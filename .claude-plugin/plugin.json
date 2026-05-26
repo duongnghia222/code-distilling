@@ -1,7 +1,7 @@
 {
   "name": "code-distilling",
   "description": "Port high-quality implementations from reference open-source repos into your project with discipline: analysis, design, planning, and equivalence-tested execution.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": {
     "name": "Nghia Duong",
     "email": "duongnghia222@gmail.com"
