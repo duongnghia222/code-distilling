@@ -1,0 +1,15 @@
+{
+  "name": "code-distilling",
+  "description": "Marketplace distributing the code-distilling plugin: disciplined porting of features from reference open-source repos into your project.",
+  "owner": {
+    "name": "Nghia Duong",
+    "email": "duongnghia222@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "code-distilling",
+      "source": "./",
+      "description": "Port high-quality implementations from reference open-source repos into your project with discipline: analysis, design, planning, equivalence-tested execution, and full attribution."
+    }
+  ]
+}

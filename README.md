@@ -60,16 +60,22 @@ The agent will engage `analyzing-reference` first, then walk you through the res
 
 ### Claude Code
 
+This repo is a Claude Code plugin marketplace. Add it, then install the plugin:
+
 ```bash
-/plugin install duongnghia222/code-distilling
+/plugin marketplace add duongnghia222/code-distilling
+/plugin install code-distilling@code-distilling
 ```
 
-Or clone this repo and add the plugin path manually:
+Or test locally by cloning first:
 
 ```bash
 git clone https://github.com/duongnghia222/code-distilling
-/plugin install ./code-distilling
+/plugin marketplace add ./code-distilling
+/plugin install code-distilling@code-distilling
 ```
+
+Update later with `/plugin marketplace update code-distilling`.
 
 ### Codex
 
