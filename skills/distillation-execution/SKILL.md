@@ -1,15 +1,15 @@
 ---
 name: distillation-execution
-description: Use to execute an approved distillation plan - dispatches a fresh implementer subagent per task following equivalence-tdd, with two-stage review (spec compliance first, then code quality)
+description: Use to execute an approved distillation plan in the current session - dispatches a fresh implementer subagent per chunk following equivalence-tdd, with two-stage review (spec compliance first, then code quality)
 ---
 
 # Distillation Execution
 
-Execute the distillation plan by dispatching a fresh implementer subagent per task, with tightly-scoped context. Run two-stage review after each task: **spec compliance first, then code quality**.
+Execute the distillation plan by dispatching a fresh implementer subagent per chunk, with tightly-scoped context. The implementer follows `code-distilling:equivalence-tdd` end-to-end inside its single dispatch — porting the test, running it failing, porting the implementation, running it passing, and committing. Run two-stage review after each chunk: **spec compliance first, then code quality**.
 
-**Why subagents:** delegating tasks to specialized subagents with isolated context keeps them focused. You curate exactly what context they need; they should not inherit your session history. This preserves your context for coordination and review work.
+**Why subagents:** delegating chunks to specialized subagents with isolated context keeps them focused. You curate exactly what context they need; they should not inherit your session history. This preserves your context for coordination and review work.
 
-**Core principle:** Fresh subagent per task + two-stage review (spec then quality) = high-quality ports, fast iteration.
+**Core principle:** Fresh subagent per chunk + two-stage review (spec then quality) = high-quality ports, fast iteration.
 
 **Continuous execution:** Do not pause to check in with your human partner between tasks. Execute every task from the plan without stopping. The only reasons to stop: BLOCKED status you cannot resolve, ambiguity that genuinely prevents progress, or all tasks complete. "Should I continue?" prompts and progress summaries waste time — they asked you to execute the plan, so execute it.
 
@@ -20,16 +20,16 @@ Execute the distillation plan by dispatching a fresh implementer subagent per ta
 ```dot
 digraph when_execute {
     "Plan approved?" [shape=diamond];
-    "Tasks mostly independent?" [shape=diamond];
+    "Chunks mostly independent?" [shape=diamond];
     "Stay in this session?" [shape=diamond];
     "distillation-execution" [shape=box];
     "Manual execution" [shape=box];
     "Run distillation-plan first" [shape=box];
 
-    "Plan approved?" -> "Tasks mostly independent?" [label="yes"];
+    "Plan approved?" -> "Chunks mostly independent?" [label="yes"];
     "Plan approved?" -> "Run distillation-plan first" [label="no"];
-    "Tasks mostly independent?" -> "Stay in this session?" [label="yes"];
-    "Tasks mostly independent?" -> "Manual execution" [label="no — tightly coupled"];
+    "Chunks mostly independent?" -> "Stay in this session?" [label="yes"];
+    "Chunks mostly independent?" -> "Manual execution" [label="no — tightly coupled"];
     "Stay in this session?" -> "distillation-execution" [label="yes"];
     "Stay in this session?" -> "Manual execution" [label="no"];
 }
@@ -49,11 +49,11 @@ digraph process {
     "Create TaskCreate entries per plan task" [shape=box];
 
     subgraph cluster_per_task {
-        label="Per Task";
+        label="Per Task (one chunk = one task)";
         "Dispatch implementer subagent (./implementer-prompt.md)" [shape=box];
         "Implementer asks questions?" [shape=diamond];
         "Answer questions, re-dispatch" [shape=box];
-        "Implementer commits + self-reviews" [shape=box];
+        "Implementer runs equivalence-tdd end-to-end + commits" [shape=box];
         "Dispatch spec compliance reviewer (./spec-reviewer-prompt.md)" [shape=box];
         "Spec reviewer approves?" [shape=diamond];
         "Implementer fixes spec gaps" [shape=box];
@@ -73,8 +73,8 @@ digraph process {
     "Dispatch implementer subagent (./implementer-prompt.md)" -> "Implementer asks questions?";
     "Implementer asks questions?" -> "Answer questions, re-dispatch" [label="yes"];
     "Answer questions, re-dispatch" -> "Dispatch implementer subagent (./implementer-prompt.md)";
-    "Implementer asks questions?" -> "Implementer commits + self-reviews" [label="no"];
-    "Implementer commits + self-reviews" -> "Dispatch spec compliance reviewer (./spec-reviewer-prompt.md)";
+    "Implementer asks questions?" -> "Implementer runs equivalence-tdd end-to-end + commits" [label="no"];
+    "Implementer runs equivalence-tdd end-to-end + commits" -> "Dispatch spec compliance reviewer (./spec-reviewer-prompt.md)";
     "Dispatch spec compliance reviewer (./spec-reviewer-prompt.md)" -> "Spec reviewer approves?";
     "Spec reviewer approves?" -> "Implementer fixes spec gaps" [label="no"];
     "Implementer fixes spec gaps" -> "Dispatch spec compliance reviewer (./spec-reviewer-prompt.md)";
@@ -92,9 +92,9 @@ digraph process {
 ## Steps
 
 1. **Read the plan once.** Note the plan header's `Reference path` — this is `<REF_PATH>` for the rest of execution. Extract every task with its full text and required context: source paths to read (resolved against `<REF_PATH>`), target paths, mode, adaptation notes from the spec, the test source (path or captured cases).
-2. **Create `TaskCreate` entries** — one per plan task (test tasks and impl tasks both).
+2. **Create `TaskCreate` entries** — one per plan task.
 3. **For each task in order:**
-   a. Dispatch the implementer subagent using `implementer-prompt.md`. Provide the task text, the curated context, and a hard requirement to follow `equivalence-tdd`.
+   a. Dispatch the implementer subagent using `implementer-prompt.md`. Provide the task text, the curated context, and a hard requirement to follow `code-distilling:equivalence-tdd` end-to-end within this single dispatch.
    b. If the implementer asks questions, answer clearly and completely before letting them proceed.
    c. After the implementer commits, dispatch the spec compliance reviewer using `spec-reviewer-prompt.md`. Re-dispatch the implementer with the reviewer's findings until the reviewer approves.
    d. Dispatch the code quality reviewer using `code-quality-reviewer-prompt.md`. Re-dispatch the implementer with the reviewer's findings until the reviewer approves.
@@ -175,6 +175,7 @@ Implementer subagents return one of four statuses. Handle each appropriately.
 - **Start code quality review before spec compliance is approved** (wrong order).
 - Move to the next task while either review has open issues.
 - Let the implementer pull lines from the reference for a `learn-then-rewrite` chunk.
+- Split a chunk into separate test and implementation tasks — `equivalence-tdd` runs inside the implementer's single dispatch.
 
 **If the subagent asks questions:** answer clearly and completely. Don't rush them.
 
@@ -188,46 +189,50 @@ Implementer subagents return one of four statuses. Handle each appropriately.
 You: I'm using distillation-execution to execute the plan with subagent-driven dispatch.
 
 [Read plan once: docs/plans/2026-05-26-distill-awesome-auth-oauth.md]
-[Extract all 5 chunks → 10 tasks (test + impl)]
+[Extract 5 chunks → 5 tasks]
 [Create TaskCreate with all tasks]
 
-Task 1.t: Port test for src/cache/lru.ts
-[Dispatch implementer with task text + curated context]
-Implementer: DONE. Commit abc1234.
+Task 1: Port src/cache/lru.ts (mode: copy)
+[Dispatch implementer with task text + curated context + pasted source]
+Implementer:
+  - Ported test/cache/lru.test.ts; ran it; FAIL: "Cannot find module 'src/cache/lru'"
+  - Ported src/cache/lru.ts; ran the test; PASS
+  - Committed abc1234 (test + impl in a single commit per equivalence-tdd)
+  - DONE
 
 [Dispatch spec compliance reviewer]
-Spec reviewer: APPROVED.
-
-[Dispatch code quality reviewer]
-Code reviewer: APPROVED.
-
-[Mark Task 1.t complete]
-
-Task 1.i: Port implementation for src/cache/lru.ts
-[Dispatch implementer with task text + source code]
-Implementer: DONE. Commit def5678.
-
-[Dispatch spec compliance reviewer]
-Spec reviewer: ISSUES — adaptation notes say "rename LRU to LruCache" but the file still uses `LRU`.
-
-[Re-dispatch implementer with the issue]
-Implementer: Fixed. Commit ghi9012.
-
-[Re-dispatch spec reviewer]
-Spec reviewer: APPROVED.
+Spec reviewer: APPROVED — adaptation notes followed, mode adherence intact.
 
 [Dispatch code quality reviewer]
 Code reviewer: ISSUES (Important) — magic number 1024 should be a constant.
 
-[Re-dispatch implementer]
-Implementer: Extracted DEFAULT_CAPACITY. Commit jkl3456.
+[Re-dispatch implementer with the issue]
+Implementer: Extracted DEFAULT_CAPACITY. Commit def5678.
 
 [Re-dispatch code reviewer]
 Code reviewer: APPROVED.
 
-[Mark Task 1.i complete]
+[Mark Task 1 complete]
 
-... [Tasks 2 through 5 similarly] ...
+Task 2: Rewrite src/auth/strategy.ts (mode: learn-then-rewrite)
+[Dispatch implementer with task text + ref-map excerpt + spec adaptation notes; NO source paste]
+Implementer:
+  - Wrote fresh equivalence tests from spec §7 captured cases
+  - Ran tests; all FAIL on missing module
+  - Wrote an independent implementation satisfying the tests
+  - Ran tests; PASS
+  - Committed ghi9012
+  - DONE
+
+[Dispatch spec compliance reviewer]
+Spec reviewer: APPROVED — no reference-source phrasing detected.
+
+[Dispatch code quality reviewer]
+Code reviewer: APPROVED.
+
+[Mark Task 2 complete]
+
+... [Tasks 3 through 5 similarly] ...
 
 [After all tasks]
 [Dispatch final code reviewer for whole branch diff]
@@ -246,11 +251,16 @@ Execution is done when:
 
 ## Required Sub-Skills
 
-- `code-distilling:equivalence-tdd` — every implementer subagent follows this.
+- `code-distilling:equivalence-tdd` — every implementer subagent follows this end-to-end within its single dispatch.
+
+## Upstream
+
+- `code-distilling:analyzing-reference` → `code-distilling:distillation-design` → `code-distilling:distillation-plan` produce the artifacts this skill consumes (reference map, spec, plan).
 
 ## Key Principles
 
-- **Fresh subagent per task.** No context pollution between tasks.
+- **Fresh subagent per chunk.** No context pollution between tasks.
+- **One task per chunk.** The implementer runs `equivalence-tdd` end-to-end (port test → fail → port impl → pass → single commit) inside the single dispatch — no `.t`/`.i` split at the controller level.
 - **Two-stage review, in order.** Spec compliance gates code quality.
 - **Continuous execution.** No "should I continue?" prompts.
 - **Curate context.** Don't dump the plan; quote what's needed.
