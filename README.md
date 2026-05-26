@@ -142,7 +142,7 @@ Mode is decided per chunk during `distillation-design`, using explicit criteria 
 
 ## Status
 
-Early development (v0.1.0). The architecture is documented in [`docs/specs/2026-05-26-code-distilling-plugin-design.md`](docs/specs/2026-05-26-code-distilling-plugin-design.md).
+Early development.
 
 **v1 is considered ready when:** a single session can take *"I want feature X from `<path-to-reference-repo>`"* through to committed, tested, attributed code in the user's project — without manual intervention beyond approving the spec and the plan.
 
