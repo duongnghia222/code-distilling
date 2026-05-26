@@ -66,9 +66,9 @@ If your PR adds support for a new harness (IDE, CLI tool, agent runner), you MUS
 
 A real integration loads the `using-code-distilling` bootstrap at session start. The bootstrap is what causes the porting skills to auto-trigger when porting intent is detected. Without it, the skills are dead weight.
 
-**The acceptance test.** Open a clean session in the new harness inside a project that has a `ref-code/<repo>/` directory. Send exactly:
+**The acceptance test.** Open a clean session in the new harness inside any project, with a reference repo cloned somewhere on disk. Send exactly (substitute a real path):
 
-> Let's port the X feature from ref-code/&lt;repo&gt;.
+> Let's port the X feature from /path/to/reference-repo.
 
 A working integration auto-triggers `analyzing-reference` before any code is written. Paste the complete transcript in the PR.
 
@@ -76,7 +76,7 @@ A working integration auto-triggers `analyzing-reference` before any code is wri
 
 1. Fork the repo and create a feature branch.
 2. Edit the skill (`skills/<name>/SKILL.md` and any references).
-3. **Test it.** Open a clean session, set up a `ref-code/` directory with a small reference repo, and walk through a port. Verify:
+3. **Test it.** Open a clean session, clone a small reference repo somewhere on disk, point the agent at its path, and walk through a port. Verify:
    - The right skills fire at the right moments.
    - The skill's Red Flags actually trip when you violate them.
    - The skill's checklist items get done.

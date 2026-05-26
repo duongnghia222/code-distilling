@@ -64,8 +64,11 @@ Every plan MUST start with this header:
 
 **Spec:** `docs/specs/YYYY-MM-DD-distill-<repo>-<feature-slug>.md`
 **Reference map:** `docs/distilling/<repo>-<feature-slug>-reference-map.md`
+**Reference path:** <REF_PATH — copied verbatim from the reference map>
 **Reference commit:** <SHA>
 **Source language → Target language:** <lang> → <lang>
+
+> **Path convention:** source paths in this plan are relative to `Reference path`. The execution skill resolves them with `<REF_PATH>/<source-path>` when reading files.
 
 ---
 ```
@@ -77,11 +80,13 @@ Before defining tasks, write the file map. One row per target file.
 ```markdown
 ## Source → Target File Map
 
+Source paths are relative to `Reference path` (see plan header).
+
 | # | Source path(s) | Target path | Mode | Test source | Adaptation notes |
 |---|----------------|-------------|------|-------------|------------------|
-| 1 | ref-code/<repo>/src/util/lru.ts | src/cache/lru.ts | copy | ref-code/<repo>/test/util/lru.test.ts → test/cache/lru.test.ts | rename `LRU` to `LruCache` per target conventions |
-| 2 | ref-code/<repo>/src/auth/oauth.ts | src/auth/oauth.ts | port | ref-code/<repo>/test/auth/oauth.test.ts → test/auth/oauth.test.ts | callback-style → async/await; swap `axios` for `fetch` |
-| 3 | (design influence) ref-code/<repo>/src/auth/strategy.ts | src/auth/strategy.ts | learn-then-rewrite | fresh-equivalence-tests captured in spec §7 | independent implementation |
+| 1 | src/util/lru.ts | src/cache/lru.ts | copy | test/util/lru.test.ts → test/cache/lru.test.ts | rename `LRU` to `LruCache` per target conventions |
+| 2 | src/auth/oauth.ts | src/auth/oauth.ts | port | test/auth/oauth.test.ts → test/auth/oauth.test.ts | callback-style → async/await; swap `axios` for `fetch` |
+| 3 | (design influence) src/auth/strategy.ts | src/auth/strategy.ts | learn-then-rewrite | fresh-equivalence-tests captured in spec §7 | independent implementation |
 ```
 
 For `learn-then-rewrite` rows, the source column names the reference module that inspired the design, prefixed with `(design influence)`.
@@ -99,7 +104,7 @@ Tasks come in pairs (test → implementation) per chunk, followed by a brief att
 ````markdown
 **Files:**
 - Create: `test/path/to/chunk.test.<ext>`
-- Read: `ref-code/<repo>/test/path/to/chunk.test.<ext>` (or "behavior captures in spec §7" for fresh-equivalence-tests)
+- Read: `<REF_PATH>/test/path/to/chunk.test.<ext>` (or "behavior captures in spec §7" for fresh-equivalence-tests)
 
 **Mode:** copy / port / learn-then-rewrite (the test-side translation; may differ from the impl mode)
 
@@ -124,7 +129,7 @@ If the test passes accidentally or fails for an unrelated reason, stop and fix t
 ````markdown
 **Files:**
 - Create or modify: `src/path/to/chunk.<ext>`
-- Read: `ref-code/<repo>/src/path/to/chunk.<ext>` (or omit for learn-then-rewrite)
+- Read: `<REF_PATH>/src/path/to/chunk.<ext>` (or omit for learn-then-rewrite)
 - Test: `test/path/to/chunk.test.<ext>` (from Task N.t)
 
 **Mode:** copy / port / learn-then-rewrite
@@ -186,7 +191,7 @@ Every step must contain the actual content an implementer needs. These are **pla
 - "Port the test" without including the actual ported test code.
 - "Similar to Task N" — repeat the code; the implementer may read tasks out of order.
 - Steps that describe **what** to do without showing **how** (code blocks required where code is involved).
-- Source paths that don't exist in `ref-code/<repo>/`.
+- Source paths that don't exist under `<REF_PATH>/` (the reference path from the plan header).
 - Target paths that don't follow the user's project conventions (check the project's existing layout).
 - Attribution headers with `<TODO>` fields — fill them from the reference map.
 
@@ -195,9 +200,9 @@ Every step must contain the actual content an implementer needs. These are **pla
 After writing the complete plan, look at the spec with fresh eyes and check the plan against it:
 
 1. **Spec coverage:** every chunk from the spec's mode-assignments table is in the file map and has a task pair. Anything from Section 9 ("Out of scope") of the spec is NOT in the plan.
-2. **Path consistency:** every source path exists in `ref-code/<repo>/`. Every target path is one a reasonable implementer would create.
+2. **Path consistency:** every source path resolves to a real file under `<REF_PATH>/` (verify by joining the reference path from the header with each row's source path). Every target path is one a reasonable implementer would create.
 3. **Mode consistency:** the mode column in the file map matches what each task's prompts ask the implementer to do (copy code shown vs. design-influence note).
-4. **Test source consistency:** if the spec says `port-reference-test` for a chunk, the test task references a real test file in `ref-code/`. If `fresh-equivalence-tests`, the test task pastes the cases from the spec.
+4. **Test source consistency:** if the spec says `port-reference-test` for a chunk, the test task references a real test file under `<REF_PATH>/`. If `fresh-equivalence-tests`, the test task pastes the cases from the spec.
 5. **Attribution coverage:** every implementation task has a Step-1 attribution header. The Final Task is present.
 6. **Dependency order:** for each chunk, every chunk it imports is earlier in the task list.
 
@@ -237,7 +242,7 @@ Announce:
 
 - You do **not** write the actual ported code into the target tree. That's execution.
 - You do **not** re-decide modes; modes come from the approved spec.
-- You do **not** modify `ref-code/`.
+- You do **not** modify anything under the reference path. The reference is read-only.
 - You do **not** start execution from this skill — `distillation-execution` is the next step.
 
 ## Key Principles

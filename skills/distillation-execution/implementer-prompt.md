@@ -79,7 +79,8 @@ You MUST follow `code-distilling:equivalence-tdd` for this task. Specifically:
 
 ## Hard Rules
 
-- Do NOT modify anything under `ref-code/`. The reference is read-only.
+- Do NOT modify anything under the reference path. The reference is read-only, wherever it lives on disk.
+- Do NOT go read the reference repo yourself. The controller has already extracted everything you need into this prompt. If something is missing, return NEEDS_CONTEXT.
 - Do NOT weaken the test to make it pass. The test is the spec.
 - Do NOT skip running the test in the failing state.
 - Do NOT skip the attribution header.
@@ -150,7 +151,7 @@ Look at your work with fresh eyes:
 **Scope:**
 
 - Did I touch only the files named in the task?
-- Nothing under `ref-code/` was modified?
+- Nothing under the reference path was modified?
 - No "while I'm here" refactors crept in?
 
 If you find issues, fix them now — don't report DONE with known gaps.

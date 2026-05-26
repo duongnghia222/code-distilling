@@ -195,7 +195,7 @@ For learn-then-rewrite, use `Source-influence:` instead of `Source:`.
 | "Test and impl can be separate commits" | Splits attribution and makes review harder. One commit per chunk. |
 | "Mid-port, this is actually learn-then-rewrite" | Mode shifts must be explicit. Stop, escalate, amend the spec, then continue. |
 | "I'll just paste the reference in learn-then-rewrite, no one will know" | Defeats the mode and may breach the license. If you need the lines, the chunk is `port`. |
-| "Let me just call the reference's code from the target" | Creates a dependency on `ref-code/` that ships nothing. Port the code. |
+| "Let me just call the reference's code from the target" | Creates a dependency on a directory outside the target project that ships nothing. Port the code. |
 | "Tests were a hassle, I'll add them after I get it working" | Tests-after pass immediately and prove nothing. The cycle is RED → GREEN, in that order. |
 
 ## Red Flags - STOP and Start Over

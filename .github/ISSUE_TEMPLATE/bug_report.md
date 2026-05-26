@@ -43,7 +43,7 @@ paste here
 
 ## Reference repo (if relevant)
 
-- Repo: <!-- URL or path under ref-code/ -->
+- Repo: <!-- URL or path to the reference repo on disk -->
 - License: <!-- SPDX -->
 - Commit: <!-- SHA you were on -->
 

@@ -70,11 +70,11 @@ of human involvement will be closed without review.
      are dead weight — present on disk but never invoked at the right
      moments.
 
-     ACCEPTANCE TEST: Open a clean session in the new harness inside a
-     project that has a `ref-code/<repo>/` directory present. Send exactly
-     this user message:
+     ACCEPTANCE TEST: Open a clean session in the new harness inside any
+     project, with a reference repo cloned anywhere on disk. Send exactly
+     this user message (substitute a real path):
 
-         Let's port the X feature from ref-code/<repo>.
+         Let's port the X feature from /path/to/reference-repo.
 
      A working integration auto-triggers `analyzing-reference` before any
      code is written. Paste the complete transcript below.

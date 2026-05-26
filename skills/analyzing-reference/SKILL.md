@@ -1,13 +1,15 @@
 ---
 name: analyzing-reference
-description: Use when the user wants to port a feature from a reference repo under ref-code/ - produces a structured reference map (files, dependencies, tests, entry points, hidden coupling, license) that every downstream skill consumes
+description: Use when the user wants to port a feature from a reference repo at any path on disk - produces a structured reference map (files, dependencies, tests, entry points, hidden coupling, license) that every downstream skill consumes
 ---
 
 # Analyzing a Reference Repository
 
 ## Overview
 
-Deep-read a reference repo at `ref-code/<repo>/` and produce a **reference map** — the structured artifact that `distillation-design`, `distillation-plan`, and `distillation-execution` consume.
+Deep-read a reference repo at the path the user supplied (absolute, relative, or a checkout inside the project) and produce a **reference map** — the structured artifact that `distillation-design`, `distillation-plan`, and `distillation-execution` consume.
+
+The path captured in the reference map's `Reference path` field is the single source of truth for the reference's location. Every downstream skill resolves source files via that field — no hard-coded directory conventions.
 
 This is the first skill in the porting flow. Skipping it means downstream skills make decisions without evidence — and those decisions are usually wrong.
 
@@ -21,14 +23,19 @@ This is the first skill in the porting flow. Skipping it means downstream skills
 
 ```dot
 digraph when_analyze {
-    "User wants to port from ref-code/<repo>?" [shape=diamond];
+    "User wants to port from a reference repo?" [shape=diamond];
+    "Reference path supplied?" [shape=diamond];
+    "Ask user for path" [shape=box];
     "Reference map already exists for this feature?" [shape=diamond];
     "analyzing-reference" [shape=box];
     "Skip — use existing map" [shape=box];
     "Not applicable — use general workflow" [shape=box];
 
-    "User wants to port from ref-code/<repo>?" -> "Reference map already exists for this feature?" [label="yes"];
-    "User wants to port from ref-code/<repo>?" -> "Not applicable — use general workflow" [label="no"];
+    "User wants to port from a reference repo?" -> "Reference path supplied?" [label="yes"];
+    "User wants to port from a reference repo?" -> "Not applicable — use general workflow" [label="no"];
+    "Reference path supplied?" -> "Reference map already exists for this feature?" [label="yes"];
+    "Reference path supplied?" -> "Ask user for path" [label="no"];
+    "Ask user for path" -> "Reference map already exists for this feature?";
     "Reference map already exists for this feature?" -> "analyzing-reference" [label="no, or stale"];
     "Reference map already exists for this feature?" -> "Skip — use existing map" [label="yes, current"];
 }
@@ -38,10 +45,12 @@ digraph when_analyze {
 
 Before invoking, you must have:
 
-1. **Path to a reference repo:** a directory under `ref-code/`, e.g. `ref-code/awesome-auth/`.
+1. **Path to a reference repo:** any directory on disk that contains the reference. Absolute (`/Users/me/code/awesome-auth`), relative from the project root (`../awesome-auth`), or a checkout inside the project — all valid. Verify the path exists and contains a recognizable repo (LICENSE, manifest, source tree) before proceeding.
 2. **Feature description:** a sentence or two naming what the user wants to port (e.g., "the OAuth login and token refresh flow", "the in-memory LRU cache").
 
-If either is missing, ask the user — **one question at a time**, multiple-choice when possible.
+If either is missing, ask the user — **one question at a time**, multiple-choice when possible. For the path, accept whatever they give you; do not insist on a particular layout.
+
+Throughout this document, `<REF_PATH>` stands for the path the user supplied. Wherever an example uses a path like `/Users/me/code/awesome-auth/...`, treat it as `<REF_PATH>/...` resolved against the user's value.
 
 ## Output
 
@@ -52,10 +61,11 @@ A reference map written to `docs/distilling/<repo>-<feature-slug>-reference-map.
 ```markdown
 # Reference Map: <repo> — <feature>
 
-**Reference repo path:** ref-code/<repo>/
-**Source commit hash:** <hash from `git -C ref-code/<repo> rev-parse HEAD`>
+**Reference path:** <REF_PATH — exactly as the user gave it, absolute preferred>
+**Reference repo URL:** <upstream URL if known; otherwise "local only">
+**Source commit hash:** <hash from `git -C <REF_PATH> rev-parse HEAD`>
 **License:** <SPDX identifier from LICENSE file>
-**License file:** ref-code/<repo>/LICENSE
+**License file:** <REF_PATH>/LICENSE
 **Primary language:** <language>
 **Test framework:** <e.g., jest, pytest, go test>
 
@@ -63,13 +73,17 @@ A reference map written to `docs/distilling/<repo>-<feature-slug>-reference-map.
 <one paragraph>
 
 ## Feature files
-- ref-code/<repo>/path/to/file1.ts — <one-line summary>
-- ref-code/<repo>/path/to/file2.ts — <one-line summary>
+
+Paths in this section are RELATIVE to `<REF_PATH>`. Downstream skills join them
+with the `Reference path` field above to read each file.
+
+- path/to/file1.ts — <one-line summary>
+- path/to/file2.ts — <one-line summary>
 
 ## Transitive deps inside the repo
 
-| File | Used by | must-take or can-stub? | Why |
-| ---- | ------- | ---------------------- | --- |
+| File (relative to <REF_PATH>) | Used by | must-take or can-stub? | Why |
+| ------------------------------ | ------- | ---------------------- | --- |
 | ... | ... | must-take / can-stub | ... |
 
 ## External libraries
@@ -79,15 +93,18 @@ A reference map written to `docs/distilling/<repo>-<feature-slug>-reference-map.
 | ... | ... | ... | (filled in during design) |
 
 ## Tests for the feature
-- ref-code/<repo>/test/file1.test.ts — covers <what>
-- ref-code/<repo>/test/file2.test.ts — covers <what>
+
+Paths relative to `<REF_PATH>`.
+
+- test/file1.test.ts — covers <what>
+- test/file2.test.ts — covers <what>
 
 ## Entry points
 How callers invoke the feature from outside:
 - function/class/method/endpoint, with signature
 
 ## Hidden coupling
-Globals, env vars, file paths, side effects, time/random sources, network calls, OS-specific behavior. Each item names the file and line.
+Globals, env vars, file paths, side effects, time/random sources, network calls, OS-specific behavior. Each item names the file (relative to `<REF_PATH>`) and line.
 
 ## License & attribution data
 - License: <SPDX>
@@ -99,12 +116,17 @@ Globals, env vars, file paths, side effects, time/random sources, network calls,
 - <anything you couldn't resolve and need user input on>
 ```
 
+**Path convention.** The `Reference path` field is the only absolute (or
+user-supplied) path that appears in the map. Every other source-file path in
+the map is relative to it. This keeps the map portable: if a teammate clones
+the reference somewhere else, they update one field and everything still resolves.
+
 ## Checklist
 
 Create one `TaskCreate` entry per item and complete in order.
 
-1. **Confirm inputs** — path exists, feature description present.
-2. **Snapshot reference metadata** — top-level files: README, LICENSE, package manifest, test config. Record license SPDX and source commit hash.
+1. **Confirm inputs** — the supplied path exists on disk and contains a recognizable repo (LICENSE / manifest / source tree). Record the path exactly as the user gave it (or normalize to absolute if they gave a relative path — do not silently change it). Feature description is present.
+2. **Snapshot reference metadata** — top-level files at `<REF_PATH>`: README, LICENSE, package manifest, test config. Record license SPDX and source commit hash (`git -C <REF_PATH> rev-parse HEAD`).
 3. **Locate the feature** — search files by user's keywords + manifest entry points; deep-read candidates; confirm with the user if multiple plausible matches.
 4. **Walk transitive deps inside the repo** — for every feature file, trace imports recursively. Stop at the repo boundary. Mark each dep `must-take` or `can-stub`.
 5. **List external libraries** — distinct from stdlib. Note version constraints.
@@ -161,12 +183,14 @@ Each item is a decision the design step has to make. Surface it so the design st
 ```markdown
 ## Hidden coupling
 
-- ref-code/awesome-auth/src/oauth.ts:42 — reads `process.env.OAUTH_CLIENT_SECRET` directly.
-- ref-code/awesome-auth/src/refresh.ts:88 — calls `Date.now()` for token expiry comparison.
-- ref-code/awesome-auth/src/state.ts:15 — module-level `Map<string, Session>` cache; not cleared between requests.
-- ref-code/awesome-auth/src/oauth.ts:120 — uses `fetch` to hit `https://example.com/oauth/token`.
+(Reference path: /Users/me/code/awesome-auth — all paths below are relative.)
+
+- src/oauth.ts:42 — reads `process.env.OAUTH_CLIENT_SECRET` directly.
+- src/refresh.ts:88 — calls `Date.now()` for token expiry comparison.
+- src/state.ts:15 — module-level `Map<string, Session>` cache; not cleared between requests.
+- src/oauth.ts:120 — uses `fetch` to hit `https://example.com/oauth/token`.
 ```
-Concrete: file, line, what's coupled.
+Concrete: file (relative to the reference path), line, what's coupled.
 </Good>
 
 <Bad>
@@ -215,7 +239,8 @@ Fix issues inline. No re-review loop.
 
 - You do **not** decide what to copy / port / rewrite. That's `distillation-design`.
 - You do **not** check license compatibility. That's `attribution-and-license` (invoked from `distillation-design`).
-- You do **not** modify any file under `ref-code/`. The reference is read-only.
+- You do **not** modify any file under the reference path. The reference is read-only, wherever it lives.
+- You do **not** copy the reference into the user's project (or any other location). Read it in place at `<REF_PATH>`.
 - You do **not** write code in the target project. You produce a document.
 
 ## When the reference is poor

@@ -109,6 +109,7 @@ Write the spec to `docs/specs/YYYY-MM-DD-distill-<repo>-<feature-slug>.md`. Ever
 **Status:** Draft → awaiting user review.
 **Date:** YYYY-MM-DD
 **Reference map:** docs/distilling/<repo>-<feature-slug>-reference-map.md
+**Reference path:** <REF_PATH — copied verbatim from the reference map>
 **Reference commit:** <SHA>
 **Reference license:** <SPDX>
 **Target license:** <SPDX>
@@ -116,7 +117,8 @@ Write the spec to `docs/specs/YYYY-MM-DD-distill-<repo>-<feature-slug>.md`. Ever
 **Source language:** <lang>  →  **Target language:** <lang>
 
 ---
-```
+
+> **Source paths in this spec are relative to `Reference path`.** Resolve them with `<REF_PATH>/<source-path>` when reading the file.
 
 Then the ten standard sections:
 

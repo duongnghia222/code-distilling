@@ -32,7 +32,7 @@
       "Write"
     ],
     "defaultPrompt": [
-      "I want to port a feature from ref-code/<repo> into my project.",
+      "I want to port a feature from /path/to/reference-repo into my project.",
       "Help me distill the OAuth implementation from this reference."
     ]
   }

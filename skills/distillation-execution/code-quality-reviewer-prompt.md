@@ -62,7 +62,10 @@ need is below.
 8. **License header correctness.** Format matches
    `attribution-and-license/references/header-templates.md` for the target
    language. Fields are populated correctly:
-   - Source path corresponds to a real file in `ref-code/<repo>/`.
+   - `Source` is the upstream repo URL when known, or the reference path
+     from the reference map when there is no public URL.
+   - `Source path` corresponds to a real file under the reference path
+     (a relative path inside the reference repo).
    - Source commit is the SHA recorded by `analyzing-reference`.
    - SPDX matches the reference's LICENSE.
    - Date is today.

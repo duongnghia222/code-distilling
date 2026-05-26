@@ -95,7 +95,7 @@ digraph process {
 
 ## Steps
 
-1. **Read the plan once.** Extract every task with its full text and required context: source paths to read inside `ref-code/`, target paths, mode, adaptation notes from the spec, the test source (path or captured cases).
+1. **Read the plan once.** Note the plan header's `Reference path` — this is `<REF_PATH>` for the rest of execution. Extract every task with its full text and required context: source paths to read (resolved against `<REF_PATH>`), target paths, mode, adaptation notes from the spec, the test source (path or captured cases).
 2. **License recheck.** Confirm the spec's compatibility result is still valid (target license hasn't changed; reference commit hash matches the reference map). If anything drifted, halt and escalate.
 3. **Create `TaskCreate` entries** — one per plan task (test tasks and impl tasks both).
 4. **For each task in order:**
@@ -115,8 +115,8 @@ Implementer subagents should receive, per task:
 - The full task text from the plan (**verbatim** — they do not read the plan file).
 - The spec's row for this chunk (modes table + adaptation notes).
 - The reference-map excerpt naming the file's transitive deps and hidden coupling.
-- The exact source file content from `ref-code/<repo>/<path>` (for copy/port; **omit for learn-then-rewrite** to enforce independence).
-- The attribution header template filled with values (so they paste, not invent).
+- The exact source file content (read by you from `<REF_PATH>/<source-path>` and pasted into the prompt — for copy/port; **omit for learn-then-rewrite** to enforce independence). The subagent does not access the reference repo itself.
+- The attribution header template filled with values (so they paste, not invent), including the reference repo URL (or `<REF_PATH>` if no upstream URL is recorded).
 - The exact test command to run and what success/failure looks like.
 
 Do **not** dump the entire spec, plan, or reference map. Curate.

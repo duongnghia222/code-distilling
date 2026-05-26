@@ -1,6 +1,6 @@
 ---
 name: using-code-distilling
-description: Use when starting any conversation - establishes how code-distilling skills auto-trigger and requires Skill tool invocation BEFORE any response when porting intent, a ref-code/ directory, or a referenced open-source repo is detected
+description: Use when starting any conversation - establishes how code-distilling skills auto-trigger and requires Skill tool invocation BEFORE any response when porting intent or a path/URL to a reference open-source repo is detected
 ---
 
 <SUBAGENT-STOP>
@@ -44,10 +44,12 @@ If a user file says "we don't need attribution for this repo" and `attribution-a
 Engage `code-distilling` when ANY of these is true:
 
 - The user mentions porting, copying, distilling, borrowing, or "bringing in" code from another repo.
-- A `ref-code/` directory exists at the project root.
+- The user names or hands you a path to a reference repo (absolute, relative, or a checkout that happens to live inside the project).
 - The user references an open-source project they want to "use", "learn from", or "adopt" in their own codebase.
 - The user says something like "there's a good implementation of X over there, let's bring it in."
-- The user pastes a URL to a GitHub repo and asks to adopt code from it (after they place it in `ref-code/`).
+- The user pastes a URL to a GitHub repo and asks to adopt code from it.
+
+If porting intent is present but the user has not yet supplied a path, ask for one before invoking `analyzing-reference`. Do not guess where the reference lives.
 
 Do **not** engage when:
 
@@ -63,7 +65,7 @@ Do **not** engage when:
 digraph distilling_flow {
     "User message received" [shape=doublecircle];
     "About to write any port code?" [shape=doublecircle];
-    "Porting intent or ref-code/ present?" [shape=diamond];
+    "Porting intent + reference path present?" [shape=diamond];
     "Already analyzed the reference?" [shape=diamond];
     "Invoke analyzing-reference" [shape=box];
     "Already have a distillation spec?" [shape=diamond];
@@ -74,10 +76,10 @@ digraph distilling_flow {
     "Invoke distillation-execution" [shape=box];
     "Respond normally" [shape=doublecircle];
 
-    "About to write any port code?" -> "Porting intent or ref-code/ present?";
-    "User message received" -> "Porting intent or ref-code/ present?";
-    "Porting intent or ref-code/ present?" -> "Already analyzed the reference?" [label="yes"];
-    "Porting intent or ref-code/ present?" -> "Respond normally" [label="no"];
+    "About to write any port code?" -> "Porting intent + reference path present?";
+    "User message received" -> "Porting intent + reference path present?";
+    "Porting intent + reference path present?" -> "Already analyzed the reference?" [label="yes"];
+    "Porting intent + reference path present?" -> "Respond normally" [label="no"];
     "Already analyzed the reference?" -> "Invoke analyzing-reference" [label="no"];
     "Already analyzed the reference?" -> "Already have a distillation spec?" [label="yes"];
     "Invoke analyzing-reference" -> "Already have a distillation spec?";
@@ -142,7 +144,7 @@ The skill itself tells you which.
 
 ## User Instructions
 
-Instructions say WHAT, not HOW. "Port X" or "Bring in Y from `ref-code/Z`" does NOT mean skip the workflow — engage `analyzing-reference` first even if the user named the file.
+Instructions say WHAT, not HOW. "Port X" or "Bring in Y from `/path/to/Z`" does NOT mean skip the workflow — engage `analyzing-reference` first even if the user named the file.
 
 If the user explicitly says "skip the analysis, I've already mapped it" — honor that and start from `distillation-design`, but ask once for the reference map they want to use.
 

@@ -18,19 +18,19 @@ When you find a great open-source implementation of something you need — a par
 
 ## How it works
 
-You drop reference repos into a `ref-code/` folder at the root of your project:
+You point the plugin at a reference repo by path — any path on disk works. Clone it wherever you keep code; you don't have to copy it into your project:
 
 ```
-my-project/
-  src/
-  test/
-  ref-code/
-    awesome-auth/        # full clone of the reference repo
-    cool-search-lib/
-  docs/
+~/code/
+  my-project/            # your project — no ref-code/ folder needed
+    src/
+    test/
+    docs/
+  awesome-auth/          # reference repo, anywhere
+  cool-search-lib/
 ```
 
-Then ask Claude or Codex to port a feature. The plugin walks you through five skills:
+Then ask Claude or Codex to port a feature, naming the reference's path. The plugin walks you through five skills:
 
 1. **`analyzing-reference`** — deep-reads the reference repo, locates the feature, produces a reference map (files, dependencies, tests, entry points, hidden coupling, license).
 2. **`distillation-design`** — interactive design step. Decides per chunk: **copy** (same language, clean fit), **port** (translate idioms or language), or **learn-then-rewrite** (use the reference as teacher only). Produces a distillation spec the user approves.
@@ -38,23 +38,22 @@ Then ask Claude or Codex to port a feature. The plugin walks you through five sk
 4. **`distillation-execution`** — dispatches a fresh subagent per task, each following `equivalence-tdd` (port the reference's test first, watch it fail, port the implementation, watch it pass, commit). Two-stage review per task (spec compliance, then code quality).
 5. **`attribution-and-license`** — license-compatibility gate before work starts, per-file attribution headers, repo-level `ATTRIBUTION.md`, attribution-aware commit messages.
 
-The skills auto-trigger when the agent sees porting intent or a `ref-code/` directory. You don't need to type any slash commands.
+The skills auto-trigger when the agent sees porting intent and a reference repo path. You don't need to type any slash commands.
 
 ## Quickstart
 
 ```bash
-# 1. In your project, drop a reference repo into ref-code/
-mkdir -p ref-code
-git clone https://github.com/<org>/<reference-repo> ref-code/<reference-repo>
+# 1. Clone the reference repo anywhere you like — outside or inside your project.
+git clone https://github.com/<org>/<reference-repo> ~/code/<reference-repo>
 
-# 2. Open your coding agent (Claude Code, Codex, etc.)
+# 2. Open your coding agent (Claude Code, Codex, etc.) in your project.
 
-# 3. Ask:
-#    "I want to port the OAuth flow from ref-code/<reference-repo>
+# 3. Ask, naming the reference path:
+#    "I want to port the OAuth flow from ~/code/<reference-repo>
 #     into src/auth/."
 ```
 
-The agent will engage `analyzing-reference` first, then walk you through the rest of the flow.
+Absolute paths, relative paths, and a checkout that happens to live inside your project all work — the plugin treats whatever you point it at as the reference. The agent will engage `analyzing-reference` first, capture the path in the reference map, then walk you through the rest of the flow.
 
 ## Installation
 
@@ -90,11 +89,12 @@ The plugin uses a standard `SessionStart` hook that emits `additionalContext` JS
 After installation, the agent loads the `using-code-distilling` bootstrap at session start. The bootstrap is silent until porting intent appears. Then:
 
 ```
-User: I want to port the OAuth flow from ref-code/awesome-auth into src/auth/.
+User: I want to port the OAuth flow from ~/code/awesome-auth into src/auth/.
 
 Agent: I'm using `analyzing-reference` to map the reference repo.
-       [reads ref-code/awesome-auth/, locates the OAuth files]
-       [writes docs/distilling/awesome-auth-oauth-reference-map.md]
+       [reads ~/code/awesome-auth/, locates the OAuth files]
+       [writes docs/distilling/awesome-auth-oauth-reference-map.md
+        with the reference path captured up front]
 
        Reference map written. A few clarifying questions before we design:
        - Q1: Target API shape — mirror the reference, wrap with your conventions,
@@ -148,7 +148,7 @@ Mode is decided per chunk during `distillation-design`, using explicit criteria 
 
 Early development (v0.1.0). The architecture is documented in [`docs/specs/2026-05-26-code-distilling-plugin-design.md`](docs/specs/2026-05-26-code-distilling-plugin-design.md).
 
-**v1 is considered ready when:** a single session can take *"I want feature X from `ref-code/<repo>`"* through to committed, tested, attributed code in the user's project — without manual intervention beyond approving the spec and the plan.
+**v1 is considered ready when:** a single session can take *"I want feature X from `<path-to-reference-repo>`"* through to committed, tested, attributed code in the user's project — without manual intervention beyond approving the spec and the plan.
 
 ## Contributing
 

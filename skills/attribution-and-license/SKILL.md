@@ -33,7 +33,7 @@ If you can't trace a file back to its source license, you can't ship it. Headers
 
 **Inputs:**
 
-- Reference license: from `ref-code/<repo>/LICENSE` (recorded in the reference map by `analyzing-reference`).
+- Reference license: from `<REF_PATH>/LICENSE` (the `License file` field recorded in the reference map by `analyzing-reference`, where `<REF_PATH>` is the `Reference path` field from that same map).
 - Target license: target project's `LICENSE` at project root; if absent, ask the user.
 
 **Process:**
@@ -57,12 +57,14 @@ If you can't trace a file back to its source license, you can't ship it. Headers
 **Template:** See `references/header-templates.md` for language-specific comment styles. The header contains, in this order:
 
 ```
-Source: <reference repo URL or path under ref-code/>
-Source path: <path inside the reference repo, e.g. src/auth/oauth.ts>
+Source: <upstream repo URL — or, if no upstream is known, the Reference path from the map>
+Source path: <path inside the reference repo, relative to Reference path, e.g. src/auth/oauth.ts>
 Source commit: <full commit SHA recorded by analyzing-reference>
 Source license: <SPDX>
 Distilled into this project on <YYYY-MM-DD>
 ```
+
+Prefer the upstream URL when one is recorded — it's the most useful pointer for a future reader who doesn't have your local checkout. Fall back to the literal reference path only when no URL exists.
 
 **Mode-specific variations:**
 

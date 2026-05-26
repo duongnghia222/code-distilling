@@ -6,8 +6,8 @@ Each ported file carries an attribution header at the top, in the target languag
 
 | Field | Source |
 |-------|--------|
-| Source repo URL | Reference map (resolved from `ref-code/<repo>` to its public URL if known; otherwise the local path) |
-| Source path | Reference map; file or files this target was derived from |
+| Source repo URL | Reference map's `Reference repo URL` field if known; otherwise the `Reference path` field (local path) |
+| Source path | Reference map; file or files this target was derived from (relative to the reference path) |
 | Source commit | Reference map (full SHA recorded by `analyzing-reference`) |
 | Source license | Reference map (SPDX) |
 | Distilled date | Today's date in YYYY-MM-DD |
@@ -19,7 +19,7 @@ Each ported file carries an attribution header at the top, in the target languag
 
 ```
 /*
- * Source: <repo URL or ref-code/<repo>>
+ * Source: <repo URL, or the reference path if no URL is known>
  * Source path: <path inside the source repo>
  * Source commit: <full SHA>
  * Source license: <SPDX>
@@ -37,7 +37,7 @@ For learn-then-rewrite, add a final line inside the block:
 
 ```
 """
-Source: <repo URL or ref-code/<repo>>
+Source: <repo URL, or the reference path if no URL is known>
 Source path: <path inside the source repo>
 Source commit: <full SHA>
 Source license: <SPDX>
@@ -54,7 +54,7 @@ Implementation is independent; design influenced by the source.
 ### Ruby / Shell / YAML / TOML / Dockerfile
 
 ```
-# Source: <repo URL or ref-code/<repo>>
+# Source: <repo URL, or the reference path if no URL is known>
 # Source path: <path inside the source repo>
 # Source commit: <full SHA>
 # Source license: <SPDX>
@@ -65,7 +65,7 @@ Implementation is independent; design influenced by the source.
 
 ```
 <!--
-  Source: <repo URL or ref-code/<repo>>
+  Source: <repo URL, or the reference path if no URL is known>
   Source path: <path inside the source repo>
   Source commit: <full SHA>
   Source license: <SPDX>
@@ -77,7 +77,7 @@ Implementation is independent; design influenced by the source.
 
 ```
 /*
- * Source: <repo URL or ref-code/<repo>>
+ * Source: <repo URL, or the reference path if no URL is known>
  * Source path: <path inside the source repo>
  * Source commit: <full SHA>
  * Source license: <SPDX>
@@ -88,7 +88,7 @@ Implementation is independent; design influenced by the source.
 ### SQL / Lua
 
 ```
--- Source: <repo URL or ref-code/<repo>>
+-- Source: <repo URL, or the reference path if no URL is known>
 -- Source path: <path inside the source repo>
 -- Source commit: <full SHA>
 -- Source license: <SPDX>
