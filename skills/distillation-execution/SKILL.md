@@ -1,11 +1,11 @@
 ---
 name: distillation-execution
-description: Use to execute an approved distillation plan - dispatches a fresh implementer subagent per task following equivalence-tdd, with two-stage review (spec compliance first, then code quality), and a final attribution-and-license pass
+description: Use to execute an approved distillation plan - dispatches a fresh implementer subagent per task following equivalence-tdd, with two-stage review (spec compliance first, then code quality)
 ---
 
 # Distillation Execution
 
-Execute the distillation plan by dispatching a fresh implementer subagent per task, with tightly-scoped context. Run two-stage review after each task: **spec compliance first, then code quality**. Finish with the `attribution-and-license` final pass.
+Execute the distillation plan by dispatching a fresh implementer subagent per task, with tightly-scoped context. Run two-stage review after each task: **spec compliance first, then code quality**.
 
 **Why subagents:** delegating tasks to specialized subagents with isolated context keeps them focused. You curate exactly what context they need; they should not inherit your session history. This preserves your context for coordination and review work.
 
@@ -46,7 +46,6 @@ digraph process {
     rankdir=TB;
 
     "Read plan once, extract every task with full text + curated context" [shape=box];
-    "Run license compatibility recheck" [shape=box];
     "Create TaskCreate entries per plan task" [shape=box];
 
     subgraph cluster_per_task {
@@ -66,11 +65,9 @@ digraph process {
 
     "More tasks remain?" [shape=diamond];
     "Dispatch final code reviewer (whole branch)" [shape=box];
-    "Run attribution-and-license final pass" [shape=box];
     "Done" [shape=doublecircle];
 
-    "Read plan once, extract every task with full text + curated context" -> "Run license compatibility recheck";
-    "Run license compatibility recheck" -> "Create TaskCreate entries per plan task";
+    "Read plan once, extract every task with full text + curated context" -> "Create TaskCreate entries per plan task";
     "Create TaskCreate entries per plan task" -> "More tasks remain?";
     "More tasks remain?" -> "Dispatch implementer subagent (./implementer-prompt.md)" [label="yes"];
     "Dispatch implementer subagent (./implementer-prompt.md)" -> "Implementer asks questions?";
@@ -88,25 +85,22 @@ digraph process {
     "Code reviewer approves?" -> "Mark task complete" [label="yes"];
     "Mark task complete" -> "More tasks remain?";
     "More tasks remain?" -> "Dispatch final code reviewer (whole branch)" [label="no"];
-    "Dispatch final code reviewer (whole branch)" -> "Run attribution-and-license final pass";
-    "Run attribution-and-license final pass" -> "Done";
+    "Dispatch final code reviewer (whole branch)" -> "Done";
 }
 ```
 
 ## Steps
 
 1. **Read the plan once.** Note the plan header's `Reference path` — this is `<REF_PATH>` for the rest of execution. Extract every task with its full text and required context: source paths to read (resolved against `<REF_PATH>`), target paths, mode, adaptation notes from the spec, the test source (path or captured cases).
-2. **License recheck.** Confirm the spec's compatibility result is still valid (target license hasn't changed; reference commit hash matches the reference map). If anything drifted, halt and escalate.
-3. **Create `TaskCreate` entries** — one per plan task (test tasks and impl tasks both).
-4. **For each task in order:**
+2. **Create `TaskCreate` entries** — one per plan task (test tasks and impl tasks both).
+3. **For each task in order:**
    a. Dispatch the implementer subagent using `implementer-prompt.md`. Provide the task text, the curated context, and a hard requirement to follow `equivalence-tdd`.
    b. If the implementer asks questions, answer clearly and completely before letting them proceed.
    c. After the implementer commits, dispatch the spec compliance reviewer using `spec-reviewer-prompt.md`. Re-dispatch the implementer with the reviewer's findings until the reviewer approves.
    d. Dispatch the code quality reviewer using `code-quality-reviewer-prompt.md`. Re-dispatch the implementer with the reviewer's findings until the reviewer approves.
    e. Mark the task complete.
-5. **After all tasks:** dispatch the final code reviewer for the entire distillation diff against the branch base.
-6. **Run the `attribution-and-license` final pass.** This generates/updates `ATTRIBUTION.md`, copies source licenses to `licenses/`, verifies every distilled file has a header, and verifies every commit has a `Source:` or `Source-influence:` trailer.
-7. **Announce completion** with a summary: chunks distilled, modes used, tests passing, attribution status.
+4. **After all tasks:** dispatch the final code reviewer for the entire distillation diff against the branch base.
+5. **Announce completion** with a summary: chunks distilled, modes used, tests passing.
 
 ## Curated Subagent Context
 
@@ -116,7 +110,6 @@ Implementer subagents should receive, per task:
 - The spec's row for this chunk (modes table + adaptation notes).
 - The reference-map excerpt naming the file's transitive deps and hidden coupling.
 - The exact source file content (read by you from `<REF_PATH>/<source-path>` and pasted into the prompt — for copy/port; **omit for learn-then-rewrite** to enforce independence). The subagent does not access the reference repo itself.
-- The attribution header template filled with values (so they paste, not invent), including the reference repo URL (or `<REF_PATH>` if no upstream URL is recorded).
 - The exact test command to run and what success/failure looks like.
 
 Do **not** dump the entire spec, plan, or reference map. Curate.
@@ -181,7 +174,6 @@ Implementer subagents return one of four statuses. Handle each appropriately.
 - Accept "close enough" on spec compliance.
 - **Start code quality review before spec compliance is approved** (wrong order).
 - Move to the next task while either review has open issues.
-- Skip the final `attribution-and-license` pass.
 - Let the implementer pull lines from the reference for a `learn-then-rewrite` chunk.
 
 **If the subagent asks questions:** answer clearly and completely. Don't rush them.
@@ -196,8 +188,7 @@ Implementer subagents return one of four statuses. Handle each appropriately.
 You: I'm using distillation-execution to execute the plan with subagent-driven dispatch.
 
 [Read plan once: docs/plans/2026-05-26-distill-awesome-auth-oauth.md]
-[Extract all 5 chunks → 10 tasks (test + impl) + Final Task F]
-[License recheck: COMPATIBLE — proceed]
+[Extract all 5 chunks → 10 tasks (test + impl)]
 [Create TaskCreate with all tasks]
 
 Task 1.t: Port test for src/cache/lru.ts
@@ -213,7 +204,7 @@ Code reviewer: APPROVED.
 [Mark Task 1.t complete]
 
 Task 1.i: Port implementation for src/cache/lru.ts
-[Dispatch implementer with task text + source code + header template]
+[Dispatch implementer with task text + source code]
 Implementer: DONE. Commit def5678.
 
 [Dispatch spec compliance reviewer]
@@ -242,11 +233,6 @@ Code reviewer: APPROVED.
 [Dispatch final code reviewer for whole branch diff]
 Final reviewer: APPROVED.
 
-[Run attribution-and-license final pass]
-- ATTRIBUTION.md updated with 5 distilled files
-- licenses/awesome-auth-MIT.txt copied
-- All commits verified to have Source: trailer
-
 Done!
 ```
 
@@ -256,13 +242,11 @@ Execution is done when:
 
 - Every plan task is complete and both reviewers approved it.
 - The final code reviewer has approved the whole diff.
-- The `attribution-and-license` final pass has committed.
-- A short summary has been posted to the user with: chunks distilled, modes used, tests passing, attribution status, any concerns to follow up on.
+- A short summary has been posted to the user with: chunks distilled, modes used, tests passing, any concerns to follow up on.
 
 ## Required Sub-Skills
 
 - `code-distilling:equivalence-tdd` — every implementer subagent follows this.
-- `code-distilling:attribution-and-license` — invoked at start (recheck) and end (final pass).
 
 ## Key Principles
 

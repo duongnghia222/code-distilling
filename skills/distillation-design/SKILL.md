@@ -1,6 +1,6 @@
 ---
 name: distillation-design
-description: Use after analyzing-reference to interactively design a distillation - decides per-chunk mode (copy/port/learn-then-rewrite), target API, attribution plan, equivalence test plan, then produces a distillation spec the user must approve before any porting happens
+description: Use after analyzing-reference to interactively design a distillation - decides per-chunk mode (copy/port/learn-then-rewrite), target API, equivalence test plan, then produces a distillation spec the user must approve before any porting happens
 ---
 
 # Distillation Design
@@ -17,7 +17,7 @@ Do NOT invoke `distillation-plan`, `distillation-execution`, or any port-side sk
 
 ## Anti-Pattern: "This Is Too Simple To Need A Spec"
 
-Every distillation goes through this process. A one-file copy, a single utility, a snippet you "just want to bring in" — all of them. "Simple" ports are where unexamined assumptions create license risk, hidden coupling, and untraceable code. The spec can be short (one paragraph per section for truly simple ports), but you MUST produce it and get approval.
+Every distillation goes through this process. A one-file copy, a single utility, a snippet you "just want to bring in" — all of them. "Simple" ports are where unexamined assumptions create hidden coupling and untraceable code. The spec can be short (one paragraph per section for truly simple ports), but you MUST produce it and get approval.
 
 ## When to Use
 
@@ -39,7 +39,7 @@ digraph when_design {
 ## Inputs
 
 - A reference map at `docs/distilling/<repo>-<feature-slug>-reference-map.md` (produced by `analyzing-reference`).
-- The user's project (for understanding target conventions: language, test framework, naming, license).
+- The user's project (for understanding target conventions: language, test framework, naming).
 
 If the reference map is missing or stale, invoke `analyzing-reference` first.
 
@@ -51,18 +51,16 @@ A distillation spec at `docs/specs/YYYY-MM-DD-distill-<repo>-<feature-slug>.md` 
 
 You MUST create a `TaskCreate` entry for each of these items and complete them in order:
 
-1. **Read the reference map end-to-end.** Note surprises: large dep graph, unusual license, heavy hidden coupling.
-2. **Run the license-compatibility check** by invoking `attribution-and-license`. STOP if INCOMPATIBLE without an explicit override.
-3. **Ask clarifying questions** (see below) one at a time, multiple-choice when possible.
-4. **Assign a mode per chunk.** Use `references/mode-decision-criteria.md`. Record the criterion that triggered each decision.
-5. **Define the target API.** How does the distilled feature look from inside the user's project?
-6. **Define the equivalence test plan.** Which tests we port, adapt, write fresh, or fall back to spot-check.
-7. **Define the attribution plan** in terms `attribution-and-license` understands (which files, which commit, override needed?).
-8. **Write the distillation spec** to `docs/specs/YYYY-MM-DD-distill-<repo>-<feature-slug>.md`.
-9. **Spec self-review** — see below.
-10. **Commit the spec** with message: `spec: distill <repo>/<feature>`.
-11. **User review gate.** Ask the user to review and approve. Wait. If changes requested, fix and re-review.
-12. **Hand off to `distillation-plan`.**
+1. **Read the reference map end-to-end.** Note surprises: large dep graph, heavy hidden coupling.
+2. **Ask clarifying questions** (see below) one at a time, multiple-choice when possible.
+3. **Assign a mode per chunk.** Use `references/mode-decision-criteria.md`. Record the criterion that triggered each decision.
+4. **Define the target API.** How does the distilled feature look from inside the user's project?
+5. **Define the equivalence test plan.** Which tests we port, adapt, write fresh, or fall back to spot-check.
+6. **Write the distillation spec** to `docs/specs/YYYY-MM-DD-distill-<repo>-<feature-slug>.md`.
+7. **Spec self-review** — see below.
+8. **Commit the spec** with message: `spec: distill <repo>/<feature>`.
+9. **User review gate.** Ask the user to review and approve. Wait. If changes requested, fix and re-review.
+10. **Hand off to `distillation-plan`.**
 
 ## Clarifying Questions (one at a time)
 
@@ -81,7 +79,7 @@ Ask in this order. Prefer multiple-choice. Skip a question if the reference map 
 
 For each chunk (typically one file, or one logical group of files), assign one mode:
 
-- **copy** — same language, license clean for copy, idiomatic for target. Bring the code over with minimal changes (rename imports/types to match target).
+- **copy** — same language, idiomatic for target. Bring the code over with minimal changes (rename imports/types to match target).
 - **port** — different language, OR same language but materially different idioms (callback-style → async/await), OR same language but the chunk uses target-incompatible patterns (browser globals in a Node project).
 - **learn-then-rewrite** — the chunk is heavily entangled with reference-specific infrastructure (DI containers, framework lifecycles, event buses) that don't exist in the target; OR the value is in the algorithmic *approach* rather than the code; OR cross-language translation is so heavy that "porting" is misleading.
 
@@ -111,16 +109,13 @@ Write the spec to `docs/specs/YYYY-MM-DD-distill-<repo>-<feature-slug>.md`. Ever
 **Reference map:** docs/distilling/<repo>-<feature-slug>-reference-map.md
 **Reference path:** <REF_PATH — copied verbatim from the reference map>
 **Reference commit:** <SHA>
-**Reference license:** <SPDX>
-**Target license:** <SPDX>
-**License compatibility:** COMPATIBLE | COMPATIBLE-WITH-CONSTRAINTS | OVERRIDDEN
 **Source language:** <lang>  →  **Target language:** <lang>
 
 ---
 
 > **Source paths in this spec are relative to `Reference path`.** Resolve them with `<REF_PATH>/<source-path>` when reading the file.
 
-Then the ten standard sections:
+Then the eight standard sections:
 
 ```markdown
 ## 1. Goal
@@ -153,20 +148,11 @@ Signatures, types, examples.
 Test framework in target. For each chunk: port-reference-test / fresh-equivalence-tests / property-based / spot-check.
 Fallbacks explicitly stated for chunks without reference tests.
 
-## 8. Attribution plan
-- Per-file headers: yes for every distilled file (including ported tests).
-- ATTRIBUTION.md update planned.
-- Source license copy to `licenses/<repo>-<spdx>.txt`: yes.
-- Override (if INCOMPATIBLE was overridden): record both licenses, user's reason, date.
-
-## 9. Out of scope
+## 8. Out of scope
 Things explicitly NOT being distilled in this run, even if present in the reference map.
 
-## 10. Success criteria
+## 9. Success criteria
 - All ported tests pass against the distilled code.
-- All distilled files have attribution headers.
-- ATTRIBUTION.md and licenses/ updated.
-- License compatibility check passed (or override recorded).
 - Hidden coupling items each have a resolution; none left unaddressed.
 ```
 
@@ -176,9 +162,8 @@ After writing the spec, scan with fresh eyes:
 
 1. **Placeholder scan:** any TBD / TODO / vague entries? Fix inline.
 2. **Internal consistency:** does Section 3's mode column match Section 7's test plan? (A chunk marked `learn-then-rewrite` shouldn't say "port reference tests" without a note explaining why.)
-3. **Scope coverage:** every chunk in the reference map is either in Section 3 (in scope) or Section 9 (out of scope). Nothing is silently dropped.
+3. **Scope coverage:** every chunk in the reference map is either in Section 3 (in scope) or Section 8 (out of scope). Nothing is silently dropped.
 4. **Hidden coupling:** every item from the reference map is resolved in Section 6.
-5. **License compatibility:** result recorded explicitly. If overridden, the override section is present with reason + date.
 
 Fix issues inline. No re-review loop.
 
@@ -194,17 +179,15 @@ Wait. If changes requested, edit, re-run self-review, re-commit, ask again. Only
 
 | Excuse | Reality |
 |--------|---------|
-| "Just one file, no spec needed" | License + attribution + tests need a spec row. Short ≠ skipped. |
+| "Just one file, no spec needed" | Tests need a spec row. Short ≠ skipped. |
 | "I'll pick modes during execution" | The implementer subagent reads the spec row. No row = no port. |
-| "License is MIT, both sides, obviously fine" | Document it in the spec anyway. Reviewers need to see the chain of evidence. |
 | "User already approved verbally, skip the file" | The spec is the artifact. The plan reads it. Future you reads it. Write it. |
 | "Cross-language is fine, I'll figure it out" | Load `cross-language-notes.md`. Idiom mismatches are where ports break. |
 
 ## Red Flags - STOP
 
 - Mode column has rows without a deciding criterion.
-- Section 9 ("Out of scope") is empty AND Section 3 doesn't cover every chunk from the map.
-- License compatibility section says "TBD" or is missing.
+- Section 8 ("Out of scope") is empty AND Section 3 doesn't cover every chunk from the map.
 - Hidden coupling section is empty when the reference map listed items.
 - About to proceed to `distillation-plan` without explicit user approval.
 
@@ -212,7 +195,6 @@ Wait. If changes requested, edit, re-run self-review, re-commit, ask again. Only
 
 - You do **not** map files to tasks. That's `distillation-plan`.
 - You do **not** write code or tests. That's `distillation-execution`.
-- You do **not** check or update `ATTRIBUTION.md`. The headers come from per-file work in execution; the final pass is also in execution.
 
 ## Key Principles
 

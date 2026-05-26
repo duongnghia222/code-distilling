@@ -45,16 +45,14 @@ digraph equivalence_tdd {
     verify_fail [label="Verify fails\ncorrectly", shape=diamond];
     impl [label="PORT IMPL\nor learn-then-rewrite", shape=box, style=filled, fillcolor="#ccffcc"];
     verify_pass [label="Verify passes\nclean output", shape=diamond];
-    header [label="Add attribution\nheader", shape=box, style=filled, fillcolor="#ccccff"];
-    commit [label="COMMIT\nwith Source: trailer", shape=ellipse];
+    commit [label="COMMIT", shape=ellipse];
 
     test -> verify_fail;
     verify_fail -> impl [label="yes"];
     verify_fail -> test [label="wrong failure\nor test passed"];
     impl -> verify_pass;
-    verify_pass -> header [label="yes"];
+    verify_pass -> commit [label="yes"];
     verify_pass -> impl [label="no"];
-    header -> commit;
 }
 ```
 
@@ -70,14 +68,11 @@ Choose the test source based on the plan's **test strategy** for this chunk:
 - **fresh-equivalence-test:** the reference has no usable tests; the plan provides input/output pairs captured from running the reference. Encode each pair as a test case. Cite the captured run in a comment.
 - **property-based fallback:** the plan provides properties (sort stable, length preserved, idempotent). Encode each property as a test in the target's property-testing library (fast-check, hypothesis, proptest) or a hand-written generative test.
 
-The test goes in the target project's test tree, mirroring the source structure where reasonable. The test file carries an attribution header (see `attribution-and-license`).
+The test goes in the target project's test tree, mirroring the source structure where reasonable.
 
 <Good>
 ```typescript
 // test/cache/lru.test.ts
-// Source: awesome-auth@a1b2c3d:test/util/lru.test.ts
-// License: MIT
-// Distilled into this project on 2026-05-26
 
 import { LruCache } from '../../src/cache/lru';
 
@@ -140,8 +135,6 @@ For **`port` mode**, the implementation preserves the reference's algorithmic st
 
 For **`learn-then-rewrite` mode**, the implementation is **independent** — you understood the reference, now you write code that satisfies the test. **You do not refer to the reference's lines while typing.** If you find yourself needing the lines, the chunk is `port`, not `learn-then-rewrite` — stop and escalate to re-classify.
 
-Each target file gets its attribution header (see `attribution-and-license` per-file rules) **in the same commit** as the code.
-
 ### 4. Run the test
 
 **MANDATORY.**
@@ -170,20 +163,14 @@ One commit per chunk, containing:
 
 - The new/modified test file.
 - The new/modified implementation file.
-- The attribution header inside each.
 
-Commit message follows `attribution-and-license`'s convention:
+Commit message:
 
 ```
 distill(<repo>): <what was distilled>
 
 <optional body with adaptation notes>
-
-Source: <repo>@<short-sha>:<source path>
-License: <SPDX>
 ```
-
-For learn-then-rewrite, use `Source-influence:` instead of `Source:`.
 
 ## Common Rationalizations
 
@@ -192,9 +179,9 @@ For learn-then-rewrite, use `Source-influence:` instead of `Source:`.
 | "The test is obviously correct, no need to run it failing first" | Step 2 is the only thing that confirms the test exercises the right code. |
 | "I'll adapt the test to make it pass" | The test is the spec. Adapting it discards equivalence. Fix the impl, or escalate. |
 | "Let me add some fresh tests while I'm here" | Out of scope. Equivalence first; new behavior is a separate workstream. |
-| "Test and impl can be separate commits" | Splits attribution and makes review harder. One commit per chunk. |
+| "Test and impl can be separate commits" | Splits review across commits. One commit per chunk. |
 | "Mid-port, this is actually learn-then-rewrite" | Mode shifts must be explicit. Stop, escalate, amend the spec, then continue. |
-| "I'll just paste the reference in learn-then-rewrite, no one will know" | Defeats the mode and may breach the license. If you need the lines, the chunk is `port`. |
+| "I'll just paste the reference in learn-then-rewrite, no one will know" | Defeats the mode. If you need the lines, the chunk is `port`. |
 | "Let me just call the reference's code from the target" | Creates a dependency on a directory outside the target project that ships nothing. Port the code. |
 | "Tests were a hassle, I'll add them after I get it working" | Tests-after pass immediately and prove nothing. The cycle is RED → GREEN, in that order. |
 
@@ -210,7 +197,6 @@ For learn-then-rewrite, use `Source-influence:` instead of `Source:`.
 - "Keep the reference's code as a reference while I write the test."
 - "Different language so the rule doesn't really apply."
 - Mode silently shifted from `port` to `learn-then-rewrite` (or vice versa) without amending the spec.
-- About to commit without the `Source:` or `Source-influence:` trailer.
 
 **All of these mean: stop. Start over with the discipline.**
 
@@ -234,13 +220,10 @@ When porting tests across languages:
 Before declaring the chunk done:
 
 - [ ] Test file exists at the target path, mirroring the reference structure.
-- [ ] Test file has an attribution header.
-- [ ] Implementation file has an attribution header.
 - [ ] Step 2 was performed: test failed against the not-yet-ported target.
 - [ ] Step 4 was performed: test passes now.
 - [ ] Test command output was read fresh (not assumed from a prior run).
 - [ ] Other tests in the project still pass.
-- [ ] Commit message includes the `Source:` (or `Source-influence:`) trailer.
 - [ ] No reference lines pasted into a `learn-then-rewrite` chunk.
 
 Can't check all boxes? You skipped the discipline. Start over.

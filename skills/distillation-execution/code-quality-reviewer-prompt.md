@@ -59,18 +59,7 @@ need is below.
    `print` / `fmt.Println` debug statements, no TODOs without an associated
    issue link.
 
-8. **License header correctness.** Format matches
-   `attribution-and-license/references/header-templates.md` for the target
-   language. Fields are populated correctly:
-   - `Source` is the upstream repo URL when known, or the reference path
-     from the reference map when there is no public URL.
-   - `Source path` corresponds to a real file under the reference path
-     (a relative path inside the reference repo).
-   - Source commit is the SHA recorded by `analyzing-reference`.
-   - SPDX matches the reference's LICENSE.
-   - Date is today.
-
-9. **Mode-specific quality:**
+8. **Mode-specific quality:**
    - **copy:** minimal diff against source after renames; no gratuitous
      restructuring.
    - **port:** algorithmic structure preserved; translations are idiomatic,
@@ -84,8 +73,8 @@ Use these severity levels:
 
 - **Blocker** — spec compliance was approved but this finding makes the
   code unsafe, unmergeable, or wrong. Examples: missing error handling
-  required by the project's style guide; license header field clearly
-  wrong; test that flakes on the second run.
+  required by the project's style guide; test that flakes on the second
+  run.
 
 - **Important** — should be fixed before merging. Examples: imprecise
   types, dead code, awkward naming clearly out of step with the project, a

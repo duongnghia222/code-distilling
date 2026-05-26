@@ -2,7 +2,7 @@
 
 > Port high-quality implementations from reference open-source repos into your project — with discipline.
 
-`code-distilling` is a Claude Code and Codex plugin that turns *"I want to copy this feature from that repo"* into a controlled workflow: analyze the reference, decide per-chunk what to **copy** / **port** / **learn-then-rewrite**, design a target API, plan the work, execute it with equivalence tests derived from the reference, and finish with full attribution and license compliance.
+`code-distilling` is a Claude Code and Codex plugin that turns *"I want to copy this feature from that repo"* into a controlled workflow: analyze the reference, decide per-chunk what to **copy** / **port** / **learn-then-rewrite**, design a target API, plan the work, and execute it with equivalence tests derived from the reference.
 
 It is a sister-plugin to [Superpowers](https://github.com/obra/superpowers) and follows the same skill-driven discipline. You do not need Superpowers installed to use it.
 
@@ -10,11 +10,11 @@ It is a sister-plugin to [Superpowers](https://github.com/obra/superpowers) and 
 
 When you find a great open-source implementation of something you need — a parser, an auth flow, a search algorithm — there are three failure modes:
 
-1. **Paste-and-pray.** Copy the code in, rename a few symbols, hope it works. No license trail, no tests, no idea what you brought along for the ride.
+1. **Paste-and-pray.** Copy the code in, rename a few symbols, hope it works. No tests, no idea what you brought along for the ride.
 2. **From-scratch-with-vibes.** Read the reference, close the tab, write your own. Lose all the edge cases the original handled.
 3. **Vendor-and-forget.** Add the repo as a dependency, drag in their build system, never actually understand what's running.
 
-`code-distilling` is the disciplined fourth option: **port a curated subset of the reference into your own codebase, with the reference's tests as your acceptance criteria, and ship it with the attribution your license obligations require.**
+`code-distilling` is the disciplined fourth option: **port a curated subset of the reference into your own codebase, with the reference's tests as your acceptance criteria.**
 
 ## How it works
 
@@ -30,13 +30,12 @@ You point the plugin at a reference repo by path — any path on disk works. Clo
   cool-search-lib/
 ```
 
-Then ask Claude or Codex to port a feature, naming the reference's path. The plugin walks you through five skills:
+Then ask Claude or Codex to port a feature, naming the reference's path. The plugin walks you through four skills:
 
-1. **`analyzing-reference`** — deep-reads the reference repo, locates the feature, produces a reference map (files, dependencies, tests, entry points, hidden coupling, license).
+1. **`analyzing-reference`** — deep-reads the reference repo, locates the feature, produces a reference map (files, dependencies, tests, entry points, hidden coupling).
 2. **`distillation-design`** — interactive design step. Decides per chunk: **copy** (same language, clean fit), **port** (translate idioms or language), or **learn-then-rewrite** (use the reference as teacher only). Produces a distillation spec the user approves.
-3. **`distillation-plan`** — source-to-target file map, task list with paired test/implementation steps, attribution headers.
+3. **`distillation-plan`** — source-to-target file map, task list with paired test/implementation steps.
 4. **`distillation-execution`** — dispatches a fresh subagent per task, each following `equivalence-tdd` (port the reference's test first, watch it fail, port the implementation, watch it pass, commit). Two-stage review per task (spec compliance, then code quality).
-5. **`attribution-and-license`** — license-compatibility gate before work starts, per-file attribution headers, repo-level `ATTRIBUTION.md`, attribution-aware commit messages.
 
 The skills auto-trigger when the agent sees porting intent and a reference repo path. You don't need to type any slash commands.
 
@@ -112,8 +111,7 @@ Agent: I'm using `distillation-plan` to write the implementation plan.
 
 Agent: [dispatches implementer subagents per task]
        [two-stage review per task]
-       [final attribution pass]
-       Done — 5 chunks distilled, 17 tests passing, ATTRIBUTION.md updated.
+       Done — 5 chunks distilled, 17 tests passing.
 ```
 
 ## The skills
@@ -122,15 +120,14 @@ Agent: [dispatches implementer subagents per task]
 |-------|---------------|------------------|
 | `using-code-distilling` | Session start (bootstrap) | Triggers downstream skills on porting intent |
 | `analyzing-reference` | First, when porting intent is detected | Reference map document |
-| `distillation-design` | After the reference map exists | Distillation spec (modes, target API, test plan, attribution plan) |
+| `distillation-design` | After the reference map exists | Distillation spec (modes, target API, test plan) |
 | `distillation-plan` | After the spec is approved | Task-by-task implementation plan |
 | `distillation-execution` | After the plan is approved | Subagent-driven execution of every task |
 | `equivalence-tdd` | Inside execution, per task | Rigid test-first discipline for porting |
-| `attribution-and-license` | Three times: compatibility check, per-file headers, final pass | License compliance + `ATTRIBUTION.md` + commit trailers |
 
 ## Three modes for every chunk
 
-- **copy** — same language, license clean, idiomatic for target. Minimal changes (rename imports/types).
+- **copy** — same language, idiomatic for target. Minimal changes (rename imports/types).
 - **port** — different language, OR same language with materially different idioms, OR target-incompatible patterns (browser globals in a Node project).
 - **learn-then-rewrite** — the chunk is heavily entangled with reference-specific infrastructure that doesn't exist in the target; OR the value is the algorithmic approach, not the code itself; OR cross-language translation is so heavy that "porting" is misleading.
 
@@ -140,7 +137,6 @@ Mode is decided per chunk during `distillation-design`, using explicit criteria 
 
 - **The reference is the spec.** Tests come from the reference, not from your imagination. If the reference has no tests, you capture behaviors from a real run.
 - **Modes are explicit.** Every chunk has a mode and a deciding criterion. "Just trust me" is not a criterion.
-- **License compliance is non-optional.** No port without a compatibility check. No file without a header. No commit without a `Source:` trailer.
 - **Subagents per task.** Fresh context per task keeps the implementer focused. Two-stage review (spec compliance, then code quality) prevents over- or under-building.
 - **Process over guessing.** Skipping the analysis or the spec produces ports nobody can audit. The flow scales — short specs for small ports — but you still run it.
 

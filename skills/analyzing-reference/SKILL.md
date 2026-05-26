@@ -1,6 +1,6 @@
 ---
 name: analyzing-reference
-description: Use when the user wants to port a feature from a reference repo at any path on disk - produces a structured reference map (files, dependencies, tests, entry points, hidden coupling, license) that every downstream skill consumes
+description: Use when the user wants to port a feature from a reference repo at any path on disk - produces a structured reference map (files, dependencies, tests, entry points, hidden coupling) that every downstream skill consumes
 ---
 
 # Analyzing a Reference Repository
@@ -45,7 +45,7 @@ digraph when_analyze {
 
 Before invoking, you must have:
 
-1. **Path to a reference repo:** any directory on disk that contains the reference. Absolute (`/Users/me/code/awesome-auth`), relative from the project root (`../awesome-auth`), or a checkout inside the project — all valid. Verify the path exists and contains a recognizable repo (LICENSE, manifest, source tree) before proceeding.
+1. **Path to a reference repo:** any directory on disk that contains the reference. Absolute (`/Users/me/code/awesome-auth`), relative from the project root (`../awesome-auth`), or a checkout inside the project — all valid. Verify the path exists and contains a recognizable repo (manifest, source tree) before proceeding.
 2. **Feature description:** a sentence or two naming what the user wants to port (e.g., "the OAuth login and token refresh flow", "the in-memory LRU cache").
 
 If either is missing, ask the user — **one question at a time**, multiple-choice when possible. For the path, accept whatever they give you; do not insist on a particular layout.
@@ -64,8 +64,6 @@ A reference map written to `docs/distilling/<repo>-<feature-slug>-reference-map.
 **Reference path:** <REF_PATH — exactly as the user gave it, absolute preferred>
 **Reference repo URL:** <upstream URL if known; otherwise "local only">
 **Source commit hash:** <hash from `git -C <REF_PATH> rev-parse HEAD`>
-**License:** <SPDX identifier from LICENSE file>
-**License file:** <REF_PATH>/LICENSE
 **Primary language:** <language>
 **Test framework:** <e.g., jest, pytest, go test>
 
@@ -106,12 +104,6 @@ How callers invoke the feature from outside:
 ## Hidden coupling
 Globals, env vars, file paths, side effects, time/random sources, network calls, OS-specific behavior. Each item names the file (relative to `<REF_PATH>`) and line.
 
-## License & attribution data
-- License: <SPDX>
-- Copyright holders: <names from LICENSE or package metadata>
-- Author of feature files (best-effort from git log of feature files): <names>
-- Recorded commit hash for attribution: <hash>
-
 ## Open questions for design
 - <anything you couldn't resolve and need user input on>
 ```
@@ -125,18 +117,17 @@ the reference somewhere else, they update one field and everything still resolve
 
 Create one `TaskCreate` entry per item and complete in order.
 
-1. **Confirm inputs** — the supplied path exists on disk and contains a recognizable repo (LICENSE / manifest / source tree). Record the path exactly as the user gave it (or normalize to absolute if they gave a relative path — do not silently change it). Feature description is present.
-2. **Snapshot reference metadata** — top-level files at `<REF_PATH>`: README, LICENSE, package manifest, test config. Record license SPDX and source commit hash (`git -C <REF_PATH> rev-parse HEAD`).
+1. **Confirm inputs** — the supplied path exists on disk and contains a recognizable repo (manifest / source tree). Record the path exactly as the user gave it (or normalize to absolute if they gave a relative path — do not silently change it). Feature description is present.
+2. **Snapshot reference metadata** — top-level files at `<REF_PATH>`: README, package manifest, test config. Record source commit hash (`git -C <REF_PATH> rev-parse HEAD`).
 3. **Locate the feature** — search files by user's keywords + manifest entry points; deep-read candidates; confirm with the user if multiple plausible matches.
 4. **Walk transitive deps inside the repo** — for every feature file, trace imports recursively. Stop at the repo boundary. Mark each dep `must-take` or `can-stub`.
 5. **List external libraries** — distinct from stdlib. Note version constraints.
 6. **Find tests** — locate test files exercising the feature files. Identify the test framework.
 7. **Identify entry points** — how callers invoke the feature.
 8. **Surface hidden coupling** — globals, env vars, file IO, network, time, random, OS-specific calls inside the feature subgraph.
-9. **Collect license & attribution data** — copyright holders, author names if discoverable from `git log`.
-10. **Write the reference map** to `docs/distilling/<repo>-<feature-slug>-reference-map.md`.
-11. **Self-review** — see below.
-12. **Hand off** — announce: "Reference map written to `<path>`. Invoking `distillation-design` next."
+9. **Write the reference map** to `docs/distilling/<repo>-<feature-slug>-reference-map.md`.
+10. **Self-review** — see below.
+11. **Hand off** — announce: "Reference map written to `<path>`. Invoking `distillation-design` next."
 
 ## How to do the work
 
@@ -210,7 +201,6 @@ Vague. Design step has nothing to resolve.
 |--------|---------|
 | "The reference is well-known, I know the deps" | Document them anyway. Downstream skills don't share your memory. |
 | "I'll skip transitive deps, just take the top file" | Top file imports things. Those things have to exist in the target. |
-| "License is probably MIT" | Read the file. If unreadable, ask. Never guess. |
 | "I'll figure out hidden coupling during the port" | You won't. The design step needs them up front to pick modes. |
 | "Tests aren't relevant to the map" | They're the spec for `equivalence-tdd`. Name the files. |
 | "I'll come back and add deps later" | "Later" never comes. The map drives the spec; missing deps = missing spec rows. |
@@ -219,7 +209,6 @@ Vague. Design step has nothing to resolve.
 
 - Reference map lists only the entry file (no transitive deps).
 - Hidden coupling section is empty (almost no real feature is this clean).
-- License section says "TBD" or "MIT (guessed)".
 - Tests section says "the repo has tests" without listing them.
 - Map includes **opinions** on how to port — out of scope; that belongs in `distillation-design`.
 - "Open questions" section is missing entirely (every analysis surfaces at least one).
@@ -230,7 +219,7 @@ After writing the map, scan with fresh eyes:
 
 1. **Placeholder scan:** any TBD/TODO/vague entries? Fix inline.
 2. **Internal consistency:** every file listed under **Feature files** is reachable from an **Entry point**. Every dep listed under **Transitive deps** is imported (directly or transitively) by a feature file.
-3. **License sanity:** SPDX is one identifier from the standard list. Source commit hash is a full SHA, not "main" or "HEAD".
+3. **Commit sanity:** source commit hash is a full SHA, not "main" or "HEAD".
 4. **Open questions:** explicitly listed. If you have zero open questions, you probably missed something — look again.
 
 Fix issues inline. No re-review loop.
@@ -238,14 +227,13 @@ Fix issues inline. No re-review loop.
 ## What you do NOT do
 
 - You do **not** decide what to copy / port / rewrite. That's `distillation-design`.
-- You do **not** check license compatibility. That's `attribution-and-license` (invoked from `distillation-design`).
 - You do **not** modify any file under the reference path. The reference is read-only, wherever it lives.
 - You do **not** copy the reference into the user's project (or any other location). Read it in place at `<REF_PATH>`.
 - You do **not** write code in the target project. You produce a document.
 
 ## When the reference is poor
 
-If the reference has no tests, no clear feature boundary, broken builds, or a license you cannot identify: **stop and report this to the user before writing the map.** They may choose a different reference, a different feature, or accept the limitations explicitly.
+If the reference has no tests, no clear feature boundary, or a broken build: **stop and report this to the user before writing the map.** They may choose a different reference, a different feature, or accept the limitations explicitly.
 
 ## Why this matters
 
@@ -253,6 +241,6 @@ Every downstream skill quotes the reference map:
 
 - `distillation-design` picks per-chunk modes from the dependency graph and hidden coupling.
 - `distillation-plan` builds the source→target file map from the feature-files list.
-- `distillation-execution`'s implementer subagent attaches attribution headers using the recorded commit hash and license.
+- `distillation-execution`'s implementer subagent reads source files at the recorded commit hash.
 
 A vague map produces a vague spec, which produces a vague plan, which produces a port nobody can audit. Be specific here — every other skill depends on it.

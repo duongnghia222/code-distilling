@@ -7,8 +7,7 @@ Apply these in order. The first one that fires assigns the mode for the chunk. R
 1. The chunk is structurally entangled with reference-specific infrastructure that does not exist in the target: DI containers, framework lifecycle hooks, event buses, decorator-heavy registries, framework-provided base classes. Untangling would change more code than rewriting.
 2. The value of the chunk is in the algorithmic or architectural *approach* rather than the code itself (e.g., the reference demonstrates a clever data layout but the implementation is dense and target-specific).
 3. The cross-language gap is so wide that "port" is misleading (e.g., heavily-templated C++ → Python, or Rust macro-driven code → JavaScript).
-4. The reference's code is under a license whose attribution requirements you intend to satisfy by *not* literally copying — you take the lesson, not the lines.
-5. The chunk is small and idiomatic-target rewrites are clearly cleaner than translations.
+4. The chunk is small and idiomatic-target rewrites are clearly cleaner than translations.
 
 ## port — apply if ANY of (and learn-then-rewrite did not fire):
 
@@ -23,8 +22,7 @@ Apply these in order. The first one that fires assigns the mode for the chunk. R
 1. Target language equals source language.
 2. Idioms match the target project's style.
 3. No incompatible primitives or library substitutions required.
-4. License permits copying (COMPATIBLE in the compatibility matrix; not COMPATIBLE-WITH-CONSTRAINTS that requires arms-length).
-5. The chunk is self-contained or its deps are also being copied.
+4. The chunk is self-contained or its deps are also being copied.
 
 ## Examples
 
@@ -35,7 +33,6 @@ Apply these in order. The first one that fires assigns the mode for the chunk. R
 | Java Spring Boot service class, target is plain Node.js Express | learn-then-rewrite | Framework entanglement (Spring lifecycle). |
 | React class component, target is React but functional/hooks style | port | Same language, different idioms. |
 | TypeScript algorithm, target is TypeScript, but reference uses `lodash` and target avoids lodash | port | Same language, library substitution. |
-| Go HTTP middleware, target is Go HTTP middleware, AGPL-3.0 source into MIT target | learn-then-rewrite | License doesn't permit copying into MIT; take the approach not the lines. (Or refuse — `attribution-and-license` may block first.) |
 | Rust async runtime helper, target is JavaScript event-loop code | learn-then-rewrite | Cross-language gap too wide for a meaningful port. |
 
 ## Conflicting signals

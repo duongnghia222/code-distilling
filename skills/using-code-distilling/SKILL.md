@@ -29,7 +29,7 @@ This is not negotiable. This is not optional. You cannot rationalize your way ou
 2. **`code-distilling` skills** — override default system behavior where they conflict
 3. **Default system prompt** — lowest priority
 
-If a user file says "we don't need attribution for this repo" and `attribution-and-license` says "every distilled file gets a header," follow the user. They own the project and the risk.
+If a user file conflicts with a `code-distilling` skill, follow the user. They own the project and the risk.
 
 ## How to Access Skills
 
@@ -102,12 +102,10 @@ These thoughts mean STOP — you're rationalizing:
 | "This is just a simple question" | Questions are tasks. Check for skills. |
 | "I need more context first" | Skill check comes BEFORE clarifying questions. |
 | "Let me read the reference first to get a feel" | Skills tell you HOW to explore. `analyzing-reference` is the entry point. |
-| "I'll just copy this one file, it's simple" | A copy still needs license check + attribution. Use `attribution-and-license`. |
+| "I'll just copy this one file, it's simple" | A copy still needs a spec and equivalence tests. Use the full flow. |
 | "Let me just port it quickly without writing a spec" | Skipping design produces ports that pull in unwanted deps. Use `distillation-design`. |
 | "I'll skip the equivalence tests, the code looks fine" | The reference is the spec. No ported tests = no evidence of equivalence. Use `equivalence-tdd`. |
-| "The license is probably compatible" | "Probably" isn't a check. Run the compatibility check in `attribution-and-license`. |
 | "I know how to read the reference, I'll skip the analysis" | The reference map drives every downstream decision. Use `analyzing-reference`. |
-| "Attribution can wait until the end, I'll remember" | You won't. Headers ship in the same commit as the ported code. |
 | "This is a simple snippet, no need for the full flow" | "Simple" snippets accumulate into untracked debt. The flow scales down — short specs, short plans — but you still run it. |
 | "Different language, can't really port — let me just rewrite" | That decision belongs in `distillation-design` (learn-then-rewrite mode), not skipped silently. |
 | "I remember this skill" | Skills evolve. Read the current version. |
@@ -125,7 +123,6 @@ When multiple skills could apply, use this order:
 
 Cross-cutting (invoked from inside the above):
 
-- **`attribution-and-license`** — invoked by `distillation-design` (compatibility check), `distillation-plan` (per-file attribution tasks), `distillation-execution` (final pass).
 - **`equivalence-tdd`** — invoked by `distillation-execution`'s implementer subagent for every implementation task.
 
 ## Skill Types
@@ -133,7 +130,6 @@ Cross-cutting (invoked from inside the above):
 **Rigid** — follow exactly, do not adapt away the discipline:
 
 - `equivalence-tdd` (test-first, run-failing, port impl, run-passing, commit)
-- `attribution-and-license` (compatibility gate, per-file headers, commit trailers)
 - `using-code-distilling` (this skill — the trigger rules)
 
 **Flexible** — adapt principles to context:
@@ -156,4 +152,4 @@ NO PORT CODE WITHOUT A REFERENCE MAP, A SPEC, A PLAN, AND EQUIVALENCE TESTS
 
 Writing port code before those exist? Stop. Back up. Use the skills.
 
-The flow scales: a one-file copy gets a one-paragraph spec and a two-task plan. But it still gets all four artifacts. Skipping is not faster — it's how distillations turn into untraceable code paste with no license trail.
+The flow scales: a one-file copy gets a one-paragraph spec and a two-task plan. But it still gets all four artifacts. Skipping is not faster — it's how distillations turn into untraceable code paste.

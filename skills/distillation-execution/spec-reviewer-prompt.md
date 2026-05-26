@@ -29,7 +29,6 @@ need is below.
 - External library plan (spec §5): <EXCERPT_IF_RELEVANT>
 - Hidden coupling resolutions (spec §6): <EXCERPT_IF_RELEVANT>
 - Equivalence test plan (spec §7): <EXCERPT_FOR_THIS_CHUNK>
-- Attribution plan (spec §8): <EXCERPT>
 
 **Files touched by the commit:** <LIST>
 
@@ -63,13 +62,8 @@ Run `git show <SHA>` (or read the files at that SHA) and verify, **in order**:
    notes column is reflected in the code (renames, type translations,
    library swaps).
 
-5. **Out-of-scope respect.** Nothing in the spec's §9 "Out of scope" was
+5. **Out-of-scope respect.** Nothing in the spec's §8 "Out of scope" was
    implemented. If the implementer added behavior the spec excluded, flag it.
-
-6. **Attribution header present.** The target file (and the test file if
-   newly created) starts with the attribution header in the right format.
-   (Detailed correctness is for the code quality reviewer; you only check
-   **presence** and that the source path/commit match what the spec says.)
 
 ## What NOT to Do
 

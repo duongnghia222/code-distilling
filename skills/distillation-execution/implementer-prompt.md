@@ -34,12 +34,6 @@ need is below.
 <SOURCE_FILE_CONTENT>
 ```
 
-**Attribution header to paste verbatim into the target file:**
-
-```<comment style>
-<FILLED_HEADER — values already substituted from the reference map>
-```
-
 **Test command to run:**
 
 <EXACT_COMMAND, e.g., pnpm test test/cache/lru.test.ts>
@@ -52,8 +46,8 @@ need is below.
 ## Before You Begin
 
 If anything in the task or context is unclear — paths, the mode, the test
-strategy, the adaptation notes, the header template — **ask now**. Do not
-guess. Raise concerns before you touch any file.
+strategy, or the adaptation notes — **ask now**. Do not guess. Raise
+concerns before you touch any file.
 
 It is always OK to pause and clarify.
 
@@ -70,12 +64,8 @@ You MUST follow `code-distilling:equivalence-tdd` for this task. Specifically:
      idiomatic translations from the adaptation notes.
    - **learn-then-rewrite:** write an independent implementation that
      satisfies the test. Do NOT consult the reference's source lines.
-4. Add the attribution header to the implementation file (and to the test
-   file if it's a new test file).
-5. Run the test. It MUST pass.
-6. Commit test + implementation in a single commit with the trailer:
-   `Source: <repo>@<short-sha>:<source path>`
-   (or `Source-influence:` for learn-then-rewrite).
+4. Run the test. It MUST pass.
+5. Commit test + implementation in a single commit.
 
 ## Hard Rules
 
@@ -83,8 +73,6 @@ You MUST follow `code-distilling:equivalence-tdd` for this task. Specifically:
 - Do NOT go read the reference repo yourself. The controller has already extracted everything you need into this prompt. If something is missing, return NEEDS_CONTEXT.
 - Do NOT weaken the test to make it pass. The test is the spec.
 - Do NOT skip running the test in the failing state.
-- Do NOT skip the attribution header.
-- Do NOT commit without the `Source:` (or `Source-influence:`) trailer.
 - Do NOT introduce changes outside the files named in the task. If you
   discover you need to touch another file, return BLOCKED with a description.
 - For learn-then-rewrite chunks, do NOT paste or paraphrase the reference's
@@ -141,12 +129,6 @@ Look at your work with fresh eyes:
 - For port: algorithmic structure preserved, idioms translated?
 - For learn-then-rewrite: no reference lines pasted; the implementation
   reads as native target code?
-
-**Attribution:**
-
-- Header at the top of the implementation file?
-- Header on any newly created test file?
-- Commit message has the `Source:` (or `Source-influence:`) trailer?
 
 **Scope:**
 
