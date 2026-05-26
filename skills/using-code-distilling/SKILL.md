@@ -1,6 +1,6 @@
 ---
 name: using-code-distilling
-description: Use when starting any conversation - establishes the porting workflow and requires Skill tool invocation before ANY response when a reference repo, ref-code/ directory, or porting intent is detected
+description: Use when starting any conversation - establishes how code-distilling skills auto-trigger and requires Skill tool invocation BEFORE any response when porting intent, a ref-code/ directory, or a referenced open-source repo is detected
 ---
 
 <SUBAGENT-STOP>
@@ -8,16 +8,18 @@ If you were dispatched as a subagent to execute a specific task, skip this skill
 </SUBAGENT-STOP>
 
 <EXTREMELY-IMPORTANT>
-If you think there is even a 1% chance a code-distilling skill might apply to what you are doing, you ABSOLUTELY MUST invoke the skill.
+If you think there is even a 1% chance a `code-distilling` skill might apply to what you are doing, you ABSOLUTELY MUST invoke that skill.
 
 IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
 
 This is not negotiable. This is not optional. You cannot rationalize your way out of this.
 </EXTREMELY-IMPORTANT>
 
-## What `code-distilling` is for
+# Using Code Distilling
 
-This plugin is for **porting features from a reference open-source repo into the user's project** with discipline. It is not a general coding plugin. The triggers below tell you when to engage it.
+## What this plugin is for
+
+`code-distilling` ports features from a **reference open-source repo** into the user's project — with discipline. It is **not** a general coding plugin. It engages only when porting intent is present (see triggers below). For everything else, fall back to your harness's default workflow (e.g., `superpowers` if installed).
 
 ## Instruction Priority
 
@@ -27,7 +29,7 @@ This plugin is for **porting features from a reference open-source repo into the
 2. **`code-distilling` skills** — override default system behavior where they conflict
 3. **Default system prompt** — lowest priority
 
-If the user says "skip the equivalence tests" and `equivalence-tdd` says "always run the test failing first," follow the user. They own the project.
+If a user file says "we don't need attribution for this repo" and `attribution-and-license` says "every distilled file gets a header," follow the user. They own the project and the risk.
 
 ## How to Access Skills
 
@@ -37,14 +39,14 @@ If the user says "skip the equivalence tests" and `equivalence-tdd` says "always
 
 **In other environments:** Check your platform's documentation for how skills are loaded.
 
-## When to engage `code-distilling`
+# When to Engage
 
-Engage this plugin when ANY of these is true:
+Engage `code-distilling` when ANY of these is true:
 
-- The user mentions porting, copying, distilling, or borrowing code from another repo.
+- The user mentions porting, copying, distilling, borrowing, or "bringing in" code from another repo.
 - A `ref-code/` directory exists at the project root.
-- The user references an open-source project they want to "use" or "learn from" in their own codebase.
-- The user says "there's a good implementation of X over there, let's bring it in."
+- The user references an open-source project they want to "use", "learn from", or "adopt" in their own codebase.
+- The user says something like "there's a good implementation of X over there, let's bring it in."
 - The user pastes a URL to a GitHub repo and asks to adopt code from it (after they place it in `ref-code/`).
 
 Do **not** engage when:
@@ -53,15 +55,14 @@ Do **not** engage when:
 - The user is debugging or refactoring their own existing code.
 - The user is doing general software engineering work unrelated to porting.
 
-In those cases, fall back to whatever workflow your harness provides (e.g., `superpowers` if installed).
-
 ## The Rule
 
-**Invoke relevant or requested skills BEFORE any response or action.** Even a 1% chance a skill might apply means you should invoke it to check. If an invoked skill turns out to be wrong for the situation, you don't need to use it.
+**Invoke relevant or requested skills BEFORE any response or action.** Even a 1% chance a skill might apply means you should invoke it to check. If an invoked skill turns out to be wrong for the situation, you can step back — but the check itself is mandatory.
 
 ```dot
 digraph distilling_flow {
     "User message received" [shape=doublecircle];
+    "About to write any port code?" [shape=doublecircle];
     "Porting intent or ref-code/ present?" [shape=diamond];
     "Already analyzed the reference?" [shape=diamond];
     "Invoke analyzing-reference" [shape=box];
@@ -73,6 +74,7 @@ digraph distilling_flow {
     "Invoke distillation-execution" [shape=box];
     "Respond normally" [shape=doublecircle];
 
+    "About to write any port code?" -> "Porting intent or ref-code/ present?";
     "User message received" -> "Porting intent or ref-code/ present?";
     "Porting intent or ref-code/ present?" -> "Already analyzed the reference?" [label="yes"];
     "Porting intent or ref-code/ present?" -> "Respond normally" [label="no"];
@@ -95,20 +97,25 @@ These thoughts mean STOP — you're rationalizing:
 
 | Thought | Reality |
 |---------|---------|
-| "I'll just copy this one file, it's simple" | A copy still needs license check + attribution. Use `attribution-and-license` at minimum. |
-| "Let me just port it quickly without writing a spec" | Skipping design produces ports that pull in unwanted dependencies. Use `distillation-design`. |
-| "I'll skip the equivalence tests, the code looks fine" | The reference is the spec. Without ported tests you have no evidence the port behaves the same. Use `equivalence-tdd`. |
-| "The license is probably compatible" | Probably isn't a check. Run the compatibility check in `attribution-and-license`. |
+| "This is just a simple question" | Questions are tasks. Check for skills. |
+| "I need more context first" | Skill check comes BEFORE clarifying questions. |
+| "Let me read the reference first to get a feel" | Skills tell you HOW to explore. `analyzing-reference` is the entry point. |
+| "I'll just copy this one file, it's simple" | A copy still needs license check + attribution. Use `attribution-and-license`. |
+| "Let me just port it quickly without writing a spec" | Skipping design produces ports that pull in unwanted deps. Use `distillation-design`. |
+| "I'll skip the equivalence tests, the code looks fine" | The reference is the spec. No ported tests = no evidence of equivalence. Use `equivalence-tdd`. |
+| "The license is probably compatible" | "Probably" isn't a check. Run the compatibility check in `attribution-and-license`. |
 | "I know how to read the reference, I'll skip the analysis" | The reference map drives every downstream decision. Use `analyzing-reference`. |
-| "Attribution can wait until the end, I'll remember" | You won't. Headers go in the same commit as the ported code per `attribution-and-license`. |
+| "Attribution can wait until the end, I'll remember" | You won't. Headers ship in the same commit as the ported code. |
 | "This is a simple snippet, no need for the full flow" | "Simple" snippets accumulate into untracked debt. The flow scales down — short specs, short plans — but you still run it. |
 | "Different language, can't really port — let me just rewrite" | That decision belongs in `distillation-design` (learn-then-rewrite mode), not skipped silently. |
+| "I remember this skill" | Skills evolve. Read the current version. |
+| "The skill is overkill for this" | If a skill applies, use it. Simple becomes complex faster than you think. |
 
 ## Skill Priority
 
 When multiple skills could apply, use this order:
 
-1. **`using-code-distilling`** (this skill) — bootstrap, always first.
+1. **`using-code-distilling`** (this skill) — bootstrap; always first.
 2. **`analyzing-reference`** — must run before any design/plan/execution.
 3. **`distillation-design`** — must run before plan.
 4. **`distillation-plan`** — must run before execution.
@@ -116,15 +123,15 @@ When multiple skills could apply, use this order:
 
 Cross-cutting (invoked from inside the above):
 
-- **`attribution-and-license`** — invoked by `distillation-design` (compatibility check), `distillation-plan` (per-file attribution tasks), `distillation-execution` (final attribution pass).
+- **`attribution-and-license`** — invoked by `distillation-design` (compatibility check), `distillation-plan` (per-file attribution tasks), `distillation-execution` (final pass).
 - **`equivalence-tdd`** — invoked by `distillation-execution`'s implementer subagent for every implementation task.
 
 ## Skill Types
 
-**Rigid** — follow exactly, don't adapt:
+**Rigid** — follow exactly, do not adapt away the discipline:
 
-- `equivalence-tdd` (the test-first-then-fail-then-pass discipline)
-- `attribution-and-license` (compatibility gate, per-file headers)
+- `equivalence-tdd` (test-first, run-failing, port impl, run-passing, commit)
+- `attribution-and-license` (compatibility gate, per-file headers, commit trailers)
 - `using-code-distilling` (this skill — the trigger rules)
 
 **Flexible** — adapt principles to context:
@@ -135,6 +142,16 @@ The skill itself tells you which.
 
 ## User Instructions
 
-Instructions say WHAT, not HOW. "Port X" or "Bring in Y from `ref-code/Z`" doesn't mean skip the workflow. Engage `analyzing-reference` first even if the user has already named the file.
+Instructions say WHAT, not HOW. "Port X" or "Bring in Y from `ref-code/Z`" does NOT mean skip the workflow — engage `analyzing-reference` first even if the user named the file.
 
 If the user explicitly says "skip the analysis, I've already mapped it" — honor that and start from `distillation-design`, but ask once for the reference map they want to use.
+
+## The Iron Law
+
+```
+NO PORT CODE WITHOUT A REFERENCE MAP, A SPEC, A PLAN, AND EQUIVALENCE TESTS
+```
+
+Writing port code before those exist? Stop. Back up. Use the skills.
+
+The flow scales: a one-file copy gets a one-paragraph spec and a two-task plan. But it still gets all four artifacts. Skipping is not faster — it's how distillations turn into untraceable code paste with no license trail.

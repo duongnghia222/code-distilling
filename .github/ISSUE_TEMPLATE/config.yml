@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or discussion
+    url: https://github.com/duongnghia222/code-distilling/discussions
+    about: For open-ended questions, workflow discussions, or "is this the right approach?" — use Discussions, not Issues.

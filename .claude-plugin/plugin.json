@@ -4,8 +4,11 @@
   "version": "0.1.0",
   "author": {
     "name": "Nghia Duong",
-    "email": "nghia.duong@ringkas.homes"
+    "email": "duongnghia222@gmail.com"
   },
+  "homepage": "https://github.com/duongnghia222/code-distilling",
+  "repository": "https://github.com/duongnghia222/code-distilling",
+  "bugs": "https://github.com/duongnghia222/code-distilling/issues",
   "license": "MIT",
   "keywords": [
     "skills",
