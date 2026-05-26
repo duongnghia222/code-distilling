@@ -1,0 +1,36 @@
+{
+  "name": "code-distilling",
+  "version": "0.1.0",
+  "description": "Port high-quality implementations from reference open-source repos into your project with discipline: analysis, design, planning, equivalence-tested execution, and full attribution.",
+  "author": {
+    "name": "Nghia Duong",
+    "email": "nghia.duong@ringkas.homes"
+  },
+  "license": "MIT",
+  "keywords": [
+    "porting",
+    "distillation",
+    "code-reuse",
+    "attribution",
+    "skills",
+    "tdd",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Code Distilling",
+    "shortDescription": "Disciplined porting of features from reference open-source repos into your project.",
+    "longDescription": "Use Code Distilling to analyze a reference repo, decide per-chunk distillation mode (copy / port / learn-then-rewrite), produce a distillation spec and plan, execute the port with equivalence tests derived from the reference, and finish with proper attribution and license compliance.",
+    "developerName": "Nghia Duong",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "I want to port a feature from ref-code/<repo> into my project.",
+      "Help me distill the OAuth implementation from this reference."
+    ]
+  }
+}

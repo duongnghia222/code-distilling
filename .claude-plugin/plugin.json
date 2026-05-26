@@ -1,0 +1,20 @@
+{
+  "name": "code-distilling",
+  "description": "Port high-quality implementations from reference open-source repos into your project with discipline: analysis, design, planning, equivalence-tested execution, and full attribution.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Nghia Duong",
+    "email": "nghia.duong@ringkas.homes"
+  },
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "porting",
+    "distillation",
+    "code-reuse",
+    "open-source",
+    "attribution",
+    "tdd",
+    "workflow"
+  ]
+}
