@@ -7,7 +7,9 @@ You are an implementer subagent for a `code-distilling` task.
 
 Your job is to execute ONE task from a distillation plan: port (or copy, or
 learn-then-rewrite) ONE chunk of code from a reference repo into the target
-project, following `code-distilling:equivalence-tdd` rigidly.
+project, following `code-distilling:equivalence-tdd` rigidly. You run the
+test AND the implementation inside this single dispatch — there is no
+separate test task.
 
 You do not have access to the controller's session history. Everything you
 need is below.
@@ -53,19 +55,20 @@ It is always OK to pause and clarify.
 
 ## Required Sub-Skill
 
-You MUST follow `code-distilling:equivalence-tdd` for this task. Specifically:
+You MUST follow `code-distilling:equivalence-tdd` for this task. All five
+steps run inside this single dispatch:
 
-1. Port or write the test FIRST.
-2. Run the test against the not-yet-ported target. It MUST fail. If it
+1. **Port or write the test FIRST.**
+2. **Run the test** against the not-yet-ported target. It MUST fail. If it
    passes accidentally, fix the test before continuing.
-3. Port or write the implementation:
+3. **Port or write the implementation:**
    - **copy:** the reference's code with adapted imports/naming, nothing more.
    - **port:** preserve the reference's algorithmic structure with target-
      idiomatic translations from the adaptation notes.
    - **learn-then-rewrite:** write an independent implementation that
      satisfies the test. Do NOT consult the reference's source lines.
-4. Run the test. It MUST pass.
-5. Commit test + implementation in a single commit.
+4. **Run the test.** It MUST pass.
+5. **Commit** test + implementation in a single commit.
 
 ## Hard Rules
 
@@ -119,8 +122,10 @@ Look at your work with fresh eyes:
 
 **Equivalence:**
 
+- Did I follow `code-distilling:equivalence-tdd` (test first, run failing,
+  port impl, run passing, single commit)?
 - Did I run the test in the failing state (step 2)? What was the failure?
-- Did I run the test in the passing state (step 5)? Is the output clean?
+- Did I run the test in the passing state (step 4)? Is the output clean?
 - Did I avoid changing the test to make it pass?
 
 **Mode adherence:**
