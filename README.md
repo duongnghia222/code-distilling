@@ -30,12 +30,13 @@ You point the plugin at a reference repo by path — any path on disk works. Clo
   cool-search-lib/
 ```
 
-Then ask Claude or Codex to port a feature, naming the reference's path. The plugin walks you through four skills:
+Then ask Claude or Codex to port a feature, naming the reference's path. The plugin walks you through five skills:
 
-1. **`analyzing-reference`** — deep-reads the reference repo, locates the feature, produces a reference map (files, dependencies, tests, entry points, hidden coupling).
-2. **`distillation-design`** — interactive design step. Decides per chunk: **copy** (same language, clean fit), **port** (translate idioms or language), or **learn-then-rewrite** (use the reference as teacher only). Produces a distillation spec the user approves.
-3. **`distillation-plan`** — source-to-target file map, task list with paired test/implementation steps.
-4. **`distillation-execution`** — dispatches a fresh subagent per task, each following `equivalence-tdd` (port the reference's test first, watch it fail, port the implementation, watch it pass, commit). Two-stage review per task (spec compliance, then code quality).
+1. **`assessing-feature`** — a go/no-go gate. Reads the feature's architecture, implementation, and algorithm, and issues a **GO / NO-GO / REWRITE** verdict before any deep mapping begins. A NO-GO stops the flow cheaply, before effort is sunk.
+2. **`analyzing-reference`** — deep-reads the reference repo, locates the feature, produces a reference map (files, dependencies, tests, entry points, hidden coupling).
+3. **`distillation-design`** — interactive design step. Decides per chunk: **copy** (same language, clean fit), **port** (translate idioms or language), or **learn-then-rewrite** (use the reference as teacher only). Produces a distillation spec the user approves.
+4. **`distillation-plan`** — source-to-target file map, task list with paired test/implementation steps.
+5. **`distillation-execution`** — dispatches a fresh subagent per task, each following `equivalence-tdd` (port the reference's test first, watch it fail, port the implementation, watch it pass, commit). Two-stage review per task (spec compliance, then code quality).
 
 The skills auto-trigger when the agent sees porting intent and a reference repo path. You don't need to type any slash commands.
 
@@ -90,6 +91,12 @@ After installation, the agent loads the `using-code-distilling` bootstrap at ses
 ```
 User: I want to port the OAuth flow from ~/code/awesome-auth into src/auth/.
 
+Agent: I'm using `assessing-feature` to judge whether this feature is worth distilling.
+       [reads the core OAuth files: architecture, implementation, algorithm]
+       [writes docs/distilling/awesome-auth-oauth-assessment.md]
+       Assessment: GO — clean token-refresh state machine, well-tested,
+       self-contained. Invoking `analyzing-reference` next.
+
 Agent: I'm using `analyzing-reference` to map the reference repo.
        [reads ~/code/awesome-auth/, locates the OAuth files]
        [writes docs/distilling/awesome-auth-oauth-reference-map.md
@@ -119,7 +126,8 @@ Agent: [dispatches implementer subagents per task]
 | Skill | When it fires | What it produces |
 |-------|---------------|------------------|
 | `using-code-distilling` | Session start (bootstrap) | Triggers downstream skills on porting intent |
-| `analyzing-reference` | First, when porting intent is detected | Reference map document |
+| `assessing-feature` | First, when porting intent is detected | Feature assessment + GO / NO-GO / REWRITE verdict |
+| `analyzing-reference` | After a GO verdict | Reference map document |
 | `distillation-design` | After the reference map exists | Distillation spec (modes, target API, test plan) |
 | `distillation-plan` | After the spec is approved | Task-by-task implementation plan |
 | `distillation-execution` | After the plan is approved | Subagent-driven execution of every task |

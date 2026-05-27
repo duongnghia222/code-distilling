@@ -49,7 +49,7 @@ Engage `code-distilling` when ANY of these is true:
 - The user says something like "there's a good implementation of X over there, let's bring it in."
 - The user pastes a URL to a GitHub repo and asks to adopt code from it.
 
-If porting intent is present but the user has not yet supplied a path, ask for one before invoking `analyzing-reference`. Do not guess where the reference lives.
+If porting intent is present but the user has not yet supplied a path, ask for one before invoking `assessing-feature`. Do not guess where the reference lives.
 
 Do **not** engage when:
 
@@ -66,6 +66,10 @@ digraph distilling_flow {
     "User message received" [shape=doublecircle];
     "About to write any port code?" [shape=doublecircle];
     "Porting intent + reference path present?" [shape=diamond];
+    "Feature assessed (verdict on record)?" [shape=diamond];
+    "Invoke assessing-feature" [shape=box];
+    "Verdict GO (or user overrode)?" [shape=diamond];
+    "Stop — reference not worth distilling" [shape=box];
     "Already analyzed the reference?" [shape=diamond];
     "Invoke analyzing-reference" [shape=box];
     "Already have a distillation spec?" [shape=diamond];
@@ -78,8 +82,13 @@ digraph distilling_flow {
 
     "About to write any port code?" -> "Porting intent + reference path present?";
     "User message received" -> "Porting intent + reference path present?";
-    "Porting intent + reference path present?" -> "Already analyzed the reference?" [label="yes"];
+    "Porting intent + reference path present?" -> "Feature assessed (verdict on record)?" [label="yes"];
     "Porting intent + reference path present?" -> "Respond normally" [label="no"];
+    "Feature assessed (verdict on record)?" -> "Invoke assessing-feature" [label="no"];
+    "Feature assessed (verdict on record)?" -> "Already analyzed the reference?" [label="yes"];
+    "Invoke assessing-feature" -> "Verdict GO (or user overrode)?";
+    "Verdict GO (or user overrode)?" -> "Stop — reference not worth distilling" [label="no"];
+    "Verdict GO (or user overrode)?" -> "Already analyzed the reference?" [label="yes"];
     "Already analyzed the reference?" -> "Invoke analyzing-reference" [label="no"];
     "Already analyzed the reference?" -> "Already have a distillation spec?" [label="yes"];
     "Invoke analyzing-reference" -> "Already have a distillation spec?";
@@ -101,7 +110,8 @@ These thoughts mean STOP — you're rationalizing:
 |---------|---------|
 | "This is just a simple question" | Questions are tasks. Check for skills. |
 | "I need more context first" | Skill check comes BEFORE clarifying questions. |
-| "Let me read the reference first to get a feel" | Skills tell you HOW to explore. `analyzing-reference` is the entry point. |
+| "Let me read the reference first to get a feel" | Skills tell you HOW to explore. `assessing-feature` is the entry point. |
+| "This feature is obviously worth porting, skip the assessment" | The verdict is cheap insurance against a doomed port. Use `assessing-feature` first. |
 | "I'll just copy this one file, it's simple" | A copy still needs a spec and equivalence tests. Use the full flow. |
 | "Let me just port it quickly without writing a spec" | Skipping design produces ports that pull in unwanted deps. Use `distillation-design`. |
 | "I'll skip the equivalence tests, the code looks fine" | The reference is the spec. No ported tests = no evidence of equivalence. Use `equivalence-tdd`. |
@@ -116,10 +126,11 @@ These thoughts mean STOP — you're rationalizing:
 When multiple skills could apply, use this order:
 
 1. **`using-code-distilling`** (this skill) — bootstrap; always first.
-2. **`analyzing-reference`** — must run before any design/plan/execution.
-3. **`distillation-design`** — must run before plan.
-4. **`distillation-plan`** — must run before execution.
-5. **`distillation-execution`** — runs the plan.
+2. **`assessing-feature`** — go/no-go gate; must run before mapping. A NO-GO stops the flow.
+3. **`analyzing-reference`** — must run before any design/plan/execution.
+4. **`distillation-design`** — must run before plan.
+5. **`distillation-plan`** — must run before execution.
+6. **`distillation-execution`** — runs the plan.
 
 Cross-cutting (invoked from inside the above):
 
@@ -134,15 +145,15 @@ Cross-cutting (invoked from inside the above):
 
 **Flexible** — adapt principles to context:
 
-- `analyzing-reference`, `distillation-design`, `distillation-plan`, `distillation-execution`
+- `assessing-feature`, `analyzing-reference`, `distillation-design`, `distillation-plan`, `distillation-execution`
 
 The skill itself tells you which.
 
 ## User Instructions
 
-Instructions say WHAT, not HOW. "Port X" or "Bring in Y from `/path/to/Z`" does NOT mean skip the workflow — engage `analyzing-reference` first even if the user named the file.
+Instructions say WHAT, not HOW. "Port X" or "Bring in Y from `/path/to/Z`" does NOT mean skip the workflow — engage `assessing-feature` first even if the user named the file.
 
-If the user explicitly says "skip the analysis, I've already mapped it" — honor that and start from `distillation-design`, but ask once for the reference map they want to use.
+If the user explicitly says "skip the assessment, I already know it's worth porting" — honor that and start from `analyzing-reference`. If they say "skip the analysis, I've already mapped it" — start from `distillation-design`, but ask once for the reference map they want to use.
 
 ## The Iron Law
 
