@@ -70,7 +70,7 @@ A real integration loads the `using-code-distilling` bootstrap at session start.
 
 > Let's port the X feature from /path/to/reference-repo.
 
-A working integration auto-triggers `analyzing-reference` before any code is written. Paste the complete transcript in the PR.
+A working integration auto-triggers `reference-analysis` before any code is written. Paste the complete transcript in the PR.
 
 ## How to develop a skill change
 

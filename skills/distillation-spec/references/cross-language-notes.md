@@ -1,6 +1,6 @@
 # Cross-Language Notes
 
-A reference for `distillation-design` and `distillation-execution` when source and target languages differ. Use to inform mode decisions and to guide adaptations in `port` and `learn-then-rewrite` chunks.
+A reference for `distillation-spec` (and the implementer in `distillation-implementation`) when source and target languages differ. Use to inform mode decisions and to guide adaptations in `port` and `learn-then-rewrite` chunks.
 
 This is not a complete language-pair handbook. It captures the recurring decision points; specific translations belong in the spec's adaptation-notes column on a per-chunk basis.
 

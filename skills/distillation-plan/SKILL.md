@@ -1,224 +1,147 @@
 ---
 name: distillation-plan
-description: Use after an approved distillation spec to produce a task-by-task plan with a source-to-target file map - each chunk gets a paired test task and implementation task; the writing-plans analog specialized for porting
+description: Stage 3 of code distilling. Use after the distillation spec is approved to turn it into a bite-sized, file-mapped implementation plan — a source→target file map and per-task steps carrying mode, keep-verbatim items, and seam substitutions, with complete code in every step. Produces distillation-plan.md.
 ---
 
-# Distillation Plan
+# Distillation Plan (Stage 3)
 
 ## Overview
 
-Translate the distillation spec into a task-by-task plan ready for execution. Assume the implementer (or the implementer subagent) knows the target stack but has zero context for the reference repo and questionable taste. Document everything they need: which source path, which target path, which mode, which adaptations, which test to port, what command to run, what passes look like, exact commit message.
+Turn the approved distillation spec into an implementation plan a zero-context engineer can execute. Document everything: the source (reference) → target file map, which files each task touches, the exact code, the keep-verbatim items to reproduce, the seam substitutions to make, how to test, and when to commit. Bite-sized tasks.
 
-**Announce at start:** "I'm using `distillation-plan` to write the implementation plan."
+Assume the implementer is a skilled developer who knows almost nothing about this project, the reference, or what's worth preserving. Everything they need to keep the gold and avoid leaking the reference's deps must be in the plan.
 
-**Save plans to:** `docs/plans/YYYY-MM-DD-distill-<repo>-<feature-slug>.md`
+<HARD-GATE>
+Do NOT dispatch implementers or write any port code until the plan is written and the user has approved it. This applies to EVERY port regardless of how small it looks.
+</HARD-GATE>
 
-## When to Use
+**Save plans to:** `docs/code-distilling/<capability>/distillation-plan.md`
 
-```dot
-digraph when_plan {
-    "Spec approved by user?" [shape=diamond];
-    "Run distillation-design first" [shape=box];
-    "distillation-plan" [shape=box];
-    "Hand off to distillation-execution" [shape=doublecircle];
+## Input
 
-    "Spec approved by user?" -> "distillation-plan" [label="yes"];
-    "Spec approved by user?" -> "Run distillation-design first" [label="no"];
-    "distillation-plan" -> "Hand off to distillation-execution";
-}
-```
-
-## Inputs
-
-- An approved distillation spec at `docs/specs/YYYY-MM-DD-distill-<repo>-<feature-slug>.md`.
-- The reference map the spec was derived from.
-
-If the spec is missing or unapproved, invoke `distillation-design` first.
+The approved `distillation-spec.md`: the contract, the keep-verbatim list, the discard list, the seam→your-deps mapping, the per-chunk modes, and the verification strategy. Every task in the plan traces back to a chunk in the spec. If the spec is missing or unapproved, go back to `distillation-spec` first.
 
 ## Scope Check
 
-If the spec covers multiple independent features that should have been split during design, suggest splitting now — one plan per feature. Each plan should produce a working, testable distillation on its own.
+If the spec covers multiple independent capabilities, it should have been split during the spec stage. If it wasn't, suggest splitting into separate plans — one per capability. Each plan should produce working, testable code on its own.
+
+## Source → Target File Map
+
+Before defining tasks, map the reference's files to your project's files. This locks in decomposition.
+
+| Reference (source) | Your project (target) | Mode | Notes |
+|--------------------|-----------------------|------|-------|
+| `ref/path/foo.py` | `src/path/foo.ts` (create) | port | seam: their store → your store |
+
+Each target file should have one clear responsibility; files that change together live together. Follow the project's existing patterns — don't unilaterally restructure.
 
 ## Bite-Sized Task Granularity
 
-**Each step is one action (2-5 minutes):**
+Each step is one action (2–5 minutes). The step shape depends on the chunk's test strategy from the spec:
 
-- "Port the test file" — step
-- "Run the test against the not-yet-ported target" — step
-- "Confirm failure is for the right reason" — step
-- "Port the implementation" — step
-- "Run the test" — step
-- "Commit" — step
-
-If a task has more than ~7 steps, split it.
+- **Testable chunk (equivalence-testing applies):** test-first — port the reference's test, run it failing, port/rewrite the implementation, run it passing, commit.
+- **Non-testable chunk (gap-report verifies):** implement preserving keep-verbatim and wiring seams, spot-check, commit. The fidelity check happens in `gap-report`.
 
 ## Plan Document Header
 
 Every plan MUST start with this header:
 
 ```markdown
-# Distillation Plan: <repo>/<feature>
+# [Capability] Distillation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILLS: Use `code-distilling:distillation-execution` to execute this plan task-by-task. The execution skill dispatches subagents that follow `code-distilling:equivalence-tdd` for every implementation task. Steps use checkbox (`- [ ]`) syntax.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use code-distilling:distillation-implementation to execute this plan. It dispatches a fresh subagent per logic-heavy task (two-stage review) and implements simple tasks directly. Steps use checkbox (`- [ ]`) syntax.
 
-**Spec:** `docs/specs/YYYY-MM-DD-distill-<repo>-<feature-slug>.md`
-**Reference map:** `docs/distilling/<repo>-<feature-slug>-reference-map.md`
-**Reference path:** <REF_PATH — copied verbatim from the reference map>
-**Reference commit:** <SHA>
-**Source language → Target language:** <lang> → <lang>
+**Goal:** [one sentence — what capability is being distilled into this project]
 
-> **Path convention:** source paths in this plan are relative to `Reference path`. The execution skill resolves them with `<REF_PATH>/<source-path>` when reading files.
+**Reference:** [repo @ commit] → **Target:** [where it lands]
+
+**Approach:** [2–3 sentences — the modes in play, the main seams]
 
 ---
 ```
 
-## Source → Target File Map
-
-Before defining tasks, write the file map. One row per target file.
-
-```markdown
-## Source → Target File Map
-
-Source paths are relative to `Reference path` (see plan header).
-
-| # | Source path(s) | Target path | Mode | Test source | Adaptation notes |
-|---|----------------|-------------|------|-------------|------------------|
-| 1 | src/util/lru.ts | src/cache/lru.ts | copy | test/util/lru.test.ts → test/cache/lru.test.ts | rename `LRU` to `LruCache` per target conventions |
-| 2 | src/auth/oauth.ts | src/auth/oauth.ts | port | test/auth/oauth.test.ts → test/auth/oauth.test.ts | callback-style → async/await; swap `axios` for `fetch` |
-| 3 | (design influence) src/auth/strategy.ts | src/auth/strategy.ts | learn-then-rewrite | fresh-equivalence-tests captured in spec §7 | independent implementation |
-```
-
-For `learn-then-rewrite` rows, the source column names the reference module that inspired the design, prefixed with `(design influence)`.
-
-## Task Order
-
-Order tasks by dependency. A utility chunk distills before chunks that import it. If the chunk graph has cycles, break them by introducing a target-only seam — record this in the spec's adaptation notes.
-
 ## Task Structure
 
-Tasks come in pairs (test → implementation) per chunk. Each task is 2–5 minutes of focused work.
-
-### Task N.t: Port test for <chunk>
+Each task carries its distillation context, then bite-sized steps.
 
 ````markdown
+### Task N: [Chunk Name]
+
 **Files:**
-- Create: `test/path/to/chunk.test.<ext>`
-- Read: `<REF_PATH>/test/path/to/chunk.test.<ext>` (or "behavior captures in spec §7" for fresh-equivalence-tests)
+- Source: `ref/path/to/source.py` (reference @ <commit>)
+- Create: `src/exact/path.ts`
+- Test: `test/exact/path.test.ts`
 
-**Mode:** copy / port / learn-then-rewrite (the test-side translation; may differ from the impl mode)
+**Mode:** copy | port | learn-then-rewrite
 
-- [ ] **Step 1: Port / translate the test file**
+**Keep-verbatim (reproduce EXACTLY — no rounding, rephrasing, reordering):**
+- `THRESHOLD = 0.83` (ref source.py:42)
+- [prompt template / step order / regex / lookup table …]
 
-```<lang>
-<paste the actual ported/translated test code here — no placeholders>
+**Seam substitutions:**
+- their `VectorStore` → this project's `src/db/store.ts`
+- do NOT import the reference's framework/libraries
+
+- [ ] **Step 1: [Write the failing test (testable) | Implement (non-testable)]**
+
+```ts
+// actual code — for a port, keep-verbatim items appear verbatim here
 ```
 
-- [ ] **Step 2: Run the test against the not-yet-ported target**
+- [ ] **Step 2: Run it**
 
-Run: `<target test command, e.g. pnpm test test/path/chunk.test.ts>`
-Expected: FAIL with `Cannot find module 'src/path/chunk'` or similar import-error pattern.
+Run: `<exact command>`
+Expected: [FAIL with "…" | PASS]
 
-- [ ] **Step 3: Confirm failure is for the right reason**
+- [ ] **Step 3: [Port/rewrite the implementation | spot-check]**
 
-If the test passes accidentally or fails for an unrelated reason, stop and fix the test before moving to the implementation task.
-````
-
-### Task N.i: Port implementation for <chunk>
-
-````markdown
-**Files:**
-- Create or modify: `src/path/to/chunk.<ext>`
-- Read: `<REF_PATH>/src/path/to/chunk.<ext>` (or omit for learn-then-rewrite)
-- Test: `test/path/to/chunk.test.<ext>` (from Task N.t)
-
-**Mode:** copy / port / learn-then-rewrite
-
-**Adaptation notes from spec:** <quote the relevant row verbatim>
-
-- [ ] **Step 1: Port / translate / rewrite the implementation**
-
-```<lang>
-<paste the implementation here — full code, no placeholders>
+```ts
+// complete code
 ```
 
-(For `learn-then-rewrite`: do NOT paste the reference code. Instead, paste a guidance note: "Write a target-idiomatic implementation that satisfies the test in N.t. Reference is design influence only; do not consult its source lines while implementing.")
+- [ ] **Step 4: Run / verify** — `<exact command>` — Expected: PASS / pristine output
 
-- [ ] **Step 2: Run the test**
-
-Run: `<target test command>`
-Expected: PASS.
-
-- [ ] **Step 3: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
-git add test/path/to/chunk.test.<ext> src/path/to/chunk.<ext>
-git commit -m "distill(<repo>): <chunk summary>"
+git add <files>
+git commit -m "distill(<repo>): <what was distilled>"
 ```
 ````
 
 ## No Placeholders
 
-Every step must contain the actual content an implementer needs. These are **plan failures** — never write them:
+Every step must contain the actual content. These are plan failures — never write them:
 
-- "TBD", "TODO", "implement later", "fill in details".
-- "Add appropriate error handling" / "handle edge cases" without showing how.
-- "Port the test" without including the actual ported test code.
-- "Similar to Task N" — repeat the code; the implementer may read tasks out of order.
-- Steps that describe **what** to do without showing **how** (code blocks required where code is involved).
-- Source paths that don't exist under `<REF_PATH>/` (the reference path from the plan header).
-- Target paths that don't follow the user's project conventions (check the project's existing layout).
+- "TBD", "TODO", "implement later", "port the rest"
+- "Add error handling" / "handle edge cases" without the code
+- "Preserve their constants" without listing the actual values
+- "Similar to Task N" (repeat the code — tasks may be read out of order)
+- A keep-verbatim item named but not shown (the implementer can't preserve what isn't there)
+- References to types/functions not defined in any task
+
+## Remember
+
+- Exact file paths always — both source (reference) and target.
+- Complete code in every code step. Keep-verbatim items appear verbatim in the task.
+- Exact commands with expected output.
+- Seam substitutions named per task; no reference deps introduced.
+- DRY, YAGNI, frequent commits.
 
 ## Self-Review
 
-After writing the complete plan, look at the spec with fresh eyes and check the plan against it:
+After writing the plan, check it against the spec with fresh eyes (your own checklist, not a subagent dispatch):
 
-1. **Spec coverage:** every chunk from the spec's mode-assignments table is in the file map and has a task pair. Anything from the spec's "Out of scope" section is NOT in the plan.
-2. **Path consistency:** every source path resolves to a real file under `<REF_PATH>/` (verify by joining the reference path from the header with each row's source path). Every target path is one a reasonable implementer would create.
-3. **Mode consistency:** the mode column in the file map matches what each task's prompts ask the implementer to do (copy code shown vs. design-influence note).
-4. **Test source consistency:** if the spec says `port-reference-test` for a chunk, the test task references a real test file under `<REF_PATH>/`. If `fresh-equivalence-tests`, the test task pastes the cases from the spec.
-5. **Dependency order:** for each chunk, every chunk it imports is earlier in the task list.
+1. **Chunk coverage:** does every chunk in the spec have a task? List gaps.
+2. **Keep-verbatim coverage:** does every keep-verbatim item appear, verbatim, in some task? A constant in the spec but missing from the plan is a dropped trick.
+3. **Placeholder scan:** any of the "No Placeholders" red flags? Fix them.
+4. **Seam/mode consistency:** does each task's mode match the spec? Are seam substitutions specified? Does any task quietly import a reference dep?
+5. **Type consistency:** do signatures/names used in later tasks match earlier ones?
 
-Fix issues inline. If a chunk is missing a task pair, add it. If the spec has been over- or under-implemented, escalate to the user before continuing.
+Fix issues inline. For a large plan, optionally dispatch `./plan-document-reviewer-prompt.md` for an independent check.
 
-## Common Rationalizations
+## User Review Gate
 
-| Excuse | Reality |
-|--------|---------|
-| "Implementer can read the source file, I don't need to paste it" | Implementer subagents get isolated context. They can't see what isn't in the task. |
-| "Tests can come after, let me sketch impl tasks first" | Pair test ↔ impl per chunk. `equivalence-tdd` needs the test before the impl. |
-| "I'll skip the file map, the tasks have paths" | The map is the audit trail. Reviewers and the user read it before any task. |
+> "Distillation plan written to `<path>`. Please review the task breakdown and the keep-verbatim items before we implement."
 
-## Red Flags - STOP
-
-- A task says "see Task N" instead of repeating code.
-- A task has steps but no code blocks where code is needed.
-- A chunk has an implementation task but no test task (or vice versa).
-- The file map is missing rows for chunks that have tasks.
-
-## Commit and Hand Off
-
-After self-review, commit the plan:
-
-```bash
-git add docs/plans/YYYY-MM-DD-distill-<repo>-<feature-slug>.md
-git commit -m "plan: distill <repo>/<feature>"
-```
-
-Announce:
-
-> "Plan written and committed to `<path>`. Ready for execution. Invoking `distillation-execution`."
-
-## What you do NOT do
-
-- You do **not** write the actual ported code into the target tree. That's execution.
-- You do **not** re-decide modes; modes come from the approved spec.
-- You do **not** modify anything under the reference path. The reference is read-only.
-- You do **not** start execution from this skill — `distillation-execution` is the next step.
-
-## Key Principles
-
-- **Exact file paths always.**
-- **Complete code in every step** — if a step changes code, show the code.
-- **Exact commands with expected output.**
-- **DRY, YAGNI, TDD, frequent commits.**
-- **Pair test ↔ impl per chunk.**
+Wait for approval. On changes, update and re-run the self-review. Only proceed to `distillation-implementation` once the user approves.

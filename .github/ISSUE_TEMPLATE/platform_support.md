@@ -21,7 +21,7 @@ assignees: ''
 
 ## Acceptance test plan
 
-<!-- A real integration auto-triggers `analyzing-reference` when porting
+<!-- A real integration auto-triggers `reference-analysis` when porting
      intent is detected. Describe how you'd verify this works in the new
      harness. -->
 

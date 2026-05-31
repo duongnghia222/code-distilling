@@ -76,7 +76,7 @@ of human involvement will be closed without review.
 
          Let's port the X feature from /path/to/reference-repo.
 
-     A working integration auto-triggers `analyzing-reference` before any
+     A working integration auto-triggers `reference-analysis` before any
      code is written. Paste the complete transcript below.
 
      These are NOT real integrations and PRs that ship them will be closed:
@@ -84,7 +84,7 @@ of human involvement will be closed without review.
      - Manually copying skill files into the harness.
      - Wrapping with `npx skills` or similar at-runtime shims.
      - Anything that requires the user to opt in to skills per-session.
-     - Anything where `analyzing-reference` does not auto-trigger on the
+     - Anything where `reference-analysis` does not auto-trigger on the
        test above.
 -->
 

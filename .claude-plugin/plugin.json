@@ -1,6 +1,6 @@
 {
   "name": "code-distilling",
-  "description": "Port high-quality implementations from reference open-source repos into your project with discipline: analysis, design, planning, and equivalence-tested execution.",
+  "description": "Port high-quality implementations from reference open-source repos into your project with discipline: analysis, spec, plan, implementation, and verification against the reference.",
   "version": "0.2.0",
   "author": {
     "name": "Nghia Duong",

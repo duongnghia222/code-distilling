@@ -1,6 +1,6 @@
 # Mode Decision Criteria
 
-Apply these in order. The first one that fires assigns the mode for the chunk. Record which criterion fired in the spec's mode-assignments table.
+Apply these in order. The first one that fires assigns the mode for the chunk. Record which criterion fired in the spec's chunk table (adaptation-notes column).
 
 ## learn-then-rewrite — apply if ANY of:
 
@@ -37,8 +37,8 @@ Apply these in order. The first one that fires assigns the mode for the chunk. R
 
 ## Conflicting signals
 
-If two criteria from different modes fire for the same chunk, prefer the more conservative mode (learn-then-rewrite > port > copy). Record both fired criteria in the spec's adaptation-notes column.
+If two criteria from different modes fire for the same chunk, prefer the more conservative mode (learn-then-rewrite > port > copy). Record both fired criteria in the chunk table's adaptation-notes column.
 
 ## When to revisit
 
-If during execution a chunk marked `port` turns out to need so much restructuring that it crosses into rewrite territory, pause and escalate to the user — do not silently shift modes mid-port. Mode shifts are recorded in a follow-up spec amendment.
+If during execution a chunk marked `port` turns out to need so much restructuring that it crosses into rewrite territory, pause and escalate to the user — do not silently shift modes mid-port. Mode shifts are recorded as a spec amendment.
