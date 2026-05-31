@@ -11,7 +11,7 @@ Deep-read a reference repo at the path the user supplied (absolute, relative, or
 
 The path captured in the reference map's `Reference path` field is the single source of truth for the reference's location. Every downstream skill resolves source files via that field — no hard-coded directory conventions.
 
-This runs after `assessing-feature` has returned a GO verdict (the feature is worth distilling). Skipping it means downstream skills make decisions without evidence — and those decisions are usually wrong. If no assessment is on record, invoke `assessing-feature` first.
+This is the first step of the distillation flow, once porting intent and a reference path are present. Skipping it means downstream skills make decisions without evidence — and those decisions are usually wrong.
 
 **Core principle:** The reference map is the contract. Every downstream skill quotes from it. If something isn't in the map, the downstream skills don't see it.
 
