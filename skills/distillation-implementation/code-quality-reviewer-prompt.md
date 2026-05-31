@@ -1,8 +1,10 @@
 # Code Quality Reviewer Prompt Template (Distillation)
 
-Adapted from superpowers' `subagent-driven-development`, made self-contained (this plugin doesn't ship `requesting-code-review`). Dispatch only after the spec-compliance review passes.
+Use this template when dispatching a code quality reviewer subagent.
 
-**Purpose:** verify the distilled chunk is well-built — idiomatic in the target, clean, tested, free of leaked reference cruft.
+**Purpose:** verify the distilled chunk is well-built — idiomatic in the target, clean, tested, and free of leaked reference cruft.
+
+**Only dispatch after the spec-compliance review passes.**
 
 ```
 Task tool (general-purpose):
@@ -16,6 +18,11 @@ Task tool (general-purpose):
 
     ## Review For:
 
+    **Standard code quality:**
+    - Correctness and maintainability — does the code do what it should, and is it easy to change?
+    - Names match what things do (not how they work); readable control flow.
+    - Errors handled, not swallowed; no dead, duplicated, or commented-out code.
+
     **Idiomatic in this project's language/stack:**
     - Does it read like native target code, or like transliterated source-language code?
     - Names match what things do; target conventions followed (casing, error handling, async style).
@@ -23,6 +30,7 @@ Task tool (general-purpose):
     **Structure:**
     - Does each file have one clear responsibility with a well-defined interface?
     - Can units be understood and tested independently?
+    - Does it follow the file structure from the spec?
     - Did this change create new large files or significantly grow existing ones? (Judge only what
       this change contributed; don't flag pre-existing sizes.)
 
