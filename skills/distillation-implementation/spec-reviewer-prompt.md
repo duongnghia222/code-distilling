@@ -1,6 +1,6 @@
 # Spec Compliance Reviewer Prompt Template (Distillation)
 
-Heavy-copied from superpowers' `subagent-driven-development`, with distillation checks added. Dispatch after the implementer reports DONE, before the code-quality review.
+Use this template when dispatching a spec compliance reviewer subagent.
 
 **Purpose:** verify the implementer distilled what the spec required — the contract AND the distillation discipline — nothing more, nothing less.
 

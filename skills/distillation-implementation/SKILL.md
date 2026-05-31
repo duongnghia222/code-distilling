@@ -260,6 +260,3 @@ Done with Stage 4!
 
 **Subagents use:**
 - The prompt templates in this skill — `./implementer-prompt.md`, `./spec-reviewer-prompt.md`, `./code-quality-reviewer-prompt.md`. They are self-contained: this plugin does not ship `requesting-code-review`.
-
-**Workspace:**
-- Work on a dedicated branch, not main. If the superpowers plugin is available, **superpowers:using-git-worktrees** gives an isolated workspace.

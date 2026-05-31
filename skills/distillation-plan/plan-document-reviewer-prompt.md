@@ -1,6 +1,6 @@
 # Plan Document Reviewer Prompt Template (Distillation)
 
-Heavy-copied from superpowers' `writing-plans`, with distillation checks added. Dispatch after the complete plan is written, for an independent check on a large plan.
+Use this template when dispatching a plan document reviewer subagent.
 
 **Purpose:** verify the plan is complete, matches the spec, preserves the gold, and is buildable.
 
