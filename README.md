@@ -135,7 +135,6 @@ Agent: I'm using `distillation-implementation` to build it.
 | `distillation-plan` | Stage 3 — after the spec is approved | `distillation-plan.md` (source→target file map, bite-sized tasks with code) |
 | `distillation-implementation` | Stage 4 — after the plan is approved | The ported code; subagent-driven with two-stage review |
 | `gap-report` | Stage 5 — after implementation | `gap-report.md` (completeness, fidelity, no-leakage, contract) |
-| `equivalence-testing` | Opt-in, for testable chunks | Reference-derived RED→GREEN tests |
 
 ## Three modes for every chunk
 
@@ -147,11 +146,11 @@ Mode is decided per chunk during `distillation-spec`, using explicit criteria do
 
 ## Philosophy
 
-- **The reference is the source of truth.** The encoded decisions worth copying — tuned constants, step order, edge cases, prompts — are kept verbatim, and the result is verified against the reference. Where a chunk is testable, the tests are derived from the reference, not invented.
+- **The reference is the source of truth.** The encoded decisions worth copying — tuned constants, step order, edge cases, prompts — are kept verbatim, and the result is verified against the reference.
 - **Keep data verbatim, rewrite logic freely.** Control flow and structure get re-expressed in your idioms; the code-as-data gold is copied exactly.
 - **Modes are explicit.** Every chunk has a mode and a deciding criterion. "Just trust me" is not a criterion.
 - **Subagents per chunk.** Fresh context per logic-heavy chunk keeps the implementer focused. Two-stage review (spec compliance, then code quality) prevents over- or under-building.
-- **Verify before done.** A fresh-eyes gap report is the default safety net against a port that runs but is subtly wrong. Executable equivalence tests are the optional addition where the capability supports them.
+- **Verify before done.** A fresh-eyes gap report is the default safety net against a port that runs but is subtly wrong.
 - **Process over guessing.** Skipping the analysis or the spec produces ports nobody can audit. The flow scales — short docs for small ports — but you still run it.
 
 ## Status

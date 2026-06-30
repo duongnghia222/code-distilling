@@ -74,8 +74,6 @@ digraph distilling {
 | 4 | `distillation-implementation` | the code + commits — execute the plan | none (runs continuously) |
 | 5 | `gap-report` | `gap-report.md` — completeness · fidelity · no-leakage · contract | human: skim + accept |
 
-Opt-in: `equivalence-testing` — reference-derived tests for the *testable* chunks (pure functions, clear I/O). Not mandatory; use it when executable evidence is feasible.
-
 Artifacts live in `docs/code-distilling/<capability>/`.
 
 ## Human Judgment

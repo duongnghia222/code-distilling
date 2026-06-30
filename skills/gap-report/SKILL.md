@@ -7,7 +7,7 @@ description: Stage 5 of code distilling. Default-on verification. Use after impl
 
 Verify the distillation actually captured the reference. A fresh-eyes subagent — never the implementer — compares your implementation against the distillation spec and the reference core, and writes a gap report. This is the safety net against a port that runs but is subtly wrong.
 
-This stage is default-on and cheap (a reading-based review). It is not optional. Executable equivalence tests are the optional *addition*, used only where the spec marked a chunk testable.
+This stage is default-on and cheap (a reading-based review). It is not optional.
 
 <HARD-GATE>
 The distillation is not done until a gap-report exists and the user has accepted it. Do NOT declare the port complete on the implementer's say-so.
@@ -19,24 +19,23 @@ You MUST create a task for each of these items and complete them in order:
 
 1. **Dispatch a fresh-eyes verifier** — a subagent that did not write the code (`./gap-report-reviewer-prompt.md`)
 2. **Run the four checks** — completeness, fidelity, no-leakage, contract
-3. **Add executable evidence** — run `equivalence-testing` for any chunk the spec marked testable
-4. **Write gap-report.md**
-5. **Present to the user** — loop back to implementation on gaps, else done
+3. **Write gap-report.md**
+4. **Present to the user** — loop back to implementation on gaps, else done
 
 ## Process Flow
 
 ```dot
 digraph gap_report {
     "Dispatch fresh-eyes verifier" [shape=box];
-    "Run four checks (+ optional tests)" [shape=box];
+    "Run the four checks" [shape=box];
     "Write gap-report.md" [shape=box];
     "Present to user" [shape=box];
     "Gaps acceptable?" [shape=diamond];
     "Back to distillation-implementation" [shape=box];
     "Distillation done" [shape=doublecircle];
 
-    "Dispatch fresh-eyes verifier" -> "Run four checks (+ optional tests)";
-    "Run four checks (+ optional tests)" -> "Write gap-report.md";
+    "Dispatch fresh-eyes verifier" -> "Run the four checks";
+    "Run the four checks" -> "Write gap-report.md";
     "Write gap-report.md" -> "Present to user";
     "Present to user" -> "Gaps acceptable?";
     "Gaps acceptable?" -> "Back to distillation-implementation" [label="no, fix named chunks"];
@@ -59,11 +58,6 @@ digraph gap_report {
 - **No-leakage** — did any of the reference's deps/framework/accidental complexity sneak in? Are seams wired to your deps?
 - **Contract** — does the behavior satisfy the spec's contract and invariants? (by reading, plus any feasible spot-run)
 
-**Optional executable evidence:**
-
-- For chunks the spec marked testable, run `equivalence-testing` and attach the results.
-- For fuzzy capabilities (renderers, generative output), reading-based comparison is the honest verification — say so rather than faking tests.
-
 ## After the Verification
 
 **Documentation:**
@@ -74,7 +68,7 @@ Write to `docs/code-distilling/<capability>/gap-report.md`:
 - **Completeness** — keep-verbatim & chunks: present / missing (file:line).
 - **Fidelity** — any altered code-as-data, with reference value vs ported value.
 - **Leakage** — any reference deps or accidental complexity found.
-- **Contract** — assessment + any executable evidence.
+- **Contract** — assessment + any uncertainties.
 - **Gaps** — concrete list, each pointing at the chunk to fix.
 
 **User Review Gate:**
@@ -87,5 +81,5 @@ If gaps: loop back to `distillation-implementation` to fix the named chunks, the
 
 - **Fresh eyes, not the implementer** — independence is the whole point
 - **Don't trust the report** — verify by reading the code and the reference
-- **Default-on review, optional tests** — never skip the review
-- **Be honest when it's manual** — reading-based verification beats faked tests
+- **Default-on review** — never skip it
+- **Reading-based and honest** — verify by reading the port against the reference, and say so

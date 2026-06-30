@@ -43,8 +43,6 @@ When porting:
 | `requests` (Python) | `fetch`/`axios` (JS), `net/http` (Go), `reqwest` (Rust) |
 | `Joi`/`zod` validation | `pydantic` (Python), `validator` package (Go), `serde` + custom checks (Rust) |
 | `winston` logger | `loguru` (Python), `slog` (Go), `tracing` (Rust) |
-| `jest` test framework | `pytest` (Python), `go test` (Go), `cargo test` (Rust), `vitest` (TS alt) |
-| `pytest` fixtures | `jest.beforeEach`/`vitest`, table tests (Go), `#[test]` w/ setup helpers (Rust) |
 
 When the user's project already pins a library for the function, prefer that pin over picking a new one — the spec records the choice.
 

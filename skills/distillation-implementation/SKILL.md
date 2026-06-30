@@ -50,7 +50,7 @@ digraph process {
         "Dispatch implementer (./implementer-prompt.md)" [shape=box];
         "Implementer asks questions?" [shape=diamond];
         "Answer, provide context" [shape=box];
-        "Implement under mode: preserve keep-verbatim, wire seams, test, commit, self-review" [shape=box];
+        "Implement under mode: preserve keep-verbatim, wire seams, commit, self-review" [shape=box];
         "Implement directly, preserve keep-verbatim, commit" [shape=box];
         "Spec reviewer (./spec-reviewer-prompt.md) compliant?" [shape=diamond];
         "Implementer fixes spec gaps" [shape=box];
@@ -68,8 +68,8 @@ digraph process {
     "Dispatch implementer (./implementer-prompt.md)" -> "Implementer asks questions?";
     "Implementer asks questions?" -> "Answer, provide context" [label="yes"];
     "Answer, provide context" -> "Dispatch implementer (./implementer-prompt.md)";
-    "Implementer asks questions?" -> "Implement under mode: preserve keep-verbatim, wire seams, test, commit, self-review" [label="no"];
-    "Implement under mode: preserve keep-verbatim, wire seams, test, commit, self-review" -> "Spec reviewer (./spec-reviewer-prompt.md) compliant?";
+    "Implementer asks questions?" -> "Implement under mode: preserve keep-verbatim, wire seams, commit, self-review" [label="no"];
+    "Implement under mode: preserve keep-verbatim, wire seams, commit, self-review" -> "Spec reviewer (./spec-reviewer-prompt.md) compliant?";
     "Spec reviewer (./spec-reviewer-prompt.md) compliant?" -> "Implementer fixes spec gaps" [label="no"];
     "Implementer fixes spec gaps" -> "Spec reviewer (./spec-reviewer-prompt.md) compliant?" [label="re-review"];
     "Spec reviewer (./spec-reviewer-prompt.md) compliant?" -> "Code-quality reviewer (./code-quality-reviewer-prompt.md) approves?" [label="yes"];
@@ -158,7 +158,7 @@ Implementer: [proceeds]
   - Wrote an independent token bucket (no pasted reference lines)
   - Preserved REFILL_INTERVAL_MS=250 and BURST_FACTOR=1.5 exactly, cited bucket.go
   - Wired the clock seam to clock.monotonic(); imported none of their runtime
-  - 7/7 tests passing; committed: distill(ratelimit): token-bucket refill
+  - Spot-checked the refill math against the reference; committed: distill(ratelimit): token-bucket refill
   - Self-review: all good
 
 [Dispatch spec-compliance reviewer]
@@ -255,7 +255,6 @@ Done with Stage 4!
 **Within the code-distilling flow:**
 - **code-distilling:distillation-plan** — produces the plan this stage executes
 - **code-distilling:gap-report** — Stage 5 verification; run it after all tasks (NOT finishing-a-development-branch directly)
-- **code-distilling:equivalence-testing** — optional; reference-derived tests for chunks with clear I/O
 - **code-distilling:using-code-distilling** — the overall 5-stage flow and its human gates
 
 **Subagents use:**

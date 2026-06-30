@@ -26,7 +26,7 @@ You MUST create a task for each of these items and complete them in order:
 3. **List the discard items** — the accidental complexity left behind
 4. **Map the seams to your deps** — the reference's inputs/outputs → your project's dependencies
 5. **Assign a mode per chunk** — copy / port / learn-then-rewrite (see references)
-6. **Choose the verification strategy** — what gap-report checks; is equivalence-testing feasible?
+6. **Choose the verification strategy** — what gap-report should focus on
 7. **Write distillation-spec.md, self-review, and get user gate approval**
 
 ## Process Flow
@@ -92,9 +92,8 @@ For cross-language ports, consult `references/cross-language-notes.md` and recor
 
 **Choosing the verification strategy:**
 
-- Reading-based comparison via `gap-report` is always available and always runs.
-- Decide per testable chunk whether `equivalence-testing` is feasible (pure functions, clear I/O → yes; renderers, fuzzy output → no, rely on gap-report).
-- Record the choice so Stage 3 and Stage 4 both know it.
+- Reading-based comparison via `gap-report` is the verification — it always runs.
+- Note what `gap-report` should focus on for this capability: the riskiest keep-verbatim items, the seams most likely to leak, the invariants hardest to eyeball.
 
 ## After the Spec
 
@@ -106,8 +105,8 @@ Write to `docs/code-distilling/<capability>/distillation-spec.md`:
 - **Keep-verbatim** — each item + its reference location.
 - **Discard** — what's left behind.
 - **Seam mapping** — the reference's edge → your dependency.
-- **Chunk table** — chunk · reference location · mode · keep-verbatim items · adaptation notes · test strategy.
-- **Verification strategy** — gap-report focus + any equivalence-testing chunks.
+- **Chunk table** — chunk · reference location · mode · keep-verbatim items · adaptation notes.
+- **Verification strategy** — what gap-report should focus on.
 - **Provenance** — yours ← theirs @ commit, for later re-sync.
 
 **Spec Self-Review:**
@@ -133,5 +132,5 @@ Wait for approval. On changes, update and re-run the self-review. Only proceed t
 - **Keep data verbatim, rewrite logic freely** — the keep-verbatim list is sacred
 - **Name what you discard** — explicit discard keeps the port lean
 - **Seams are where your deps go** — distill secret sauce, use your own plumbing
-- **Pick verification you can actually run** — reading-based always; tests when feasible
+- **Verify by reading** — `gap-report` compares the port against the reference
 - **It scales down** — a tiny port gets a one-paragraph spec with a two-row chunk table

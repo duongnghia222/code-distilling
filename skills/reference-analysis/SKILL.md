@@ -23,11 +23,10 @@ You MUST create a task for each of these items and complete them in order:
 
 1. **Scope the capability** — name it in one sentence
 2. **Locate the core path** — the files/functions that actually deliver it
-3. **Read their tests** — cheap signal for the edge cases the authors consider correct
-4. **Separate gold from packaging** — essential vs accidental; logic vs data
-5. **Map the seams** — what the core needs in, what it emits out
-6. **Explain the design + propose the copy list** — dialogue, get agreement
-7. **Write reference-analysis.md** — save it and get user gate approval
+3. **Separate gold from packaging** — essential vs accidental; logic vs data
+4. **Map the seams** — what the core needs in, what it emits out
+5. **Explain the design + propose the copy list** — dialogue, get agreement
+6. **Write reference-analysis.md** — save it and get user gate approval
 
 ## Process Flow
 
@@ -35,7 +34,6 @@ You MUST create a task for each of these items and complete them in order:
 digraph reference_analysis {
     "Scope the capability (one sentence)" [shape=box];
     "Locate the core path" [shape=box];
-    "Read their tests" [shape=box];
     "Separate gold from packaging" [shape=box];
     "Map the seams" [shape=box];
     "Explain design + propose copy list" [shape=box];
@@ -44,8 +42,7 @@ digraph reference_analysis {
     "Proceed to distillation-spec" [shape=doublecircle];
 
     "Scope the capability (one sentence)" -> "Locate the core path";
-    "Locate the core path" -> "Read their tests";
-    "Read their tests" -> "Separate gold from packaging";
+    "Locate the core path" -> "Separate gold from packaging";
     "Separate gold from packaging" -> "Map the seams";
     "Map the seams" -> "Explain design + propose copy list";
     "Explain design + propose copy list" -> "User agrees?";
@@ -66,7 +63,7 @@ digraph reference_analysis {
 
 - Trace the one path that delivers the capability, from entry point to result.
 - Deliberately ignore CLI, config systems, examples, telemetry, test scaffolding, backwards-compat shims. You want the lines that matter, not the thousands around them.
-- Read their tests for the core — high signal for *which edge cases the authors think matter*. Skip changelog and issue archaeology; too much effort for this stage.
+- Skip changelog and issue archaeology; too much effort for this stage.
 
 **Separating gold from packaging:**
 
@@ -97,7 +94,7 @@ Write the analysis to `docs/code-distilling/<capability>/reference-analysis.md`:
 
 - **Capability** — one sentence.
 - **The core** — files/functions, what each does, the main path.
-- **Their design** — how it works, the key moves, and the *why* (from code + tests).
+- **Their design** — how it works, the key moves, and the *why* (from the code).
 - **Gold vs packaging** — the tricks / encoded decisions to keep; the accidental parts to drop.
 - **Seams** — inputs and outputs, with secret-sauce vs commodity noted.
 - **Proposed copy list** — what we bring over, what we leave behind.

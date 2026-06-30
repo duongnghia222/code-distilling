@@ -28,7 +28,7 @@ Task tool (general-purpose):
     wired to this project's deps per the spec?
 
     **Contract:** Does the behavior satisfy the spec's contract and invariants? Reason from the code;
-    note where you'd want an executable test to be sure.
+    note any behavior you could not verify by reading.
 
     ## Report Format
     - **Verdict:** FULLY DISTILLED | GAPS FOUND

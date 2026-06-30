@@ -7,8 +7,8 @@ of human involvement will be closed without review.
 ## What problem are you trying to solve?
 
 <!-- Describe the specific problem you encountered. If this was a session
-     issue (the agent got the porting flow wrong, license check failed
-     incorrectly, equivalence-TDD discipline broke down), include: what you
+     issue (the agent got the porting flow wrong, the keep-verbatim or
+     gap-report discipline broke down), include: what you
      were doing, what went wrong, the model's exact failure mode, and
      ideally a transcript or session log.
 
@@ -22,8 +22,8 @@ of human involvement will be closed without review.
 ## Is this change appropriate for the core plugin?
 
 <!-- `code-distilling` core contains the porting workflow: reference
-     analysis, design, planning, execution, equivalence-TDD, and
-     attribution. Ask yourself:
+     analysis, design, planning, execution, and gap-report
+     verification. Ask yourself:
 
      - Would this be useful to someone porting code from a *completely
        different* reference repo than the one that motivated your change?
@@ -106,8 +106,8 @@ paste the complete transcript here
 
 <!-- "It works" is not evaluation. Describe the before/after difference
      you observed across multiple sessions. Porting flows have a lot of
-     branching — license outcomes, mode decisions, equivalence-TDD
-     discipline. Demonstrate that your change improves outcomes on more
+     branching — mode decisions, keep-verbatim fidelity, gap-report
+     outcomes. Demonstrate that your change improves outcomes on more
      than one path. -->
 
 ## Rigor

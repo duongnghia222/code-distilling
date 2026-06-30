@@ -57,11 +57,9 @@ Task tool (general-purpose):
     1. Implement the chunk under its mode.
     2. Preserve every keep-verbatim item exactly; wire seams to this project's deps; import NONE of
        the reference's deps.
-    3. Test (use equivalence-testing if the spec assigned it to this chunk; otherwise tests
-       appropriate to the behavior).
-    4. Commit — one commit per chunk: `distill(<repo>): <what was distilled>`.
-    5. Self-review (see below).
-    6. Report back.
+    3. Commit — one commit per chunk: `distill(<repo>): <what was distilled>`.
+    4. Self-review (see below).
+    5. Report back.
 
     Work from: [directory]
 
@@ -120,11 +118,6 @@ Task tool (general-purpose):
     - For learn-then-rewrite: did I write this independently, without pasting reference lines?
     - Did I stay within the mode (copy changed only imports/naming; port preserved structure)?
 
-    **Testing:**
-    - Do tests actually verify behavior (not just mock behavior)?
-    - If equivalence-testing applied, are the tests reference-derived?
-    - Are tests comprehensive?
-
     If you find issues during self-review, fix them now before reporting.
 
     ## Report Format
@@ -134,7 +127,7 @@ Task tool (general-purpose):
     - What you implemented (or what you attempted, if blocked); the mode used
     - Keep-verbatim items preserved (list them)
     - Seam substitutions made
-    - What you tested and test results
+    - How you spot-checked the chunk against the reference
     - Files changed
     - Self-review findings / concerns
 

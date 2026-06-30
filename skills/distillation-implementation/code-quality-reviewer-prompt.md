@@ -2,7 +2,7 @@
 
 Use this template when dispatching a code quality reviewer subagent.
 
-**Purpose:** verify the distilled chunk is well-built — idiomatic in the target, clean, tested, and free of leaked reference cruft.
+**Purpose:** verify the distilled chunk is well-built — idiomatic in the target, clean, and free of leaked reference cruft.
 
 **Only dispatch after the spec-compliance review passes.**
 
@@ -29,7 +29,7 @@ Task tool (general-purpose):
 
     **Structure:**
     - Does each file have one clear responsibility with a well-defined interface?
-    - Can units be understood and tested independently?
+    - Can units be understood independently?
     - Does it follow the file structure from the spec?
     - Did this change create new large files or significantly grow existing ones? (Judge only what
       this change contributed; don't flag pre-existing sizes.)
@@ -38,9 +38,6 @@ Task tool (general-purpose):
     - Did accidental complexity from the reference leak in (its config, logging, telemetry,
       abstractions-for-their-scale)?
     - Are keep-verbatim constants/prompts isolated and clearly labeled, not scattered magic numbers?
-
-    **Tests:**
-    - Do tests verify behavior, not mocks? If equivalence-testing applied, are the tests reference-derived?
 
     ## Report
     - **Strengths**

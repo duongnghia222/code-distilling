@@ -7,7 +7,7 @@ description: Stage 3 of code distilling. Use after the distillation spec is appr
 
 ## Overview
 
-Turn the approved distillation spec into an implementation plan a zero-context engineer can execute. Document everything: the source (reference) → target file map, which files each task touches, the exact code, the keep-verbatim items to reproduce, the seam substitutions to make, how to test, and when to commit. Bite-sized tasks.
+Turn the approved distillation spec into an implementation plan a zero-context engineer can execute. Document everything: the source (reference) → target file map, which files each task touches, the exact code, the keep-verbatim items to reproduce, the seam substitutions to make, and when to commit. Bite-sized tasks.
 
 Assume the implementer is a skilled developer who knows almost nothing about this project, the reference, or what's worth preserving. Everything they need to keep the gold and avoid leaking the reference's deps must be in the plan.
 
@@ -23,7 +23,7 @@ The approved `distillation-spec.md`: the contract, the keep-verbatim list, the d
 
 ## Scope Check
 
-If the spec covers multiple independent capabilities, it should have been split during the spec stage. If it wasn't, suggest splitting into separate plans — one per capability. Each plan should produce working, testable code on its own.
+If the spec covers multiple independent capabilities, it should have been split during the spec stage. If it wasn't, suggest splitting into separate plans — one per capability. Each plan should produce working code on its own.
 
 ## Source → Target File Map
 
@@ -37,10 +37,7 @@ Each target file should have one clear responsibility; files that change togethe
 
 ## Bite-Sized Task Granularity
 
-Each step is one action (2–5 minutes). The step shape depends on the chunk's test strategy from the spec:
-
-- **Testable chunk (equivalence-testing applies):** test-first — port the reference's test, run it failing, port/rewrite the implementation, run it passing, commit.
-- **Non-testable chunk (gap-report verifies):** implement preserving keep-verbatim and wiring seams, spot-check, commit. The fidelity check happens in `gap-report`.
+Each step is one action (2–5 minutes). Every chunk follows the same shape: implement preserving keep-verbatim and wiring seams, spot-check, commit. The fidelity check happens in `gap-report`.
 
 ## Plan Document Header
 
@@ -70,7 +67,6 @@ Each task carries its distillation context, then bite-sized steps.
 **Files:**
 - Source: `ref/path/to/source.py` (reference @ <commit>)
 - Create: `src/exact/path.ts`
-- Test: `test/exact/path.test.ts`
 
 **Mode:** copy | port | learn-then-rewrite
 
@@ -82,26 +78,15 @@ Each task carries its distillation context, then bite-sized steps.
 - their `VectorStore` → this project's `src/db/store.ts`
 - do NOT import the reference's framework/libraries
 
-- [ ] **Step 1: [Write the failing test (testable) | Implement (non-testable)]**
+- [ ] **Step 1: Implement** — preserve keep-verbatim, wire seams
 
 ```ts
-// actual code — for a port, keep-verbatim items appear verbatim here
+// complete code — for a port, keep-verbatim items appear verbatim here
 ```
 
-- [ ] **Step 2: Run it**
+- [ ] **Step 2: Spot-check / verify** — `<exact command>` — Expected: builds clean / pristine output
 
-Run: `<exact command>`
-Expected: [FAIL with "…" | PASS]
-
-- [ ] **Step 3: [Port/rewrite the implementation | spot-check]**
-
-```ts
-// complete code
-```
-
-- [ ] **Step 4: Run / verify** — `<exact command>` — Expected: PASS / pristine output
-
-- [ ] **Step 5: Commit**
+- [ ] **Step 3: Commit**
 
 ```bash
 git add <files>
