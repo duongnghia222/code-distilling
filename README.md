@@ -2,7 +2,7 @@
 
 > Port high-quality implementations from reference open-source repos into your project — with discipline.
 
-`code-distilling` is a Claude Code and Codex plugin that turns *"I want to copy this feature from that repo"* into a controlled workflow: analyze the reference, write a distillation spec (decide per-chunk what to **copy** / **port** / **learn-then-rewrite**, what to keep verbatim, how the seams wire into your project), implement it, and verify the result against the reference.
+`code-distilling` is a Claude Code and Codex plugin that turns *"I want to copy this feature from that repo"* into a controlled workflow: explore the reference and write a distillation spec (decide per-chunk what to **copy** / **port** / **learn-then-rewrite**, what to keep verbatim, how the seams wire into your project), and implement it.
 
 It is a sister-plugin to [Superpowers](https://github.com/obra/superpowers) and follows the same skill-driven discipline. You do not need Superpowers installed to use it.
 
@@ -14,7 +14,7 @@ When you find a great open-source implementation of something you need — a par
 2. **From-scratch-with-vibes.** Read the reference, close the tab, write your own. Lose all the edge cases the original handled.
 3. **Vendor-and-forget.** Add the repo as a dependency, drag in their build system, never actually understand what's running.
 
-`code-distilling` is the disciplined fourth option: **port a curated subset of the reference into your own codebase — keeping the encoded decisions that make it good, and verifying the result against the reference.**
+`code-distilling` is the disciplined fourth option: **port a curated subset of the reference into your own codebase — keeping the encoded decisions that make it good.**
 
 The core idea: **the code is not the asset; the decisions encoded in the code are the asset.** A tuned threshold, the order of two steps, an edge-case branch, a prompt template — those are months of someone's tuning. Distillation keeps that gold and drops the packaging (their framework, config, logging, abstractions for their scale).
 
@@ -32,13 +32,11 @@ You point the plugin at a reference repo by path — any path on disk works. Clo
   cool-search-lib/
 ```
 
-Then ask Claude or Codex to port a feature, naming the reference's path. The plugin walks you through five stages, with human approval gates after the analysis, the spec, and the plan:
+Then ask Claude or Codex to port a feature, naming the reference's path. The plugin walks you through three stages, with human approval gates after the spec and the plan:
 
-1. **`reference-analysis`** — deep-reads the reference, locates the one capability, explains its design, and agrees with you on exactly what to copy. Produces `reference-analysis.md`.
-2. **`distillation-spec`** — writes the distillation spec: the behavioral contract, the keep-verbatim list (tuned constants, prompts, step order), the discard list, the seam → your-deps mapping, and a per-chunk mode (**copy** / **port** / **learn-then-rewrite**). You approve it.
-3. **`distillation-plan`** — turns the spec into a bite-sized, file-mapped implementation plan: a source→target file map and per-task steps carrying the mode, keep-verbatim items, and seam substitutions, with complete code in every step. You approve it.
-4. **`distillation-implementation`** — executes the plan, task by task: a fresh subagent per logic-heavy task with two-stage review (spec compliance, then code quality); simple tasks implemented directly. Runs continuously.
-5. **`gap-report`** — a fresh-eyes subagent compares the implementation against the spec and the reference (completeness, fidelity, no leaked deps, contract) and writes a gap report before the port is called done.
+1. **`distillation-spec`** — deep-reads the reference, locates the one capability, explains its design, and agrees with you on exactly what to copy; then writes the distillation spec: the behavioral contract, the keep-verbatim list (tuned constants, prompts, step order), the discard list, the seam → your-deps mapping, and a per-chunk mode (**copy** / **port** / **learn-then-rewrite**). You approve it.
+2. **`distillation-plan`** — turns the spec into a bite-sized, file-mapped implementation plan: a source→target file map and per-task steps carrying the mode, keep-verbatim items, and seam substitutions, with complete code in every step. You approve it.
+3. **`distillation-implementation`** — executes the plan, task by task: a fresh subagent per logic-heavy task with two-stage review (spec compliance, then code quality); simple tasks implemented directly. Runs continuously, then finishes the branch.
 
 The skills auto-trigger when the agent sees porting intent and a reference repo path. You don't need to type any slash commands.
 
@@ -55,7 +53,7 @@ git clone https://github.com/<org>/<reference-repo> ~/code/<reference-repo>
 #     into src/auth/."
 ```
 
-Absolute paths, relative paths, and a checkout that happens to live inside your project all work — the plugin treats whatever you point it at as the reference. The agent will engage `reference-analysis` first, then walk you through the rest of the flow.
+Absolute paths, relative paths, and a checkout that happens to live inside your project all work — the plugin treats whatever you point it at as the reference. The agent will engage `distillation-spec` first, then walk you through the rest of the flow.
 
 ## Installation
 
@@ -93,18 +91,12 @@ After installation, the agent loads the `using-code-distilling` bootstrap at ses
 ```
 User: I want to port the OAuth flow from ~/code/awesome-auth into src/auth/.
 
-Agent: I'm using `reference-analysis` to map the reference.
+Agent: I'm using `distillation-spec` to map the reference and write the spec.
        [reads ~/code/awesome-auth/, locates the OAuth files]
        Here's their design, and here's what I'd copy vs leave behind...
-       [writes docs/code-distilling/oauth-flow/reference-analysis.md]
-       Please confirm the capability and the copy list before we spec.
-
-User: Looks right.
-
-Agent: I'm using `distillation-spec` to write the spec.
        [writes docs/code-distilling/oauth-flow/distillation-spec.md
         — contract, keep-verbatim list, seam mapping, per-chunk modes]
-       Please review the keep/discard split before we plan.
+       Please confirm the capability and the keep/discard split before we plan.
 
 User: Approved.
 
@@ -118,11 +110,7 @@ User: Approved.
 Agent: I'm using `distillation-implementation` to build it.
        [dispatches a fresh subagent per logic-heavy chunk; two-stage review each]
        [implements simple copy-chunks directly]
-
-       I'm using `gap-report` to verify.
-       [fresh-eyes subagent compares impl ↔ spec ↔ reference]
-       [writes docs/code-distilling/oauth-flow/gap-report.md]
-       Verdict: fully distilled — 5 chunks, no gaps.
+       All 5 chunks done — finishing the branch.
 ```
 
 ## The skills
@@ -130,11 +118,9 @@ Agent: I'm using `distillation-implementation` to build it.
 | Skill | When it fires | What it produces |
 |-------|---------------|------------------|
 | `using-code-distilling` | Session start (bootstrap) | Routes to the flow on porting intent |
-| `reference-analysis` | Stage 1 — porting intent detected | `reference-analysis.md` (the capability, their design, the copy list) |
-| `distillation-spec` | Stage 2 — after the analysis is approved | `distillation-spec.md` (contract, keep-verbatim, discard, seams, per-chunk modes) |
-| `distillation-plan` | Stage 3 — after the spec is approved | `distillation-plan.md` (source→target file map, bite-sized tasks with code) |
-| `distillation-implementation` | Stage 4 — after the plan is approved | The ported code; subagent-driven with two-stage review |
-| `gap-report` | Stage 5 — after implementation | `gap-report.md` (completeness, fidelity, no-leakage, contract) |
+| `distillation-spec` | Stage 1 — porting intent detected | `distillation-spec.md` (the capability, their design, keep-verbatim, discard, seams, per-chunk modes) |
+| `distillation-plan` | Stage 2 — after the spec is approved | `distillation-plan.md` (source→target file map, bite-sized tasks with code) |
+| `distillation-implementation` | Stage 3 — after the plan is approved | The ported code; subagent-driven with two-stage review, then finishes the branch |
 
 ## Three modes for every chunk
 
@@ -146,18 +132,17 @@ Mode is decided per chunk during `distillation-spec`, using explicit criteria do
 
 ## Philosophy
 
-- **The reference is the source of truth.** The encoded decisions worth copying — tuned constants, step order, edge cases, prompts — are kept verbatim, and the result is verified against the reference.
+- **The reference is the source of truth.** The encoded decisions worth copying — tuned constants, step order, edge cases, prompts — are kept verbatim.
 - **Keep data verbatim, rewrite logic freely.** Control flow and structure get re-expressed in your idioms; the code-as-data gold is copied exactly.
 - **Modes are explicit.** Every chunk has a mode and a deciding criterion. "Just trust me" is not a criterion.
 - **Subagents per chunk.** Fresh context per logic-heavy chunk keeps the implementer focused. Two-stage review (spec compliance, then code quality) prevents over- or under-building.
-- **Verify before done.** A fresh-eyes gap report is the default safety net against a port that runs but is subtly wrong.
-- **Process over guessing.** Skipping the analysis or the spec produces ports nobody can audit. The flow scales — short docs for small ports — but you still run it.
+- **Process over guessing.** Skipping the spec produces ports nobody can audit. The flow scales — short docs for small ports — but you still run it.
 
 ## Status
 
 Early development.
 
-**v1 is considered ready when:** a single session can take *"I want feature X from `<path-to-reference-repo>`"* through to committed, verified code in the user's project — without manual intervention beyond approving the analysis, the spec, the plan, and the gap report.
+**v1 is considered ready when:** a single session can take *"I want feature X from `<path-to-reference-repo>`"* through to committed code in the user's project — without manual intervention beyond approving the spec and the plan.
 
 ## Contributing
 

@@ -1,9 +1,9 @@
 ---
 name: distillation-implementation
-description: Stage 4 of code distilling. Use after the distillation plan is approved to execute it — dispatching a fresh subagent per logic-heavy task with two-stage distillation-aware review, or implementing simple tasks directly. Runs continuously to the gap-report stage.
+description: Stage 3 of code distilling. Use after the distillation plan is approved to execute it — dispatching a fresh subagent per logic-heavy task with two-stage distillation-aware review, or implementing simple tasks directly. Runs continuously to the end of the plan, then finishes the branch.
 ---
 
-# Distillation Implementation (Stage 4)
+# Distillation Implementation (Stage 3)
 
 Execute the distillation plan, task by task. Each task carries its mode, its keep-verbatim items, and its seam substitutions — bring the reference's encoded decisions into your project under that mode, preserving the keep-verbatim items and wiring the seams to your dependencies.
 
@@ -11,11 +11,11 @@ Execute the distillation plan, task by task. Each task carries its mode, its kee
 
 **Core principle:** Fresh subagent per logic-heavy chunk + two-stage distillation-aware review (spec compliance then code quality) = faithful port, fast iteration. Simple copies go direct.
 
-**Continuous execution:** Do not pause to check in with the user between tasks. The human gates are between stages, not between tasks. Execute the whole plan, then proceed to `gap-report`. Stop only for a BLOCKED you cannot resolve, genuine ambiguity, or completion.
+**Continuous execution:** Do not pause to check in with the user between tasks. The human gates are between stages, not between tasks. Execute the whole plan, then finish the branch. Stop only for a BLOCKED you cannot resolve, genuine ambiguity, or completion.
 
 ## When to Use
 
-You're in Stage 4: the distillation plan is approved. Execute it. Two decisions drive each task — whether it takes the subagent path or the direct path, and (on the subagent path) what mode it runs under.
+You're in Stage 3: the distillation plan is approved. Execute it. Two decisions drive each task — whether it takes the subagent path or the direct path, and (on the subagent path) what mode it runs under.
 
 ```dot
 digraph when {
@@ -34,7 +34,6 @@ digraph when {
 **vs. plain subagent-driven-development:**
 - Every task carries a mode (`copy` / `port` / `learn-then-rewrite`), keep-verbatim items, and seam substitutions
 - Reviews check distillation discipline too: keep-verbatim preserved, no leaked deps, mode honored
-- Ends by proceeding to `gap-report` (Stage 5) — a fidelity audit before the port is declared done, not straight to finishing the branch
 
 ## The Process
 
@@ -60,7 +59,7 @@ digraph process {
     }
 
     "More tasks remain?" [shape=diamond];
-    "Proceed to gap-report (Stage 5)" [shape=doublecircle];
+    "Finish the branch — distillation done" [shape=doublecircle];
 
     "Read plan, extract tasks (mode, keep-verbatim, seams), create TodoWrite" -> "Subagent path?";
     "Subagent path?" -> "Dispatch implementer (./implementer-prompt.md)" [label="yes - logic-heavy/risky"];
@@ -79,7 +78,7 @@ digraph process {
     "Implement directly, preserve keep-verbatim, commit" -> "Mark task complete in TodoWrite";
     "Mark task complete in TodoWrite" -> "More tasks remain?";
     "More tasks remain?" -> "Subagent path?" [label="yes"];
-    "More tasks remain?" -> "Proceed to gap-report (Stage 5)" [label="no"];
+    "More tasks remain?" -> "Finish the branch — distillation done" [label="no"];
 }
 ```
 
@@ -88,7 +87,7 @@ digraph process {
 3. **Subagent path:** dispatch the implementer with the task's full text pasted in (don't make the subagent read the plan file). Answer any questions before it proceeds. On DONE, run the spec-compliance reviewer; on pass, the code-quality reviewer. Loop fixes until both pass.
 4. **Direct path:** implement it yourself, preserve every keep-verbatim item, commit.
 5. Mark the task complete. Continue until the plan is done.
-6. Proceed to `gap-report` — verification comes before declaring the port done. (Do NOT jump to finishing the branch.)
+6. When the plan is complete, finish the branch — the port is done.
 
 ## Distillation-Aware Review
 
@@ -139,7 +138,7 @@ Implementer subagents report one of four statuses. Handle each appropriately:
 ## Example Workflow
 
 ```
-You: Executing the distillation plan (Stage 4): docs/code-distilling/token-bucket/distillation-plan.md
+You: Executing the distillation plan (Stage 3): docs/code-distilling/token-bucket/distillation-plan.md
 
 [Read plan once]
 [Extract all 4 tasks with full text — each with mode, keep-verbatim, seams]
@@ -183,9 +182,9 @@ Task 2: Config struct  (mode: copy, 1 file)
 ...
 
 [After all tasks]
-Proceed to gap-report (Stage 5) — do NOT finish the branch yet.
+Finish the branch — the port is done.
 
-Done with Stage 4!
+Done with Stage 3!
 ```
 
 ## Advantages
@@ -198,7 +197,6 @@ Done with Stage 4!
 **vs. plain subagent-driven-development:**
 - Reviews enforce fidelity (keep-verbatim) and cleanliness (no leaked deps), not just spec + quality
 - Modes make the keep / translate / rewrite decision explicit per chunk
-- Routes to `gap-report` for a fidelity audit before the branch is finished
 
 **Efficiency gains:**
 - No file-reading overhead — you provide the full task text, mode, keep-verbatim, and seams
@@ -210,13 +208,12 @@ Done with Stage 4!
 - Self-review catches issues before handoff
 - Two-stage review: spec compliance (incl. keep-verbatim, no leaked deps, mode) then code quality (incl. target idioms, no leaked cruft)
 - Review loops ensure fixes actually land
-- `gap-report` audits completeness and fidelity at the end
 
 **Cost:**
 - More subagent invocations (implementer + 2 reviewers per logic-heavy chunk)
 - You do more prep work (extracting all tasks, modes, keep-verbatim, and seams upfront)
 - Review loops add iterations
-- But catches altered constants, leaked deps, and mode drift early — far cheaper than discovering them in `gap-report` or after merge
+- But catches altered constants, leaked deps, and mode drift early — far cheaper than discovering them after merge
 
 ## Red Flags
 
@@ -234,7 +231,6 @@ Done with Stage 4!
 - Accept "close enough" on spec compliance (spec reviewer found issues = not done)
 - **Start code quality review before spec compliance is ✅** (wrong order)
 - Move to the next task while either review has open issues
-- **Jump to finishing the branch** — `gap-report` (Stage 5) comes first
 
 **If a subagent asks questions:**
 - Answer clearly and completely
@@ -254,8 +250,7 @@ Done with Stage 4!
 
 **Within the code-distilling flow:**
 - **code-distilling:distillation-plan** — produces the plan this stage executes
-- **code-distilling:gap-report** — Stage 5 verification; run it after all tasks (NOT finishing-a-development-branch directly)
-- **code-distilling:using-code-distilling** — the overall 5-stage flow and its human gates
+- **code-distilling:using-code-distilling** — the overall 3-stage flow and its human gates
 
 **Subagents use:**
 - The prompt templates in this skill — `./implementer-prompt.md`, `./spec-reviewer-prompt.md`, `./code-quality-reviewer-prompt.md`. They are self-contained: this plugin does not ship `requesting-code-review`.

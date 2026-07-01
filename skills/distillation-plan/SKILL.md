@@ -1,9 +1,9 @@
 ---
 name: distillation-plan
-description: Stage 3 of code distilling. Use after the distillation spec is approved to turn it into a bite-sized, file-mapped implementation plan — a source→target file map and per-task steps carrying mode, keep-verbatim items, and seam substitutions, with complete code in every step. Produces distillation-plan.md.
+description: Stage 2 of code distilling. Use after the distillation spec is approved to turn it into a bite-sized, file-mapped implementation plan — a source→target file map and per-task steps carrying mode, keep-verbatim items, and seam substitutions, with complete code in every step. Produces distillation-plan.md.
 ---
 
-# Distillation Plan (Stage 3)
+# Distillation Plan (Stage 2)
 
 ## Overview
 
@@ -19,7 +19,7 @@ Do NOT dispatch implementers or write any port code until the plan is written an
 
 ## Input
 
-The approved `distillation-spec.md`: the contract, the keep-verbatim list, the discard list, the seam→your-deps mapping, the per-chunk modes, and the verification strategy. Every task in the plan traces back to a chunk in the spec. If the spec is missing or unapproved, go back to `distillation-spec` first.
+The approved `distillation-spec.md`: the contract, the keep-verbatim list, the discard list, the seam→your-deps mapping, and the per-chunk modes. Every task in the plan traces back to a chunk in the spec. If the spec is missing or unapproved, go back to `distillation-spec` first.
 
 ## Scope Check
 
@@ -37,7 +37,7 @@ Each target file should have one clear responsibility; files that change togethe
 
 ## Bite-Sized Task Granularity
 
-Each step is one action (2–5 minutes). Every chunk follows the same shape: implement preserving keep-verbatim and wiring seams, spot-check, commit. The fidelity check happens in `gap-report`.
+Each step is one action (2–5 minutes). Every chunk follows the same shape: implement preserving keep-verbatim and wiring seams, spot-check, commit.
 
 ## Plan Document Header
 

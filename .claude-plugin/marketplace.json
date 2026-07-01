@@ -9,7 +9,7 @@
     {
       "name": "code-distilling",
       "source": "./",
-      "description": "Port high-quality implementations from reference open-source repos into your project with discipline: analysis, spec, plan, implementation, and verification against the reference."
+      "description": "Port high-quality implementations from reference open-source repos into your project with discipline: spec, plan, and implementation."
     }
   ]
 }

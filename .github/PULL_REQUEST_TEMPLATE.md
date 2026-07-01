@@ -8,7 +8,7 @@ of human involvement will be closed without review.
 
 <!-- Describe the specific problem you encountered. If this was a session
      issue (the agent got the porting flow wrong, the keep-verbatim or
-     gap-report discipline broke down), include: what you
+     two-stage review discipline broke down), include: what you
      were doing, what went wrong, the model's exact failure mode, and
      ideally a transcript or session log.
 
@@ -22,8 +22,7 @@ of human involvement will be closed without review.
 ## Is this change appropriate for the core plugin?
 
 <!-- `code-distilling` core contains the porting workflow: reference
-     analysis, design, planning, execution, and gap-report
-     verification. Ask yourself:
+     exploration, spec, planning, and execution. Ask yourself:
 
      - Would this be useful to someone porting code from a *completely
        different* reference repo than the one that motivated your change?
@@ -76,7 +75,7 @@ of human involvement will be closed without review.
 
          Let's port the X feature from /path/to/reference-repo.
 
-     A working integration auto-triggers `reference-analysis` before any
+     A working integration auto-triggers `distillation-spec` before any
      code is written. Paste the complete transcript below.
 
      These are NOT real integrations and PRs that ship them will be closed:
@@ -84,7 +83,7 @@ of human involvement will be closed without review.
      - Manually copying skill files into the harness.
      - Wrapping with `npx skills` or similar at-runtime shims.
      - Anything that requires the user to opt in to skills per-session.
-     - Anything where `reference-analysis` does not auto-trigger on the
+     - Anything where `distillation-spec` does not auto-trigger on the
        test above.
 -->
 
@@ -106,7 +105,7 @@ paste the complete transcript here
 
 <!-- "It works" is not evaluation. Describe the before/after difference
      you observed across multiple sessions. Porting flows have a lot of
-     branching — mode decisions, keep-verbatim fidelity, gap-report
+     branching — mode decisions, keep-verbatim fidelity, and review
      outcomes. Demonstrate that your change improves outcomes on more
      than one path. -->
 

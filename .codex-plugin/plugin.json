@@ -1,7 +1,7 @@
 {
   "name": "code-distilling",
-  "version": "0.3.1",
-  "description": "Port high-quality implementations from reference open-source repos into your project with discipline: analysis, spec, plan, implementation, and verification against the reference.",
+  "version": "0.4.0",
+  "description": "Port high-quality implementations from reference open-source repos into your project with discipline: spec, plan, and implementation.",
   "author": {
     "name": "Nghia Duong",
     "email": "duongnghia222@gmail.com"
@@ -21,7 +21,7 @@
   "interface": {
     "displayName": "Code Distilling",
     "shortDescription": "Disciplined porting of features from reference open-source repos into your project.",
-    "longDescription": "Use Code Distilling to analyze a reference repo, write a distillation spec (per-chunk mode copy / port / learn-then-rewrite, a keep-verbatim list, and a seam mapping to your deps), turn it into a bite-sized implementation plan, execute the port task by task with two-stage review, and verify the result against the reference with a gap report.",
+    "longDescription": "Use Code Distilling to analyze a reference repo, write a distillation spec (per-chunk mode copy / port / learn-then-rewrite, a keep-verbatim list, and a seam mapping to your deps), turn it into a bite-sized implementation plan, and execute the port task by task with two-stage review.",
     "developerName": "Nghia Duong",
     "category": "Coding",
     "capabilities": [
