@@ -90,7 +90,7 @@ Each task carries its distillation context, then bite-sized steps.
 
 ```bash
 git add <files>
-git commit -m "distill(<repo>): <what was distilled>"
+git commit -m "feat(<feature>): <what was implemented>"
 ```
 ````
 

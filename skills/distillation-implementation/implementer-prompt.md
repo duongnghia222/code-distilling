@@ -57,7 +57,7 @@ Task tool (general-purpose):
     1. Implement the chunk under its mode.
     2. Preserve every keep-verbatim item exactly; wire seams to this project's deps; import NONE of
        the reference's deps.
-    3. Commit — one commit per chunk: `distill(<repo>): <what was distilled>`.
+    3. Commit — one commit per chunk, Conventional Commits style: `feat(<feature>): <what was implemented>` (use `fix`, `refactor`, etc. as appropriate).
     4. Self-review (see below).
     5. Report back.
 

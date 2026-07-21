@@ -157,7 +157,7 @@ Implementer: [proceeds]
   - Wrote an independent token bucket (no pasted reference lines)
   - Preserved REFILL_INTERVAL_MS=250 and BURST_FACTOR=1.5 exactly, cited bucket.go
   - Wired the clock seam to clock.monotonic(); imported none of their runtime
-  - Spot-checked the refill math against the reference; committed: distill(ratelimit): token-bucket refill
+  - Spot-checked the refill math against the reference; committed: feat(ratelimit): token-bucket refill
   - Self-review: all good
 
 [Dispatch spec-compliance reviewer]
@@ -176,7 +176,7 @@ Code reviewer: Strengths: idiomatic TS, constants isolated and labeled. Issues: 
 Task 2: Config struct  (mode: copy, 1 file)
 
 [Simple/copy -> direct path]
-[Implement directly, preserve field names + defaults, commit: distill(ratelimit): config]
+[Implement directly, preserve field names + defaults, commit: feat(ratelimit): config]
 [Mark Task 2 complete]
 
 ...
