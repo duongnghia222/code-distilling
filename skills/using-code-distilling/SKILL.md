@@ -1,6 +1,6 @@
 ---
 name: using-code-distilling
-description: Use when the user wants to port, distill, copy, borrow, or "bring in" a feature or capability from a reference open-source repo into their own project. Establishes the 3-stage distillation flow and its human gates.
+description: Use when the user wants to port, distill, copy, borrow, or "bring in" a feature or capability from a reference open-source repo into their own project.
 ---
 
 # Using Code Distilling
@@ -58,13 +58,13 @@ digraph distilling {
 
 | Stage | Skill | Produces | Gate |
 |-------|-------|----------|------|
-| 1 | `distillation-spec` | `distillation-spec.md` — explore the reference & agree the copy list, then contract · keep-verbatim · discard · seam→your-deps · per-chunk modes | human: capability + keep/discard |
+| 1 | `distillation-spec` | `distillation-spec.md` — explore the reference & agree the copy list, then contract · keep-verbatim · discard · seam→your-deps · chunk table | human: capability + keep/discard |
 | 2 | `distillation-plan` | `distillation-plan.md` — source→target file map · bite-sized tasks with code, keep-verbatim, seams | human: task breakdown |
 | 3 | `distillation-implementation` | the code + commits — execute the plan, then finish the branch | none (runs continuously) |
 
 Artifacts live in `docs/code-distilling/<capability>/`.
 
-## Human Judgment
+## Human Gates
 
 Gates are **between stages** (1→2 and 2→3). Within Stage 3, subagents run **continuously** without per-task check-ins — that's by design and is not a missing gate.
 

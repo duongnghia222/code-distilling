@@ -1,6 +1,6 @@
 # Plan Document Reviewer Prompt Template (Distillation)
 
-Use this template when dispatching a plan document reviewer subagent.
+Use this template when dispatching a plan document reviewer subagent (optional, for large plans).
 
 **Purpose:** verify the plan is complete, matches the spec, preserves the gold, and is buildable.
 
@@ -20,7 +20,7 @@ Task tool (general-purpose):
     | Completeness | TODOs, placeholders, incomplete tasks, missing steps |
     | Spec alignment | Every chunk in the spec has a task; no major scope creep |
     | Keep-verbatim coverage | Every keep-verbatim item from the spec appears, verbatim, in a task — constants, prompts, step order, regexes. A missing one is a dropped trick. |
-    | Seam / mode discipline | Each task's mode matches the spec; seam substitutions are named; no task introduces a reference dependency |
+    | Seam / adaptation discipline | Each task carries its chunk's adaptation notes; seam substitutions are named with any delta's resolution; no task introduces a reference dependency |
     | Task decomposition | Tasks have clear boundaries; steps are actionable with real code |
     | Buildability | Could a zero-context engineer follow this without getting stuck? |
 
@@ -31,7 +31,7 @@ Task tool (general-purpose):
     reference dep, contradictory steps, placeholder content, or tasks too vague to act on.
     Minor wording and stylistic preferences are not blocking.
 
-    ## Output Format
+    ## Report
 
     ## Plan Review
 

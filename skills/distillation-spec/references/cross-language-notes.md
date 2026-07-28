@@ -1,8 +1,8 @@
 # Cross-Language Notes
 
-A reference for `distillation-spec` (and the implementer in `distillation-implementation`) when source and target languages differ. Use to inform mode decisions and to guide adaptations in `port` and `learn-then-rewrite` chunks.
+A reference for `distillation-spec` (and the implementer in `distillation-implementation`) when source and target languages differ. Use to write each chunk's adaptation notes and to guide the translation.
 
-This is not a complete language-pair handbook. It captures the recurring decision points; specific translations belong in the spec's adaptation-notes column on a per-chunk basis.
+This is not a complete language-pair handbook. It captures the recurring decision points; specific translations belong in the spec's adaptation notes on a per-chunk basis.
 
 ## Type-system mappings
 
@@ -20,7 +20,7 @@ This is not a complete language-pair handbook. It captures the recurring decisio
 When porting:
 
 - Map the concept first, then the syntax. A `Result<T, E>` in Rust ported to TS often becomes a discriminated union, not a thrown exception, if the original code branches on it explicitly.
-- Where the target language has no equivalent (e.g., union types in Go), use the closest pattern (interfaces, tag fields) and note the loss in the adaptation-notes.
+- Where the target language has no equivalent (e.g., union types in Go), use the closest pattern (interfaces, tag fields) and note the loss in the adaptation notes.
 
 ## Concurrency idioms
 
@@ -57,7 +57,7 @@ When the user's project already pins a library for the function, prefer that pin
 
 ## Things that usually do NOT port cleanly
 
-When you see these in the source, lean toward `learn-then-rewrite`:
+When you see these in the source, they are almost always packaging rather than gold. Put them on the discard list and write an adaptation note saying what replaces them — don't try to carry the construct across:
 
 - Metaclasses, decorator-driven class registration (Python).
 - Macro-heavy code (Rust, C, Lisp).

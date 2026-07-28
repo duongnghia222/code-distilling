@@ -22,7 +22,7 @@ The files under `skills/` are **agent instructions that shape how other agents b
 .codex-plugin/      plugin.json (Codex manifest)
 skills/             the four skills (each: SKILL.md + references/ + *-prompt.md)
   using-code-distilling/        session-start bootstrap; routes on porting intent
-  distillation-spec/            Stage 1 — contract, keep-verbatim, seams, per-chunk modes
+  distillation-spec/            Stage 1 — contract, keep-verbatim, discard, seams, chunk table
   distillation-plan/            Stage 2 — source→target file map, bite-sized tasks
   distillation-implementation/  Stage 3 — subagent-driven build + two-stage review
 hooks/              SessionStart hook that injects the bootstrap (session-start, run-hook.cmd)

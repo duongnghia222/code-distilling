@@ -1,20 +1,18 @@
-# Code Quality Reviewer Prompt Template (Distillation)
+# Code-Quality Reviewer Prompt Template (Distillation)
 
-Use this template when dispatching a code quality reviewer subagent.
+Use this template when dispatching a code-quality reviewer subagent. **Only dispatch after the spec-compliance review passes.**
 
 **Purpose:** verify the distilled chunk is well-built — idiomatic in the target, clean, and free of leaked reference cruft.
 
-**Only dispatch after the spec-compliance review passes.**
-
 ```
 Task tool (general-purpose):
-  description: "Code quality review for Chunk N"
+  description: "Review code quality for Task N: [task name]"
   prompt: |
     You are reviewing the quality of a distilled chunk. Review the diff between [BASE_SHA] and [HEAD_SHA].
 
     ## Context
 
-    [chunk summary from the implementer's report; the chunk's mode]
+    [chunk summary from the implementer's report; the chunk's adaptation notes]
 
     ## Review For:
 

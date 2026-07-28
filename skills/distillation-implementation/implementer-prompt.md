@@ -1,6 +1,8 @@
-# Implementer Subagent Prompt Template (Distillation)
+# Implementer Prompt Template (Distillation)
 
-Use this template when dispatching an implementer subagent.
+Use this template when dispatching an implementer subagent for a logic-heavy task.
+
+**Purpose:** port one chunk faithfully — keep-verbatim items exact, seams wired to this project's deps, adaptation notes followed.
 
 ```
 Task tool (general-purpose):
@@ -16,14 +18,17 @@ Task tool (general-purpose):
 
     [Scene-setting: where this chunk fits, the contract it must satisfy, surrounding architecture, dependencies]
 
-    ## Mode
+    ## How to Port It
 
-    [copy | port | learn-then-rewrite] — what it means for this chunk:
-    - copy: bring the reference code over near-verbatim; change only imports and naming.
-    - port: preserve the reference's structure; translate to this project's language/idioms.
-    - learn-then-rewrite: understand the reference, then write INDEPENDENT code that satisfies the
-      contract. Do NOT refer to the reference's lines while typing. If you find you need the lines,
-      this chunk is really a port — stop and report it.
+    This chunk is a port. Preserve the reference's encoded decisions — the keep-verbatim items
+    exactly, and its structure wherever the structure is load-bearing — and translate everything
+    else into this project's language and idioms. The adaptation notes below say which is which.
+
+    ## Adaptation Notes
+
+    [what has to change on the way over and why: idiom translation, which structure is load-bearing
+    vs. incidental, library substitutions, the reference scaffolding being dropped. Follow these —
+    they carry decisions made during the spec, not suggestions.]
 
     ## Keep-Verbatim Items (the gold — copy exactly)
 
@@ -34,7 +39,8 @@ Task tool (general-purpose):
     ## Seam Mapping (wire to THIS project's deps)
 
     [their input/output → this project's dependency. Do NOT import the reference's framework or
-    libraries — use the substitutions listed here.]
+    libraries — use the substitutions listed here. Where a seam carries a semantic delta, its
+    resolution is stated: implement the resolution, not just the swap.]
 
     ## Reference Location
 
@@ -44,7 +50,7 @@ Task tool (general-purpose):
 
     If you have questions about:
     - The contract or acceptance criteria for this chunk
-    - The mode and what it requires of you
+    - The adaptation notes and what they require of you
     - The keep-verbatim items (exact values, exact wording)
     - The seam substitutions, or which of this project's deps to wire to
     - Anything unclear in the task description
@@ -53,8 +59,8 @@ Task tool (general-purpose):
 
     ## Your Job
 
-    Once you're clear on the contract, the mode, the keep-verbatim items, and the seams:
-    1. Implement the chunk under its mode.
+    Once you're clear on the contract, the keep-verbatim items, the seams, and the adaptation notes:
+    1. Port the chunk.
     2. Preserve every keep-verbatim item exactly; wire seams to this project's deps; import NONE of
        the reference's deps.
     3. Commit — one commit per chunk, Conventional Commits style: `feat(<feature>): <what was implemented>` (use `fix`, `refactor`, etc. as appropriate).
@@ -87,15 +93,15 @@ Task tool (general-purpose):
     **STOP and escalate when:**
     - The chunk needs architectural decisions with multiple valid approaches.
     - You can't understand the reference well enough to preserve its behavior.
-    - A `port` chunk needs so much restructuring it's becoming a rewrite (a mode shift — escalate,
-      don't shift silently).
+    - You can't port the chunk without discarding the reference's structure wholesale (it was
+      mis-scoped — escalate, don't quietly write your own implementation instead).
     - You feel uncertain whether your approach preserves the reference's encoded decisions.
     - You've been reading file after file — yours or the reference's — without progress.
 
     **How to escalate:** Report back with status BLOCKED or NEEDS_CONTEXT. Describe specifically
     what you're stuck on, what you've tried, and what kind of help you need. The controller can
     provide more context, re-dispatch with a more capable model, break the chunk into smaller
-    pieces, or re-classify the mode.
+    pieces, or re-scope the chunk.
 
     ## Before Reporting Back: Self-Review
 
@@ -115,8 +121,8 @@ Task tool (general-purpose):
     - Is every keep-verbatim item present and byte-for-byte unaltered (no rounded constants,
       reworded prompts, or reordered steps)?
     - Did I import any of the reference's deps? (must be none — seams wired to this project's deps)
-    - For learn-then-rewrite: did I write this independently, without pasting reference lines?
-    - Did I stay within the mode (copy changed only imports/naming; port preserved structure)?
+    - Did I follow the adaptation notes — preserving the structure called load-bearing, and
+      leaving behind the scaffolding the spec discarded?
 
     If you find issues during self-review, fix them now before reporting.
 
@@ -124,7 +130,7 @@ Task tool (general-purpose):
 
     When done, report:
     - **Status:** DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
-    - What you implemented (or what you attempted, if blocked); the mode used
+    - What you implemented (or what you attempted, if blocked); how you handled the adaptation notes
     - Keep-verbatim items preserved (list them)
     - Seam substitutions made
     - How you spot-checked the chunk against the reference

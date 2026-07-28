@@ -2,7 +2,7 @@
 
 > Port high-quality implementations from reference open-source repos into your project — with discipline.
 
-`code-distilling` is a Claude Code and Codex plugin that turns *"I want to copy this feature from that repo"* into a controlled workflow: explore the reference and write a distillation spec (decide per-chunk what to **copy** / **port** / **learn-then-rewrite**, what to keep verbatim, how the seams wire into your project), and implement it.
+`code-distilling` is a Claude Code and Codex plugin that turns *"I want to copy this feature from that repo"* into a controlled workflow: explore the reference and write a distillation spec (what to keep verbatim, what to discard, how the seams wire into your project), and implement it.
 
 It is a sister-plugin to [Superpowers](https://github.com/obra/superpowers) and follows the same skill-driven discipline. You do not need Superpowers installed to use it.
 
@@ -34,8 +34,8 @@ You point the plugin at a reference repo by path — any path on disk works. Clo
 
 Then ask Claude or Codex to port a feature, naming the reference's path. The plugin walks you through three stages, with human approval gates after the spec and the plan:
 
-1. **`distillation-spec`** — deep-reads the reference, locates the one capability, explains its design, and agrees with you on exactly what to copy; then writes the distillation spec: the behavioral contract, the keep-verbatim list (tuned constants, prompts, step order), the discard list, the seam → your-deps mapping, and a per-chunk mode (**copy** / **port** / **learn-then-rewrite**). You approve it.
-2. **`distillation-plan`** — turns the spec into a bite-sized, file-mapped implementation plan: a source→target file map and per-task steps carrying the mode, keep-verbatim items, and seam substitutions, with complete code in every step. You approve it.
+1. **`distillation-spec`** — deep-reads the reference, locates the one capability, explains its design, and agrees with you on exactly what to copy; then writes the distillation spec: the behavioral contract, the keep-verbatim list (tuned constants, prompts, step order), the discard list, the seam → your-deps mapping, and the chunk table (each chunk traced to reference code, with its keep-verbatim items and adaptation notes). You approve it.
+2. **`distillation-plan`** — turns the spec into a bite-sized, file-mapped implementation plan: a source→target file map and per-task steps carrying keep-verbatim items, seam substitutions, and adaptation notes, with complete code in every step. You approve it.
 3. **`distillation-implementation`** — executes the plan, task by task: a fresh subagent per logic-heavy task with two-stage review (spec compliance, then code quality); simple tasks implemented directly. Runs continuously, then finishes the branch.
 
 The skills auto-trigger when the agent sees porting intent and a reference repo path. You don't need to type any slash commands.
@@ -95,7 +95,7 @@ Agent: I'm using `distillation-spec` to map the reference and write the spec.
        [reads ~/code/awesome-auth/, locates the OAuth files]
        Here's their design, and here's what I'd copy vs leave behind...
        [writes docs/code-distilling/oauth-flow/distillation-spec.md
-        — contract, keep-verbatim list, seam mapping, per-chunk modes]
+        — contract, keep-verbatim list, seam mapping, chunk table]
        Please confirm the capability and the keep/discard split before we plan.
 
 User: Approved.
@@ -109,7 +109,7 @@ User: Approved.
 
 Agent: I'm using `distillation-implementation` to build it.
        [dispatches a fresh subagent per logic-heavy chunk; two-stage review each]
-       [implements simple copy-chunks directly]
+       [implements mechanical chunks directly]
        All 5 chunks done — finishing the branch.
 ```
 
@@ -118,23 +118,27 @@ Agent: I'm using `distillation-implementation` to build it.
 | Skill | When it fires | What it produces |
 |-------|---------------|------------------|
 | `using-code-distilling` | Session start (bootstrap) | Routes to the flow on porting intent |
-| `distillation-spec` | Stage 1 — porting intent detected | `distillation-spec.md` (the capability, their design, keep-verbatim, discard, seams, per-chunk modes) |
+| `distillation-spec` | Stage 1 — porting intent detected | `distillation-spec.md` (the capability, their design, keep-verbatim, discard, seams, chunk table) |
 | `distillation-plan` | Stage 2 — after the spec is approved | `distillation-plan.md` (source→target file map, bite-sized tasks with code) |
 | `distillation-implementation` | Stage 3 — after the plan is approved | The ported code; subagent-driven with two-stage review, then finishes the branch |
 
-## Three modes for every chunk
+## Every chunk is a port
 
-- **copy** — same language, idiomatic for target. Minimal changes (rename imports/types).
-- **port** — different language, OR same language with materially different idioms, OR target-incompatible patterns (browser globals in a Node project), OR a library substitution.
-- **learn-then-rewrite** — the chunk is heavily entangled with reference-specific infrastructure that doesn't exist in the target; OR the value is the algorithmic approach, not the code itself; OR cross-language translation is so heavy that "porting" is misleading.
+There are no per-chunk mode labels. Every chunk is ported: preserve the reference's encoded decisions — the keep-verbatim items exactly, and its structure wherever the structure is load-bearing — and translate everything else into your project's language and idioms.
 
-Mode is decided per chunk during `distillation-spec`, using explicit criteria documented in `skills/distillation-spec/references/mode-decision-criteria.md`. The deciding criterion is recorded in the spec so reviewers can validate.
+The fidelity decision lives at a finer grain than a chunk label could carry:
+
+- The **keep-verbatim list** names what must survive untouched, item by item — tuned constants, prompt templates, step order, regexes, lookup tables.
+- The **discard list** names the packaging left behind — their framework, config system, logging, scale-driven abstractions.
+- The **adaptation note** on each chunk says what changes on the way over and why: the idiom translation, which structure is load-bearing vs. incidental, the library substitutions.
+
+Together those say more than "copy" or "rewrite" ever did, and they say it per item rather than per chunk.
 
 ## Philosophy
 
 - **The reference is the source of truth.** The encoded decisions worth copying — tuned constants, step order, edge cases, prompts — are kept verbatim.
 - **Keep data verbatim, rewrite logic freely.** Control flow and structure get re-expressed in your idioms; the code-as-data gold is copied exactly.
-- **Modes are explicit.** Every chunk has a mode and a deciding criterion. "Just trust me" is not a criterion.
+- **Fidelity is per item, not per chunk.** The keep-verbatim list says what survives byte-for-byte; the discard list says what's left behind; the adaptation note says what changes and why. "Just trust me" is not one of them.
 - **Subagents per chunk.** Fresh context per logic-heavy chunk keeps the implementer focused. Two-stage review (spec compliance, then code quality) prevents over- or under-building.
 - **Process over guessing.** Skipping the spec produces ports nobody can audit. The flow scales — short docs for small ports — but you still run it.
 
