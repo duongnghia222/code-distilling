@@ -34,7 +34,7 @@ Task tool (general-purpose):
 
     [List the code-as-data items for this chunk: thresholds, constants, prompt templates, step order,
     regexes, lookup tables. These are empirical findings. Do NOT round, rephrase, reorder, or
-    "clean up". Reproduce them exactly, citing the reference location in a comment.]
+    "clean up". Reproduce them exactly.]
 
     ## Seam Mapping (wire to THIS project's deps)
 
@@ -63,9 +63,14 @@ Task tool (general-purpose):
     1. Port the chunk.
     2. Preserve every keep-verbatim item exactly; wire seams to this project's deps; import NONE of
        the reference's deps.
-    3. Commit — one commit per chunk, Conventional Commits style: `feat(<feature>): <what was implemented>` (use `fix`, `refactor`, etc. as appropriate).
-    4. Self-review (see below).
-    5. Report back.
+    3. Write it as this project's own code. Never name the reference — no repo name, file path, line
+       number, or "port of / adapted from / based on" anywhere in the source, in comments,
+       docstrings, or identifiers. Provenance is tracked in the distillation spec; the code carries
+       none of it. Comment the code as you would any code you wrote here: explain the non-obvious,
+       and where a constant is empirical, say what it means — not where it came from.
+    4. Commit — one commit per chunk, Conventional Commits style: `feat(<feature>): <what was implemented>` (use `fix`, `refactor`, etc. as appropriate).
+    5. Self-review (see below).
+    6. Report back.
 
     Work from: [directory]
 
@@ -121,6 +126,8 @@ Task tool (general-purpose):
     - Is every keep-verbatim item present and byte-for-byte unaltered (no rounded constants,
       reworded prompts, or reordered steps)?
     - Did I import any of the reference's deps? (must be none — seams wired to this project's deps)
+    - Does any comment, docstring, or identifier name the reference — its repo, files, or lines?
+      (must be none — strip them; the code reads as this project's own)
     - Did I follow the adaptation notes — preserving the structure called load-bearing, and
       leaving behind the scaffolding the spec discarded?
 

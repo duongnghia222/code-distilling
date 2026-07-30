@@ -44,6 +44,9 @@ Task tool (general-purpose):
     - Were the adaptation notes followed? Is the structure the spec called load-bearing still there?
     - Did the scaffolding the spec discarded come along anyway?
     - Is this a port of the reference, or did they quietly write their own implementation instead?
+    - Does any comment, docstring, or identifier name the reference — its repo, files, or lines, or
+      an "adapted from" note? Provenance belongs in the spec doc; flag every trace that reached the
+      code.
 
     Verify by reading code, not by trusting the report.
 

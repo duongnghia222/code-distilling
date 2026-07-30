@@ -155,7 +155,7 @@ Implementer: "Does the reference clamp to MAX_TOKENS before or after refill?"
 You: "After refill — see reference bucket.go:42."
 Implementer: [proceeds]
   - Ported the refill formula and clamp order; dropped the goroutine per the adaptation note
-  - Preserved REFILL_INTERVAL_MS=250 and BURST_FACTOR=1.5 exactly, cited bucket.go
+  - Preserved REFILL_INTERVAL_MS=250 and BURST_FACTOR=1.5 exactly
   - Wired the clock seam to clock.monotonic(); imported none of their runtime
   - Spot-checked the refill math against the reference; committed: feat(ratelimit): token-bucket refill
   - Self-review: all good
@@ -200,7 +200,8 @@ The subagent path costs more: three dispatches per logic-heavy task (implementer
 - Dispatch multiple implementer subagents in parallel (conflicts)
 - Make a subagent read the plan file (paste the full task text instead)
 - Skip the keep-verbatim / seam / adaptation context (the subagent needs to know where the chunk fits)
-- **Alter keep-verbatim** — round a constant, reword a prompt, reorder steps. It's the gold; reproduce it exactly, citing the reference location.
+- **Alter keep-verbatim** — round a constant, reword a prompt, reorder steps. It's the gold; reproduce it exactly.
+- **Name the reference in the code** — no repo name, file path, line number, or "port of / adapted from" in comments, docstrings, or identifiers. Provenance lives in the distillation spec; the shipped code reads as this project's own.
 - **Import the reference's deps** — wire seams to your project's dependencies per the plan instead.
 - **Silently reinvent a chunk** — if you can't port it without discarding the reference's structure wholesale, escalate; the chunk was mis-scoped (a spec/plan amendment).
 - **Drop an adaptation note** — the note says which structure is load-bearing; ignoring it loses an encoded decision as surely as rounding a constant.

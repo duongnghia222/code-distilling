@@ -111,7 +111,7 @@ The classic mistake is backwards: faithfully reproducing their class hierarchy (
 **Listing keep-verbatim items (the gold):**
 
 - Pull the code-as-data items you flagged during exploration: thresholds, constants, prompt templates, the order of steps, specific regexes/normalizations, lookup tables.
-- These are empirical findings, not style. They are copied exactly — no rounding, no rephrasing, no reordering. Cite the reference location for each.
+- These are empirical findings, not style. They are copied exactly — no rounding, no rephrasing, no reordering. Record each one's reference location **in this spec** — that is where provenance lives. It never goes into the ported source.
 
 **Listing discard items:**
 
