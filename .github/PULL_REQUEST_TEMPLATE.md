@@ -22,7 +22,7 @@ of human involvement will be closed without review.
 ## Is this change appropriate for the core plugin?
 
 <!-- `code-distilling` core contains the porting workflow: reference
-     exploration, spec, planning, and execution. Ask yourself:
+     exploration, design specification, and implementation. Ask yourself:
 
      - Would this be useful to someone porting code from a *completely
        different* reference repo than the one that motivated your change?

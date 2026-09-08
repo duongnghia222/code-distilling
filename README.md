@@ -32,11 +32,12 @@ You point the plugin at a reference repo by path — any path on disk works. Clo
   cool-search-lib/
 ```
 
-Then ask Claude or Codex to port a feature, naming the reference's path. The plugin walks you through three stages, with human approval gates after the spec and the plan:
+Then ask your coding agent to port a feature, naming the reference's path. The workflow has two stages:
 
-1. **`distillation-spec`** — deep-reads the reference, locates the one capability, explains its design, and agrees with you on exactly what to copy; then writes the distillation spec: the behavioral contract, the keep-verbatim list (tuned constants, prompts, step order), the discard list, the seam → your-deps mapping, and the chunk table (each chunk traced to reference code, with its keep-verbatim items and adaptation notes). You approve it.
-2. **`distillation-plan`** — turns the spec into a bite-sized, file-mapped implementation plan: a source→target file map and per-task steps carrying keep-verbatim items, seam substitutions, and adaptation notes, with complete code in every step. You approve it.
-3. **`distillation-implementation`** — executes the plan, task by task: a fresh subagent per logic-heavy task with two-stage review (spec compliance, then code quality); simple tasks implemented directly. Runs continuously, then finishes the branch.
+1. **`distillation-spec`** — traces the reference and target, then records the contract, architecture, workflow, domain heuristics, prompt/skill design, exact assets, behavioral invariants, integration differences, and acceptance cases. The spec contains the knowledge another agent needs to reproduce the feature.
+2. **`distillation-implementation`** — builds directly from the spec and source, choosing implementation details as work develops. It verifies fidelity and target integration. Delegation is optional; there is no separate plan document or mandatory task approval.
+
+An end-to-end port proceeds after the spec unless a material choice needs your input. A spec-only request stops at the spec. Any review gates you request still apply.
 
 The skills auto-trigger when the agent sees porting intent and a reference repo path. You don't need to type any slash commands.
 
@@ -82,7 +83,7 @@ This repo ships a `.codex-plugin/` manifest. Install it through your harness's p
 
 ### Other harnesses
 
-The plugin uses a standard `SessionStart` hook that emits `additionalContext` JSON. Any harness that supports session-start hooks and additional-context injection can use it. See `hooks/session-start` for the platform-detection logic.
+The skill instructions use ordinary Markdown and do not require named tools or subagents. A coding CLI, including GitHub Copilot, can follow them when its environment makes the skills available; start with `skills/using-code-distilling/SKILL.md`. Automatic discovery depends on the harness integration. See `hooks/session-start` for the existing context-output branches; portability of the instructions is not a claim of end-to-end testing on every CLI.
 
 ## What you'll see in a session
 
@@ -93,24 +94,13 @@ User: I want to port the OAuth flow from ~/code/awesome-auth into src/auth/.
 
 Agent: I'm using `distillation-spec` to map the reference and write the spec.
        [reads ~/code/awesome-auth/, locates the OAuth files]
-       Here's their design, and here's what I'd copy vs leave behind...
        [writes docs/code-distilling/oauth-flow/distillation-spec.md
-        — contract, keep-verbatim list, seam mapping, chunk table]
-       Please confirm the capability and the keep/discard split before we plan.
+        — contract, design decisions, state transitions, integration, checks]
+       The spec captures the flow and target adaptations. I'll implement it now.
 
-User: Approved.
-
-Agent: I'm using `distillation-plan` to write the implementation plan.
-       [writes docs/code-distilling/oauth-flow/distillation-plan.md
-        — source→target file map, bite-sized tasks with code]
-       Please review the task breakdown before we implement.
-
-User: Approved.
-
-Agent: I'm using `distillation-implementation` to build it.
-       [dispatches a fresh subagent per logic-heavy chunk; two-stage review each]
-       [implements mechanical chunks directly]
-       All 5 chunks done — finishing the branch.
+Agent: I'm using `distillation-implementation` to build and verify it.
+       [ports the behavior, checks callback/error paths and target integration]
+       The port is implemented. Here are the checks and any remaining limitations.
 ```
 
 ## The skills
@@ -118,35 +108,24 @@ Agent: I'm using `distillation-implementation` to build it.
 | Skill | When it fires | What it produces |
 |-------|---------------|------------------|
 | `using-code-distilling` | Session start (bootstrap) | Routes to the flow on porting intent |
-| `distillation-spec` | Stage 1 — porting intent detected | `distillation-spec.md` (the capability, their design, keep-verbatim, discard, seams, chunk table) |
-| `distillation-plan` | Stage 2 — after the spec is approved | `distillation-plan.md` (source→target file map, bite-sized tasks with code) |
-| `distillation-implementation` | Stage 3 — after the plan is approved | The ported code; subagent-driven with two-stage review, then finishes the branch |
+| `distillation-spec` | Reference feature needs analysis | `distillation-spec.md`, with linked design notes/assets when useful |
+| `distillation-implementation` | Spec is ready and implementation is requested | Ported code and fidelity/integration verification |
 
-## Every chunk is a port
+## What survives the port
 
-There are no per-chunk mode labels. Every chunk is ported: preserve the reference's encoded decisions — the keep-verbatim items exactly, and its structure wherever the structure is load-bearing — and translate everything else into your project's language and idioms.
+- **Exact assets:** literal values, prompt text, schemas, examples, and tables identified for exact preservation.
+- **Behavioral invariants:** algorithms, state ownership, transition predicates, ordering, domain rules, and termination. Syntax and incidental structure can change.
+- **Documented adaptations:** target interfaces and omitted packaging, with evidence of semantic differences and how they are resolved.
 
-The fidelity decision lives at a finer grain than a chunk label could carry:
+For deep research, the design may include evidence tracking, follow-up search, and citation binding. For group chat, it may include speaker eligibility, context visibility, and reply-loop prevention. The spec traces the actual reference mechanisms; it does not impose these examples on every feature.
 
-- The **keep-verbatim list** names what must survive untouched, item by item — tuned constants, prompt templates, step order, regexes, lookup tables.
-- The **discard list** names the packaging left behind — their framework, config system, logging, scale-driven abstractions.
-- The **adaptation note** on each chunk says what changes on the way over and why: the idiom translation, which structure is load-bearing vs. incidental, the library substitutions.
-
-Together those say more than "copy" or "rewrite" ever did, and they say it per item rather than per chunk.
-
-## Philosophy
-
-- **The reference is the source of truth.** The encoded decisions worth copying — tuned constants, step order, edge cases, prompts — are kept verbatim.
-- **Keep data verbatim, rewrite logic freely.** Control flow and structure get re-expressed in your idioms; the code-as-data gold is copied exactly.
-- **Fidelity is per item, not per chunk.** The keep-verbatim list says what survives byte-for-byte; the discard list says what's left behind; the adaptation note says what changes and why. "Just trust me" is not one of them.
-- **Subagents per chunk.** Fresh context per logic-heavy chunk keeps the implementer focused. Two-stage review (spec compliance, then code quality) prevents over- or under-building.
-- **Process over guessing.** Skipping the spec produces ports nobody can audit. The flow scales — short docs for small ports — but you still run it.
+The implementer retains discretion over local coding decisions. The spec preserves the knowledge that would otherwise be lost between sessions. Required license and attribution notices remain in copied material.
 
 ## Status
 
 Early development.
 
-**v1 is considered ready when:** a single session can take *"I want feature X from `<path-to-reference-repo>`"* through to committed code in the user's project — without manual intervention beyond approving the spec and the plan.
+**Acceptance target:** a session can take *"I want feature X from `<path-to-reference-repo>`"* through a source-grounded spec to implemented and verified code, asking only for material unresolved choices or requested review gates. Commits and publishing require user authorization.
 
 ## Contributing
 

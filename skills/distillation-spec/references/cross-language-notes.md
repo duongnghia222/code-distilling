@@ -24,6 +24,8 @@ When porting:
 
 ## Concurrency idioms
 
+The mappings below are starting points, not equivalence claims. Verify cancellation, sibling-task failure, ordering, backpressure, and cleanup. For example, `Promise.race` does not cancel losing operations, and `asyncio.gather` and `Promise.all` can differ in task lifecycle. Preserve the source's relevant behavior with explicit adaptation.
+
 | Source | Target | Translation |
 |--------|--------|-------------|
 | JS Promise chain | Python `asyncio` | `await` per step; nest `try/except` where `.catch` appeared. |
@@ -57,7 +59,7 @@ When the user's project already pins a library for the function, prefer that pin
 
 ## Things that usually do NOT port cleanly
 
-When you see these in the source, they are almost always packaging rather than gold. Put them on the discard list and write an adaptation note saying what replaces them — don't try to carry the construct across:
+These constructs need inspection before replacement. Their syntax may be incidental, but registration order, memory layout, scheduling, or ownership may determine behavior. Record the invariant and its target equivalent before discarding the construct:
 
 - Metaclasses, decorator-driven class registration (Python).
 - Macro-heavy code (Rust, C, Lisp).

@@ -4,7 +4,7 @@ Guidance for Claude Code and other agents working **on this repository** (develo
 
 ## What this repo is
 
-`code-distilling` is a **Claude Code + Codex plugin** — not an application. It ships a set of skills that turn "copy this feature from that repo" into a disciplined 3-stage flow (spec → plan → implementation). There is no build step and no runtime; the deliverable is Markdown skills, hooks, and plugin manifests.
+`code-distilling` is a **Claude Code + Codex plugin** — not an application. It ships a set of skills that turn "copy this feature from that repo" into a two-stage flow (spec → implementation). There is no build step and no runtime; the deliverable is Markdown skills, hooks, and plugin manifests.
 
 **Zero runtime dependencies by design.** Do not add third-party service/tool dependencies except when adding support for a new harness.
 
@@ -20,11 +20,10 @@ The files under `skills/` are **agent instructions that shape how other agents b
 ```
 .claude-plugin/     plugin.json (Claude manifest) + marketplace.json
 .codex-plugin/      plugin.json (Codex manifest)
-skills/             the four skills (each: SKILL.md + references/ + *-prompt.md)
+skills/             three skills with supporting references and optional handoffs
   using-code-distilling/        session-start bootstrap; routes on porting intent
-  distillation-spec/            Stage 1 — contract, keep-verbatim, discard, seams, chunk table
-  distillation-plan/            Stage 2 — source→target file map, bite-sized tasks
-  distillation-implementation/  Stage 3 — subagent-driven build + two-stage review
+  distillation-spec/            contract, architecture, behavioral design, integration, checks
+  distillation-implementation/  direct implementation + fidelity and integration review
 hooks/              SessionStart hook that injects the bootstrap (session-start, run-hook.cmd)
 scripts/            bump-version.sh
 .version-bump.json  declares which files carry the version + audit excludes

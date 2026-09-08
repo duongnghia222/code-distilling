@@ -1,56 +1,16 @@
-# Spec-Compliance Reviewer Prompt Template (Distillation)
+# Fidelity review
 
-Use this template when dispatching a spec-compliance reviewer subagent after the implementer reports DONE.
+Use in the current session or as an authorized reviewer handoff. Supply the spec, relevant reference revision/locations, design assets, target diff, and check results.
 
-**Purpose:** verify the implementer distilled what the spec required — the contract AND the distillation discipline — nothing more, nothing less.
+Read actual source and target code; do not treat the implementer's report as evidence of correctness. Check:
 
-```
-Task tool (general-purpose):
-  description: "Review spec compliance for Task N: [task name]"
-  prompt: |
-    You are reviewing whether a distilled chunk matches its spec.
+- Does the implemented path satisfy the contract, including side effects and failure cases?
+- Are exact assets unchanged in their required representation?
+- Are the algorithm, critical ordering, state ownership, transition predicates, domain heuristics, and termination preserved?
+- For AI features, do prompts, context assembly, tool schemas, parsing, and routing still work together as specified?
+- Are seam differences resolved in behavior, rather than merely renaming calls?
+- Are deviations explicit and within scope? Has discarded packaging leaked into the target, or essential behavior disappeared with it?
+- Do checks distinguish this port from a plausible but incorrect imitation? What remains unverified?
+- Are source provenance and required attribution preserved?
 
-    ## What the Spec Requires
-
-    [FULL TEXT of the chunk: contract, keep-verbatim items, seam mapping, adaptation notes, reference location]
-
-    ## What the Implementer Claims
-
-    [from the implementer's report]
-
-    ## CRITICAL: Do Not Trust the Report
-
-    The implementer may be optimistic or incomplete. Verify everything by reading the actual code.
-    Do NOT take their word for keep-verbatim preservation or dependency wiring.
-
-    ## Your Job — read the code and verify:
-
-    **Contract:**
-    - Does it produce the spec's outputs for the spec's inputs? Do the invariants hold?
-    - Missing requirements? Extra/unrequested behavior? Did they solve the wrong problem?
-
-    **Keep-verbatim (the gold):**
-    - Is every keep-verbatim item present and byte-for-byte unaltered? Check each one: thresholds not
-      rounded, prompts not reworded, step order unchanged, regexes/tables exact. Cite file:line.
-
-    **No leaked deps:**
-    - Does the code import any of the reference's framework/libraries instead of this project's?
-    - Are the seams wired to the substitutions the spec named?
-    - Where the spec flagged a seam with a semantic delta, is its stated resolution actually
-      implemented — or did the implementer just swap the call? A wired seam with an uncompensated
-      delta compiles, imports nothing of theirs, and is wrong.
-
-    **Adaptation discipline:**
-    - Were the adaptation notes followed? Is the structure the spec called load-bearing still there?
-    - Did the scaffolding the spec discarded come along anyway?
-    - Is this a port of the reference, or did they quietly write their own implementation instead?
-    - Does any comment, docstring, or identifier name the reference — its repo, files, or lines, or
-      an "adapted from" note? Provenance belongs in the spec doc; flag every trace that reached the
-      code.
-
-    Verify by reading code, not by trusting the report.
-
-    ## Report
-    - ✅ Compliant (everything matches after code inspection)
-    - ❌ Issues: [specifics with file:line — missing/extra, altered keep-verbatim, leaked dep, dropped adaptation]
-```
+Report concrete issues with target locations, source/spec evidence, behavioral impact, and missing verification. Separate implementation defects from spec ambiguities. State whether fidelity is supported by available evidence, and name its limits.

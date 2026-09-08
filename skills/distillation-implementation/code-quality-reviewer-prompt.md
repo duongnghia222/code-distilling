@@ -1,44 +1,9 @@
-# Code-Quality Reviewer Prompt Template (Distillation)
+# Integration and code-quality review
 
-Use this template when dispatching a code-quality reviewer subagent. **Only dispatch after the spec-compliance review passes.**
+Use in the current session or as an authorized reviewer handoff. Supply the target diff, spec integration decisions, and relevant check results. Review actual changed code and its callers.
 
-**Purpose:** verify the distilled chunk is well-built — idiomatic in the target, clean, and free of leaked reference cruft.
+Check correctness and maintainability in the target: clear responsibilities, native conventions, interface compatibility, error handling, resource lifetime, async behavior, and appropriate tests. Look for imported reference scaffolding, hidden external-checkout dependencies, duplicated retries/caches, and changes outside the capability.
 
-```
-Task tool (general-purpose):
-  description: "Review code quality for Task N: [task name]"
-  prompt: |
-    You are reviewing the quality of a distilled chunk. Review the diff between [BASE_SHA] and [HEAD_SHA].
+Judge the change's contribution, not unrelated pre-existing problems. Do not recommend simplifying away behavior the spec requires; resolve fidelity issues using [spec-reviewer-prompt.md](spec-reviewer-prompt.md).
 
-    ## Context
-
-    [chunk summary from the implementer's report; the chunk's adaptation notes]
-
-    ## Review For:
-
-    **Standard code quality:**
-    - Correctness and maintainability — does the code do what it should, and is it easy to change?
-    - Names match what things do (not how they work); readable control flow.
-    - Errors handled, not swallowed; no dead, duplicated, or commented-out code.
-
-    **Idiomatic in this project's language/stack:**
-    - Does it read like native target code, or like transliterated source-language code?
-    - Names match what things do; target conventions followed (casing, error handling, async style).
-
-    **Structure:**
-    - Does each file have one clear responsibility with a well-defined interface?
-    - Can units be understood independently?
-    - Does it follow the file structure from the spec?
-    - Did this change create new large files or significantly grow existing ones? (Judge only what
-      this change contributed; don't flag pre-existing sizes.)
-
-    **Distillation cleanliness:**
-    - Did accidental complexity from the reference leak in (its config, logging, telemetry,
-      abstractions-for-their-scale)?
-    - Are keep-verbatim constants/prompts isolated and clearly labeled, not scattered magic numbers?
-
-    ## Report
-    - **Strengths**
-    - **Issues** — Critical / Important / Minor, each with file:line
-    - **Assessment** — approved | changes needed
-```
+Report material issues with locations, impact, and supporting evidence; separate optional improvements from defects. State checks performed and limitations. A clean review does not substitute for an integrated behavior check.

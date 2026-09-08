@@ -22,7 +22,7 @@ escape_for_json() {
 
 bootstrap_escaped=$(escape_for_json "$bootstrap_content")
 
-session_context="<EXTREMELY_IMPORTANT>\nYou have code-distilling.\n\n**Below is the full content of your 'code-distilling:using-code-distilling' skill - your introduction to the porting workflow. For all other skills, use the 'Skill' tool:**\n\n${bootstrap_escaped}\n</EXTREMELY_IMPORTANT>"
+session_context="<EXTREMELY_IMPORTANT>\nYou have code-distilling.\n\n**Below is the full content of your 'code-distilling:using-code-distilling' skill. Load other skills through your harness's skill mechanism, or read their SKILL.md files under the plugin's skills directory when no loader is available.**\n\n${bootstrap_escaped}\n</EXTREMELY_IMPORTANT>"
 
 # Output context injection as JSON.
 # Cursor expects additional_context (snake_case).
