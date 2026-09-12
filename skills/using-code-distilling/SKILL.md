@@ -9,14 +9,19 @@ Port the decisions that make a reference feature work: algorithms, architecture,
 
 Use this workflow for reference-based feature adoption, not unrelated debugging, refactoring, or original development. Establish the reference and target from the request and workspace; ask for a missing reference rather than inventing one.
 
-## Spec → implementation
+## Spec → review → implementation
 
-1. Read [distillation-spec](../distillation-spec/SKILL.md). Inspect the reference and target, then write `docs/code-distilling/<capability>/distillation-spec.md`: the behavioral contract and the design knowledge needed to reproduce it.
-2. Read [distillation-implementation](../distillation-implementation/SKILL.md). Implement directly from that spec and the source, verify fidelity and integration, and report the result.
+1. Read [distillation-spec](../distillation-spec/SKILL.md). Inspect the reference and target, explain the design to the user and ask the questions that shape the port, then write `docs/code-distilling/<capability>/distillation-spec.md`: the behavioral contract and the design knowledge needed to reproduce it.
+2. Stop for review. Present the spec with your recommendations and open questions, and wait for the user's explicit approval. On feedback, revise and present it again.
+3. Read [distillation-implementation](../distillation-implementation/SKILL.md). Implement directly from the approved spec and the source, verify fidelity and integration, and report the result.
+
+<HARD-GATE>
+Do not write port code or start implementation until the user has reviewed and explicitly approved the spec. A request to port the feature, even "end to end", is not approval of a spec the user has not seen. Only an explicit instruction to skip spec review waives this gate. This applies to every port regardless of size.
+</HARD-GATE>
 
 There is no separate plan stage, task document, or requirement to prewrite implementation code. The spec records durable decisions and evidence; the implementer chooses files, sequence, and local tactics as work develops. A working checklist is optional.
 
-If the user requested an end-to-end port, continue after writing the spec. If they requested only analysis or a spec, deliver that and stop. Respect requested review gates and existing authorization. Ask when a missing choice changes scope or observable behavior, not for routine implementation decisions. Continue independent work while a decision is pending.
+If the user requested only analysis or a spec, deliver that and stop. Ask whenever a choice changes scope or observable behavior; routine implementation decisions are yours. While waiting for an answer, continue investigating, but do not edit target code.
 
 ## Scale to the feature
 

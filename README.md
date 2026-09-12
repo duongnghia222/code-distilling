@@ -34,10 +34,10 @@ You point the plugin at a reference repo by path — any path on disk works. Clo
 
 Then ask your coding agent to port a feature, naming the reference's path. The workflow has two stages:
 
-1. **`distillation-spec`** — traces the reference and target, then records the contract, architecture, workflow, domain heuristics, prompt/skill design, exact assets, behavioral invariants, integration differences, and acceptance cases. The spec contains the knowledge another agent needs to reproduce the feature.
-2. **`distillation-implementation`** — builds directly from the spec and source, choosing implementation details as work develops. It verifies fidelity and target integration. Delegation is optional; there is no separate plan document or mandatory task approval.
+1. **`distillation-spec`** — traces the reference and target, explains the reference's design, and asks you the questions that shape the port: scope, what to preserve or adapt, and how semantic differences at integration seams are resolved. It then records the contract, architecture, workflow, domain heuristics, prompt/skill design, exact assets, behavioral invariants, integration differences, and acceptance cases. The spec contains the knowledge another agent needs to reproduce the feature.
+2. **`distillation-implementation`** — builds directly from the approved spec and source, choosing implementation details as work develops. It verifies fidelity and target integration. Delegation is optional; there is no separate plan document or mandatory task approval.
 
-An end-to-end port proceeds after the spec unless a material choice needs your input. A spec-only request stops at the spec. Any review gates you request still apply.
+Between them is a review gate: the agent stops with the spec, its recommendations, and any open questions, revises on your feedback, and writes no port code until you approve it. Asking for a port "end to end" does not skip the gate; only an explicit instruction to skip spec review does. A spec-only request stops at the spec.
 
 The skills auto-trigger when the agent sees porting intent and a reference repo path. You don't need to type any slash commands.
 
@@ -93,10 +93,20 @@ After installation, the agent loads the `using-code-distilling` bootstrap at ses
 User: I want to port the OAuth flow from ~/code/awesome-auth into src/auth/.
 
 Agent: I'm using `distillation-spec` to map the reference and write the spec.
-       [reads ~/code/awesome-auth/, locates the OAuth files]
+       [reads ~/code/awesome-auth/ and src/auth/, locates the OAuth files]
+       Here's how their flow works and why: [core path, key mechanisms].
+       First question: their session store expires entries itself; ours
+       relies on a TTL. Adapt the port, adapt our store, or accept the
+       difference? I recommend adapting the port because [evidence].
+
+User: Adapt the port.
+
+Agent: [asks the remaining design questions, one at a time]
        [writes docs/code-distilling/oauth-flow/distillation-spec.md
         — contract, design decisions, state transitions, integration, checks]
-       The spec captures the flow and target adaptations. I'll implement it now.
+       Spec written. Please review it before I implement. Open question: [...]
+
+User: Approved.
 
 Agent: I'm using `distillation-implementation` to build and verify it.
        [ports the behavior, checks callback/error paths and target integration]
@@ -109,7 +119,7 @@ Agent: I'm using `distillation-implementation` to build and verify it.
 |-------|---------------|------------------|
 | `using-code-distilling` | Session start (bootstrap) | Routes to the flow on porting intent |
 | `distillation-spec` | Reference feature needs analysis | `distillation-spec.md`, with linked design notes/assets when useful |
-| `distillation-implementation` | Spec is ready and implementation is requested | Ported code and fidelity/integration verification |
+| `distillation-implementation` | Spec is approved and implementation is requested | Ported code and fidelity/integration verification |
 
 ## What survives the port
 
@@ -125,7 +135,7 @@ The implementer retains discretion over local coding decisions. The spec preserv
 
 Early development.
 
-**Acceptance target:** a session can take *"I want feature X from `<path-to-reference-repo>`"* through a source-grounded spec to implemented and verified code, asking only for material unresolved choices or requested review gates. Commits and publishing require user authorization.
+**Acceptance target:** a session can take *"I want feature X from `<path-to-reference-repo>`"* through a design conversation and a source-grounded spec you approve to implemented and verified code, writing no port code before that approval. Commits and publishing require user authorization.
 
 ## Contributing
 

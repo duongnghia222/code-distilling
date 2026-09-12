@@ -11,7 +11,7 @@ Build directly from the distillation spec and reference source. Use your judgmen
 
 Read the spec, relevant linked design notes/assets, reference locations, and target code. If the spec is absent or missing behavior-critical knowledge, use [distillation-spec](../distillation-spec/SKILL.md) to fill that gap first. On resume, inspect the current diff and checks before assuming what is complete. Preserve existing user changes.
 
-Respect the user's scope and review gates. An end-to-end port authorizes proceeding from the spec into implementation; a spec-only request does not. Do not infer permission to commit, push, publish, or merge from this skill.
+Start only from a spec the user has explicitly approved, or after they explicitly waived spec review. A request to port the feature, even "end to end", is not approval of a spec they have not seen; a request to implement or resume a spec they have reviewed is. If approval is missing, stop and use the review gate in [distillation-spec](../distillation-spec/SKILL.md). Do not infer permission to commit, push, publish, or merge from this skill.
 
 ## Implement and learn
 
