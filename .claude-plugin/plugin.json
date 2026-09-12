@@ -1,7 +1,7 @@
 {
   "name": "code-distilling",
   "description": "Port high-quality implementations from reference open-source repos into your project through a design-aware spec and direct implementation.",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "author": {
     "name": "Nghia Duong",
     "email": "duongnghia222@gmail.com"

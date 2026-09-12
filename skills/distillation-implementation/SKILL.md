@@ -43,4 +43,4 @@ Default to implementing in the current session. If delegation is available, auth
 
 ## Finish
 
-Complete the authorized capability, not merely the first working slice. Update the spec with material discoveries and deliberate deviations so it remains useful to another agent. Report what was ported, the spec path, checks and results, and unresolved differences or verification limits. Do not claim parity for behavior you could not check.
+Complete the authorized capability, not merely the first working slice. Update the spec with material discoveries, deliberate deviations, and remaining gaps so it remains useful to another agent, including a later [distillation-gap](../distillation-gap/SKILL.md) round. Report what was ported, the spec path, checks and results, and unresolved differences or verification limits. Do not claim parity for behavior you could not check.

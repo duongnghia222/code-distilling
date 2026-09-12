@@ -1,13 +1,13 @@
 ---
 name: using-code-distilling
-description: Use when the user wants to port, distill, copy, borrow, or bring a feature from a reference repository into their project.
+description: Use when the user wants to port, distill, copy, borrow, or bring a feature from a reference repository into their project, or to catch an existing port up with its reference or close its remaining gaps.
 ---
 
 # Using Code Distilling
 
 Port the decisions that make a reference feature work: algorithms, architecture, prompts, workflow, domain rules, and edge cases. Re-express them in the target project's conventions while preserving the behavior that matters.
 
-Use this workflow for reference-based feature adoption, not unrelated debugging, refactoring, or original development. Establish the reference and target from the request and workspace; ask for a missing reference rather than inventing one.
+Use this workflow for reference-based feature adoption, including keeping an existing port current with its reference, not unrelated debugging, refactoring, or original development. Establish the reference and target from the request and workspace; ask for a missing reference rather than inventing one.
 
 ## Spec → review → implementation
 
@@ -22,6 +22,10 @@ Do not write port code or start implementation until the user has reviewed and e
 There is no separate plan stage, task document, or requirement to prewrite implementation code. The spec records durable decisions and evidence; the implementer chooses files, sequence, and local tactics as work develops. A working checklist is optional.
 
 If the user requested only analysis or a spec, deliver that and stop. Ask whenever a choice changes scope or observable behavior; routine implementation decisions are yours. While waiting for an answer, continue investigating, but do not edit target code.
+
+## Existing ports: close the gap
+
+When a port already exists and the reference has changed since it was distilled, or the port still falls short of its spec or reference, read [distillation-gap](../distillation-gap/SKILL.md) instead of writing a new spec from scratch. It inventories gaps against the recorded spec and reference revision, takes decisions that change the spec through the same review gate, and closes approved gaps with distillation-implementation.
 
 ## Scale to the feature
 

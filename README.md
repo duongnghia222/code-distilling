@@ -2,7 +2,7 @@
 
 > Port high-quality implementations from reference open-source repos into your project — with discipline.
 
-`code-distilling` is a Claude Code and Codex plugin that turns *"I want to copy this feature from that repo"* into a controlled workflow: explore the reference and write a distillation spec (what to keep verbatim, what to discard, how the seams wire into your project), and implement it.
+`code-distilling` is a Claude Code and Codex plugin that turns *"I want to copy this feature from that repo"* into a controlled workflow: explore the reference and write a distillation spec (what to keep verbatim, what to discard, how the seams wire into your project), implement it, and later close the gaps as the reference evolves.
 
 It is a sister-plugin to [Superpowers](https://github.com/obra/superpowers) and follows the same skill-driven discipline. You do not need Superpowers installed to use it.
 
@@ -38,6 +38,8 @@ Then ask your coding agent to port a feature, naming the reference's path. The w
 2. **`distillation-implementation`** — builds directly from the approved spec and source, choosing implementation details as work develops. It verifies fidelity and target integration. Delegation is optional; there is no separate plan document or mandatory task approval.
 
 Between them is a review gate: the agent stops with the spec, its recommendations, and any open questions, revises on your feedback, and writes no port code until you approve it. Asking for a port "end to end" does not skip the gate; only an explicit instruction to skip spec review does. A spec-only request stops at the spec.
+
+After a port lands, **`distillation-gap`** keeps it current. Ask the agent to catch the port up with the reference, or to close what the first implementation left open. It reviews the reference from the revision recorded in the spec, following renames, prompt and config changes, and changed tests. It also checks the target against the spec for unimplemented, drifted, or unverified behavior. Each gap is recorded with evidence and a proposed treatment (adopt, adapt, decline, or defer) in `distillation-gaps.md`, so declined upstream changes aren't raised again next time. Gaps that change the spec go through the same review gate before any code changes; upstream changes are re-expressed through the spec's adaptations, not applied as a patch.
 
 The skills auto-trigger when the agent sees porting intent and a reference repo path. You don't need to type any slash commands.
 
@@ -120,6 +122,7 @@ Agent: I'm using `distillation-implementation` to build and verify it.
 | `using-code-distilling` | Session start (bootstrap) | Routes to the flow on porting intent |
 | `distillation-spec` | Reference feature needs analysis | `distillation-spec.md`, with linked design notes/assets when useful |
 | `distillation-implementation` | Spec is approved and implementation is requested | Ported code and fidelity/integration verification |
+| `distillation-gap` | An existing port needs to catch up with its reference or close remaining gaps | `distillation-gaps.md` ledger, updated spec, and verified gap fixes |
 
 ## What survives the port
 

@@ -20,10 +20,11 @@ The files under `skills/` are **agent instructions that shape how other agents b
 ```
 .claude-plugin/     plugin.json (Claude manifest) + marketplace.json
 .codex-plugin/      plugin.json (Codex manifest)
-skills/             three skills with supporting references and optional handoffs
+skills/             four skills with supporting references and optional handoffs
   using-code-distilling/        session-start bootstrap; routes on porting intent
   distillation-spec/            contract, architecture, behavioral design, integration, checks
   distillation-implementation/  direct implementation + fidelity and integration review
+  distillation-gap/             upstream catch-up and remaining-gap closure for existing ports
 hooks/              SessionStart hook that injects the bootstrap (session-start, run-hook.cmd)
 scripts/            bump-version.sh
 .version-bump.json  declares which files carry the version + audit excludes
