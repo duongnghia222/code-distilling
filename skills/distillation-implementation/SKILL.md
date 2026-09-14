@@ -9,9 +9,9 @@ Build directly from the distillation spec and reference source. Use your judgmen
 
 ## Establish context
 
-Read the spec, relevant linked design notes/assets, reference locations, and target code. If the spec is absent or missing behavior-critical knowledge, use [distillation-spec](../distillation-spec/SKILL.md) to fill that gap first. On resume, inspect the current diff and checks before assuming what is complete. Preserve existing user changes.
+Read the spec, relevant linked design notes/assets, reference locations, and target code. If the spec is absent or missing behavior-critical knowledge, use [distillation-spec](../distillation-spec/SKILL.md) to fill that gap first, unless the port is small. On resume, inspect the current diff and checks before assuming what is complete. Preserve existing user changes.
 
-Start only from a spec the user has explicitly approved, or after they explicitly waived spec review. A request to port the feature, even "end to end", is not approval of a spec they have not seen; a request to implement or resume a spec they have reviewed is. If approval is missing, stop and use the review gate in [distillation-spec](../distillation-spec/SKILL.md). Do not infer permission to commit, push, publish, or merge from this skill.
+Start only from a spec the user has explicitly approved, after they explicitly waived spec review, or for a small port that qualifies for direct implementation under [using-code-distilling](../using-code-distilling/SKILL.md). A small port needs no spec; implement it from the reference, and stop to ask if a design question appears. A request to port the feature, even "end to end", is not approval of a spec they have not seen; a request to implement or resume a spec they have reviewed is. If approval is missing, stop and use the review gate in [distillation-spec](../distillation-spec/SKILL.md). Do not infer permission to commit, push, publish, or merge from this skill.
 
 ## Implement and learn
 
@@ -43,4 +43,4 @@ Default to implementing in the current session. If delegation is available, auth
 
 ## Finish
 
-Complete the authorized capability, not merely the first working slice. Update the spec with material discoveries, deliberate deviations, and remaining gaps so it remains useful to another agent, including a later [distillation-gap](../distillation-gap/SKILL.md) round. Report what was ported, the spec path, checks and results, and unresolved differences or verification limits. Do not claim parity for behavior you could not check.
+Complete the authorized capability, not merely the first working slice. Update the spec with material discoveries, deliberate deviations, and remaining gaps so it remains useful to another agent, including a later [distillation-gap](../distillation-gap/SKILL.md) round. Report what was ported, the spec path (or, for a small port, the reference path and revision), checks and results, and unresolved differences or verification limits. Do not claim parity for behavior you could not check.

@@ -8,7 +8,7 @@ description: Use when analyzing a reference feature for porting, or when an exis
 Explore the reference, converge with the user on the design, and write a source-grounded spec that lets a capable coding agent implement the feature without rediscovering its design. Capture what it does, how the reference achieves it, which decisions must survive, and how those decisions fit the target. Do not write a task-by-task plan or speculative replacement code.
 
 <HARD-GATE>
-Do not write port code or start implementation until the user has reviewed and explicitly approved the spec. A request to port the feature, even "end to end", is not approval of a spec the user has not seen. Only an explicit instruction to skip spec review waives this gate. This applies to every port regardless of size.
+Do not write port code or start implementation until the user has reviewed and explicitly approved the spec. A request to port the feature, even "end to end", is not approval of a spec the user has not seen. Only an explicit instruction to skip spec review waives this gate. This applies to every port except a small port that qualifies for direct implementation under [using-code-distilling](../using-code-distilling/SKILL.md); a port with any design question is not small.
 </HARD-GATE>
 
 ## Read for behavior
@@ -59,7 +59,7 @@ Ask, don't assume: the user knows their project's constraints and stack; you kno
 - Propose what to preserve exactly, preserve in behavior, adapt, and discard, and where the feature lands in the target.
 - Ask about the decisions that shape the port: scope and non-goals, adaptations and omissions, target placement and interfaces, and each semantic difference at a seam. A non-empty delta is the user's decision, not yours. Frame it as **adapt the port** (change the ported logic to fit the target), **adapt the target** (change the target dependency — a bigger ask), or **accept** (name the behavior difference you're shipping).
 
-Ask one question at a time, most scope-shaping first. Offer concrete options with your recommendation and the evidence behind it. Do not ask what you can learn by reading the source or target. Wait for each answer before moving on; re-explore when an answer changes scope. For a small port, this can be a short explanation and one or two questions, but do not skip it.
+Ask one question at a time, most scope-shaping first. Offer concrete options with your recommendation and the evidence behind it. Do not ask what you can learn by reading the source or target. Wait for each answer before moving on; re-explore when an answer changes scope. For a bounded port, this can be a short explanation and one or two questions, but do not skip it.
 
 ## Write the handoff
 

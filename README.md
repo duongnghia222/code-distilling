@@ -39,7 +39,9 @@ Then ask your coding agent to port a feature, naming the reference's path. The w
 
 Between them is a review gate: the agent stops with the spec, its recommendations, and any open questions, revises on your feedback, and writes no port code until you approve it. Asking for a port "end to end" does not skip the gate; only an explicit instruction to skip spec review does. A spec-only request stops at the spec.
 
-After a port lands, **`distillation-gap`** keeps it current. Ask the agent to catch the port up with the reference, or to close what the first implementation left open. It reviews the reference from the revision recorded in the spec, following renames, prompt and config changes, and changed tests. It also checks the target against the spec for unimplemented, drifted, or unverified behavior. Each gap is recorded with evidence and a proposed treatment (adopt, adapt, decline, or defer) in `distillation-gaps.md`, so declined upstream changes aren't raised again next time. Gaps that change the spec go through the same review gate before any code changes; upstream changes are re-expressed through the spec's adaptations, not applied as a patch.
+Small ports skip all of that. If the feature is a bounded unit, like a helper, regex, constant table, or localized fix, lands in one place with no new dependencies, and raises no design question, the agent says it is implementing directly and does it. It keeps exact values and invariants, runs a check, and reports the reference revision it ported from. If a design question comes up along the way, it stops to ask and, if needed, switches to the full flow.
+
+After a port lands, **`distillation-gap`** keeps it current. Ask the agent to catch the port up with the reference, or to close what the first implementation left open. It reviews the reference from the revision recorded in the spec, following renames, prompt and config changes, and changed tests. It also checks the target against the spec for unimplemented, drifted, or unverified behavior. Each gap is recorded with evidence and a proposed treatment (adopt, adapt, decline, or defer) in `distillation-gaps.md`, so declined upstream changes aren't raised again next time. Gaps that change the spec go through the same review gate before any code changes, except a small catch-up of unambiguous adoptions such as an upstream bug fix; upstream changes are re-expressed through the spec's adaptations, not applied as a patch.
 
 The skills auto-trigger when the agent sees porting intent and a reference repo path. You don't need to type any slash commands.
 
@@ -138,7 +140,7 @@ The implementer retains discretion over local coding decisions. The spec preserv
 
 Early development.
 
-**Acceptance target:** a session can take *"I want feature X from `<path-to-reference-repo>`"* through a design conversation and a source-grounded spec you approve to implemented and verified code, writing no port code before that approval. Commits and publishing require user authorization.
+**Acceptance target:** a session can take *"I want feature X from `<path-to-reference-repo>`"* through a design conversation and a source-grounded spec you approve to implemented and verified code, writing no port code before that approval, while a small port with no design question goes straight to implemented and verified code. Commits and publishing require user authorization.
 
 ## Contributing
 

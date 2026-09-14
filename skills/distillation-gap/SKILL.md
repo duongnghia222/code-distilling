@@ -8,12 +8,12 @@ description: Use when an existing port needs to catch up with changes in its ref
 Close the distance between an existing port and what it should be. Either the reference has moved since the port was distilled, or the port still falls short of its spec or reference. Inventory each gap with evidence, route it to the right treatment, converge with the user on the decisions, and implement only approved treatments. The goal is a port that is faithful and deliberately current, not a target that mirrors every upstream commit.
 
 <HARD-GATE>
-Do not change target code for a gap whose treatment changes the spec — adopting, adapting, or declining a reference change; adding, changing, or removing a requirement; or revising a recorded decision or seam resolution — until the user has reviewed the gap ledger and updated spec and explicitly approved them. A request to "sync", "catch up", or "close the gaps" is not approval of treatments the user has not seen. Only an explicit instruction to skip review waives this gate.
+Do not change target code for a gap whose treatment changes the spec — adopting, adapting, or declining a reference change; adding, changing, or removing a requirement; or revising a recorded decision or seam resolution — until the user has reviewed the gap ledger and updated spec and explicitly approved them. A request to "sync", "catch up", or "close the gaps" is not approval of treatments the user has not seen. Only an explicit instruction to skip review, or a small catch-up as defined under "Converge and review", waives this gate.
 </HARD-GATE>
 
 ## Establish the baseline
 
-Read the spec at `docs/code-distilling/<capability>/distillation-spec.md`, its linked notes, any earlier gap ledger, and the current target code and checks. The target may have changed since the port through user fixes, refactors, or local deviations. Work from what is there, not what the spec predicts, and preserve those changes. If there is no spec, use [distillation-spec](../distillation-spec/SKILL.md) to reconstruct one for what the target currently ports, and pass its review gate before closing gaps against it.
+Read the spec at `docs/code-distilling/<capability>/distillation-spec.md`, its linked notes, any earlier gap ledger, and the current target code and checks. The target may have changed since the port through user fixes, refactors, or local deviations. Work from what is there, not what the spec predicts, and preserve those changes. If there is no spec, use [distillation-spec](../distillation-spec/SKILL.md) to reconstruct one for what the target currently ports, and pass its review gate before closing gaps against it. A small port made without a spec needs none: compare the target unit with the reference directly.
 
 Identify the reference base: the revision the spec records. If it is missing or was a dirty checkout, infer it from evidence, such as the history that introduces or removes the spec's exact assets, the port's date, or matching code, and record the inference and its confidence. If no base can be established, say so and compare the spec's recorded design with the current reference directly; do not present a guessed diff as complete.
 
@@ -65,6 +65,8 @@ Record every answer in the spec: contract, preserve/adapt/discard decisions, exa
 In the same message, summarize what you propose to adopt, decline, and defer, the behavior changes the target will show, and remaining questions with recommended resolutions. Wait for explicit approval; answers to some questions are not approval of the round. On feedback, revise and present again. For a report-only request, deliver the ledger and stop.
 
 If every gap only implements or verifies the already-approved spec and the user asked to close them, that approval covers the work: share the ledger and proceed.
+
+A small catch-up can skip the ledger and review: the user asked to catch up or close gaps, the changes are few and localized, and each is an unambiguous adoption with no design question, such as an upstream bug fix or a retuned value the spec preserves exactly. Say in one line what you are adopting, implement it with a check, update the spec's citations and revision, and report. Declining, deferring, or adapting a change, or any change to scope or a seam resolution, still goes through review.
 
 ## Close the gaps
 
