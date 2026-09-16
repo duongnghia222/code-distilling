@@ -61,23 +61,31 @@ A matching method name is not equivalence — reranking a truncated, post-filter
 
 ## 4 · Converge with the user
 
-Where the two designs disagree, something has to give, and that choice belongs to the user, who owns the target and lives with what it becomes. Each answer becomes a decision in the spec.
+The design decisions that matter belong to the user, who owns the target and lives with what it becomes. Where the two designs disagree, something has to give; where the port could take more than one shape, someone has to choose. Each answer becomes a decision in the spec.
 
-Resolve by reading whatever reading can resolve. Then bring the user: the reference design in plain terms with citations, why it is built that way, what the target has today, your proposed split — re-express / preserve behavior / adapt / drop, and where it lands — and the real conflicts.
+Resolve by reading whatever reading can resolve. Then bring the user: the reference design in plain terms with citations, why it is built that way, what the target has today, your proposed split — re-express / preserve behavior / adapt / drop, and where it lands — and the decisions that need them.
 
-Frame each conflict as, with concrete options, your recommendation, and the evidence:
+**Ask the user** when a decision is critical to the port and theirs to make: more than one resolution is defensible, and the choice
+
+- sets or changes **scope** — what is in the port, what is left out, what the target gains beyond the reference;
+- changes **observable behavior** — what a caller, user, or test sees, including a difference the target will ship;
+- changes the **shape of the target** — a new dependency, module, or layer; a changed public interface; a convention the target does not have;
+- **displaces something the target already has** — a competing implementation, a deliberate earlier choice, a constraint the reference never met;
+- carries a **cost the user bears** — migration, performance, security, licensing, operational burden — or is expensive to reverse once shipped.
+
+Frame each with concrete options, your recommendation, and the evidence. Where the two designs conflict, the options are:
 
 - **Adapt the port** — change the ported logic to fit the target.
 - **Adapt the target** — change the target to accept it. A bigger ask.
 - **Accept** — ship the behavior difference, named.
 
-A question earns its place only when the two designs genuinely disagree, more than one resolution is defensible, and the choice changes scope, observable behavior, or the shape of the target.
+**Do not ask** when the decision is not the user's to make:
 
 - Do not ask what the code answers.
-- Do not ask about choices that are cheap to reverse.
+- Do not ask about choices that are cheap to reverse or that belong to the implementer — file names, local structure, tactics.
 - Do not ask for confirmation of a recommendation nothing contradicts — record it as an assumption instead.
 - If you cannot say what breaks under each option, you are not ready to ask. Go read.
-- A long question list is evidence of shallow reading, not diligence. Most ports come down to a handful of real conflicts, some to one.
+- A long question list is evidence of shallow reading, not diligence. Most ports come down to a handful of decisions that are really the user's, some to one.
 
 Ask one at a time, most scope-shaping first, and re-explore when an answer changes scope. Every question is asked and answered before the spec is written — **the spec records answers, never questions.** If nothing genuine remains, do not manufacture a question; record your assumptions and go to the gate.
 
