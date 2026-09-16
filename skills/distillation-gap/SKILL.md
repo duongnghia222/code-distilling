@@ -90,7 +90,7 @@ Two exceptions:
 
 ## 6 · Close the gaps
 
-Turn approved treatments into tasks with dependencies and status — appended to the spec's task table where there is one, kept in the ledger with the same columns where there is not — so a round can stop and resume like any other work. Implement with [distillation-implementation](../distillation-implementation/SKILL.md).
+The approved gaps are the round's task list, in dependency order. The ledger — never the spec — carries each gap's status and closing check, so a round can stop and resume like any other work. Implement with [distillation-implementation](../distillation-implementation/SKILL.md).
 
 - Re-express reference changes through the target's own adaptations. **Do not apply the upstream diff as a patch** — those adaptations change what the same edit means.
 - Land grouped changes together.

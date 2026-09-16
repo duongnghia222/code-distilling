@@ -95,7 +95,7 @@ Each task as large as the implementer can land and check in one pass. A whole mo
 
 Order so each rests on the last: essential path → the mechanisms hanging off it → edge cases → failure handling → checks. State each task's dependencies, or the list cannot be resequenced safely.
 
-Tasks say **what to deliver, never how to write it** — no prewritten code, no file-by-file edit list. The implementer chooses files, structure, and tactics, may resequence or split as the work demands, and records the change and its reason. The status column is the cross-session record: the next session resumes from the spec instead of reconstructing progress from a diff.
+Tasks say **what to deliver, never how to write it** — no prewritten code, no file-by-file edit list. The implementer chooses files, structure, and tactics, and may resequence or split as the work demands. The table is a plan, not a progress log: no status column. Progress lives outside the spec — see [distillation-implementation](../distillation-implementation/SKILL.md).
 
 ## 6 · Write the spec
 
@@ -106,7 +106,7 @@ Tasks say **what to deliver, never how to write it** — no prewritten code, no 
 - **How the reference does it, and why** — the core path step by step with the component that owns each step, then one entry per behavior-carrying mechanism: what it is, where it lives, what breaks if it changes, and the reason the reference built it that way — the constraint, failure, or requirement it answers, marked *documented* or *inferred*. A transition table where prose leaves branches ambiguous.
 - **What the target has today** — what already covers part of the capability and how its design differs, what the port replaces, extends, or leaves alone, and the conventions and constraints it must live inside. Enough that a reader sees the gap between the two designs without opening both.
 - **Decisions** — what the target should do about each part of the design: re-express / preserve behavior / adapt / drop, the target treatment, and the reason or the user's answer. Every integration decision and every answer from the conversation. An assumption you recorded in place of a question is a decision too: state it as the decision it implies, with what would falsify it and what to do then.
-- **Task order** — ordered table: ID · what it delivers · dependencies · mechanisms and decisions covered · status (starting at `todo`).
+- **Task order** — ordered table: ID · what it delivers · dependencies · mechanisms and decisions covered. No status column.
 - **Watch out** — every way a lookalike port goes wrong here: a lost heuristic, wrong ordering, a missing stop condition, a silently generic replacement. One line each.
 
 **Behavior-carrying assets** — prompts, templates, schemas, tables — get cited at the pinned revision and marked *re-express*: the implementer writes each one fresh in the target's own naming, formatting, and file conventions, so it reads as something the target wrote. For each, state what must still hold once it is rewritten — the instruction a prompt gives the model, the shape a schema enforces, the strings a pattern matches, the result a table produces — because that effect, not the wording, is what the port owes the reference.

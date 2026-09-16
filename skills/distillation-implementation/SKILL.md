@@ -1,6 +1,6 @@
 ---
 name: distillation-implementation
-description: Use to build a reference port from an approved distillation spec, or to resume one already in progress — work the spec's task order, keep each task's status current so the work can stop and resume, and verify fidelity against the reference.
+description: Use to build a reference port from an approved distillation spec, or to resume one already in progress — work the spec's task order, track progress outside the spec, and verify fidelity against the reference.
 ---
 
 # Distillation Implementation
@@ -17,16 +17,15 @@ Read the spec, the sources it cites at the pinned revision, and the target code 
 
 - Small port → no spec. Implement from the reference; stop to ask if a design question appears.
 - Spec missing behavior you need → fill that gap with [distillation-spec](../distillation-spec/SKILL.md) first.
-- **On resume:** read the task table, then check it against the actual diff and the checks — a status is a claim, the code is the evidence. Preserve changes the user made since the last session; do not revert work you cannot account for.
+- **On resume:** the code and its checks are the record of progress — there is no status to read. Walk the spec's task order against the tree and run each task's check to establish what is delivered, what is partial, and what is untouched. Preserve changes the user made since the last session; do not revert work you cannot account for.
 
 ## 2 · Work the task list
 
-The spec's task table is the todo list, and the spec file is where status lives. A scratch list dies with the session; the table is what the next one reads.
+The spec's task table is the plan. **The spec is not a log** — do not write status, checks run, resequencing, or progress notes into it. Keep a working list in the harness's task tracker or a scratch file if it helps; it is yours and dies with the session. Across sessions the code and its checks are the record.
 
-- `doing` when you start, `done` when its check passes, `blocked` with the reason. Record the check that proved `done`.
-- Finish a task and its check before starting the next. Leave the tree working at every task boundary — a session can end at any point and must never end mid-task with the status saying otherwise.
-- Follow the recommended order unless the work forces a change. Resequence, split, or add freely — write it into the table with its reason.
-- A discovery invalidates a spec assumption → update the spec's evidence and decision as part of that task. It changes the contract or scope → stop and ask; continue the tasks it does not touch meanwhile.
+- Finish a task and its check before starting the next. Leave the tree working at every task boundary — a session can end at any point, and the next one reads progress from the tree and the checks.
+- Follow the recommended order unless the work forces a change. Resequence, split, or add freely; say so in the report, with the reason.
+- A discovery invalidates a spec assumption → revise that decision in place as part of the task, so the spec still reads as decided, not as history. It changes the contract or scope → stop and ask; continue the tasks it does not touch meanwhile.
 
 ## 3 · Implement faithfully
 
@@ -56,8 +55,8 @@ Each task gets a check that would fail on a wrong port. Then the feature as a wh
 
 ## 5 · Finish
 
-Done = every task `done`, `declined`, or `deferred` with a recorded reason — not when the first working slice runs.
+Done = every task delivered and checked, or dropped or deferred by the user's decision — not when the first working slice runs.
 
-Update the spec with material discoveries, deliberate deviations, and anything left undone, so it describes what the target actually has.
+Where the target ended up differing from a decision in the spec, revise that decision in place with its reason, so the spec still describes what the target has. A task the user dropped or deferred is a scope decision and goes in the spec the same way. Everything else about the run belongs in the report, not the spec.
 
-Report: what was ported; the spec path (small port: reference path and revision); tasks completed; checks and their results; every unresolved difference or verification limit. **Do not claim parity for behavior you could not check.**
+Report: what was ported; the spec path (small port: reference path and revision); tasks completed, resequenced, or left undone; checks and their results; every deviation from the spec, unresolved difference, or verification limit. **Do not claim parity for behavior you could not check.**
