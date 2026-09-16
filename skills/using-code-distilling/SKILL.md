@@ -21,7 +21,7 @@ For a small port, skip the design conversation, spec document, and review gate:
 
 1. Read the reference unit, the dependencies that determine its behavior (defaults, constants, tests), and where it lands in the target.
 2. Say in one line that this is a small port you are implementing directly, then do it without waiting.
-3. Preserve exact values and invariants, adapt incidental structure to target conventions, and keep required license and attribution notices.
+3. Re-express the unit in the target's conventions, preserving the values and invariants its behavior depends on, and keep required license and attribution notices.
 4. Run a check that would catch a wrong port, then report the reference path and revision, what was preserved or adapted, the checks, and any limits.
 
 If a design question appears — a scope choice, a behavior-changing seam difference, a new dependency, or more code than it looked — stop and ask before continuing. If the port is no longer small, switch to the full flow below. If the user asks for a spec or a review, use the full flow regardless of size.
@@ -44,14 +44,6 @@ If the user requested only analysis or a spec, deliver that and stop. Ask whenev
 
 When a port already exists and the reference has changed since it was distilled, or the port still falls short of its spec or reference, read [distillation-gap](../distillation-gap/SKILL.md) instead of writing a new spec from scratch. It inventories gaps against the recorded spec and reference revision, takes decisions that change the spec through the same review gate, and closes approved gaps with distillation-implementation.
 
-## Scale to the feature
-
-When a port goes through the spec, size the spec to it. A bounded feature may need a paragraph with source, invariants, exact values, target integration, and checks. A workflow feature needs enough architecture and domain context that another agent can reproduce its decisions without the original conversation. Add linked design notes or exact assets only when useful; do not manufacture empty sections.
-
-For AI features, inspect prompts and the code that assembles context, selects tools or speakers, routes results, retries, and stops. A similar UI or a copied system prompt alone does not establish feature fidelity.
-
 ## Harness portability
 
-Use the host's skill-loading mechanism if available; otherwise read the linked `SKILL.md` files directly. Paths are relative to their containing file. The workflow requires source inspection, file editing, and suitable verification, not a particular Skill, Task, Todo, or review tool. Work in the current session by default. Delegation is optional when available and authorized.
-
-Existing `distillation-plan.md` artifacts may contain useful decisions. Reconcile those with the current spec and code when resuming an old port; do not require or regenerate a plan.
+Use the host's skill-loading mechanism if available; otherwise read the linked `SKILL.md` files directly. Paths are relative to their containing file.

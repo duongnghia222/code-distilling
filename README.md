@@ -2,7 +2,7 @@
 
 > Port high-quality implementations from reference open-source repos into your project — with discipline.
 
-`code-distilling` is a Claude Code and Codex plugin that turns *"I want to copy this feature from that repo"* into a controlled workflow: explore the reference and write a distillation spec (what to keep verbatim, what to discard, how the seams wire into your project), implement it, and later close the gaps as the reference evolves.
+`code-distilling` is a Claude Code and Codex plugin that turns *"I want to copy this feature from that repo"* into a controlled workflow: explore the reference and write a distillation spec (what to re-express in your own conventions, what to discard, how the seams wire into your project), implement it, and later close the gaps as the reference evolves.
 
 It is a sister-plugin to [Superpowers](https://github.com/obra/superpowers) and follows the same skill-driven discipline. You do not need Superpowers installed to use it.
 
@@ -128,13 +128,13 @@ Agent: I'm using `distillation-implementation` to build and verify it.
 
 ## What survives the port
 
-- **Exact assets:** literal values, prompt text, schemas, examples, and tables identified for exact preservation.
+- **Behavior-carrying assets:** prompt text, schemas, examples, tables, and tuned values — rewritten in your project's conventions, with the effect each must still have recorded.
 - **Behavioral invariants:** algorithms, state ownership, transition predicates, ordering, domain rules, and termination. Syntax and incidental structure can change.
 - **Documented adaptations:** target interfaces and omitted packaging, with evidence of semantic differences and how they are resolved.
 
 For deep research, the design may include evidence tracking, follow-up search, and citation binding. For group chat, it may include speaker eligibility, context visibility, and reply-loop prevention. The spec traces the actual reference mechanisms; it does not impose these examples on every feature.
 
-The implementer retains discretion over local coding decisions. The spec preserves the knowledge that would otherwise be lost between sessions. Required license and attribution notices remain in copied material.
+The implementer retains discretion over local coding decisions. The spec preserves the knowledge that would otherwise be lost between sessions. Required license and attribution notices remain wherever reference material survives.
 
 ## Status
 
