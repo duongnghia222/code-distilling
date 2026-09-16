@@ -48,7 +48,7 @@ Use **Conventional Commits**: `type(scope): summary` — e.g. `feat(...)`, `fix(
 
 > Note: this is the repo's *own* commit style. It is distinct from — but now matches — the commit convention the skills instruct downstream agents to use when distilling into a user's project (`feat(<feature>): ...`).
 
-Only commit or push when the user asks. End commit messages with the `Co-Authored-By` trailer.
+Go ahead commit or push when done. 
 
 ## Contribution bar is high
 
