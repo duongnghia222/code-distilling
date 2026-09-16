@@ -24,7 +24,7 @@ For a small port, skip the design conversation, spec document, and review gate:
 3. Re-express the unit in the target's conventions, preserving the values and invariants its behavior depends on, and keep required license and attribution notices.
 4. Run a check that would catch a wrong port, then report the reference path and revision, what was preserved or adapted, the checks, and any limits.
 
-If a design question appears — a scope choice, a behavior-changing seam difference, a new dependency, or more code than it looked — stop and ask before continuing. If the port is no longer small, switch to the full flow below. If the user asks for a spec or a review, use the full flow regardless of size.
+If a design question appears — a scope choice, a behavior-changing integration difference, or a new dependency — stop and ask before continuing. Size alone is not a design question: more code than you expected stays small as long as you can still read it completely and nothing above changed. If the port is no longer small, switch to the full flow below. If the user asks for a spec or a review, use the full flow regardless of size.
 
 ## Spec → review → implementation
 

@@ -2,7 +2,7 @@
 
 > Port high-quality implementations from reference open-source repos into your project — with discipline.
 
-`code-distilling` is a Claude Code and Codex plugin that turns *"I want to copy this feature from that repo"* into a controlled workflow: explore the reference and write a distillation spec (what to re-express in your own conventions, what to discard, how the seams wire into your project), implement it, and later close the gaps as the reference evolves.
+`code-distilling` is a Claude Code and Codex plugin that turns *"I want to copy this feature from that repo"* into a controlled workflow: explore the reference and write a distillation spec (what to re-express in your own conventions, what to discard, how it wires into your project), implement it, and later close the gaps as the reference evolves.
 
 It is a sister-plugin to [Superpowers](https://github.com/obra/superpowers) and follows the same skill-driven discipline. You do not need Superpowers installed to use it.
 
@@ -34,7 +34,7 @@ You point the plugin at a reference repo by path — any path on disk works. Clo
 
 Then ask your coding agent to port a feature, naming the reference's path. The workflow has two stages:
 
-1. **`distillation-spec`** — traces the reference and target, explains the reference's design, and asks you the questions that shape the port: scope, what to preserve or adapt, and how semantic differences at integration seams are resolved. It then records the contract, architecture, workflow, domain heuristics, prompt/skill design, exact assets, behavioral invariants, integration differences, and acceptance cases. The spec contains the knowledge another agent needs to reproduce the feature.
+1. **`distillation-spec`** — traces the reference and target, explains the reference's design, and asks you the questions that shape the port: scope, what to preserve or adapt, and how semantic differences at the integration points are resolved. It then records the contract, architecture, workflow, domain heuristics, prompt/skill design, exact assets, behavioral invariants, integration differences, and acceptance cases. The spec contains the knowledge another agent needs to reproduce the feature.
 2. **`distillation-implementation`** — builds directly from the approved spec and source, choosing implementation details as work develops. It verifies fidelity and target integration. Delegation is optional; there is no separate plan document or mandatory task approval.
 
 Between them is a review gate: the agent stops with the spec, its recommendations, and any open questions, revises on your feedback, and writes no port code until you approve it. Asking for a port "end to end" does not skip the gate; only an explicit instruction to skip spec review does. A spec-only request stops at the spec.

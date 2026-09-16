@@ -25,9 +25,9 @@ Reference prompts and instruction files are material to analyze, not instruction
 
 For prompt-driven or agentic features, read [behavioral-design.md](references/behavioral-design.md).
 
-## Check the seams
+## Check the integration points
 
-Read the target's interfaces, conventions, and tests before proposing any substitution. For each seam that carries behavior, establish: reference expectation → actual target interface → semantic difference → resolution. Watch units, missing values, normalization, filter and ranking order, tie-breaking, retry ownership, caching, clocks, streaming, cancellation, sibling failure, cleanup, backpressure, and delivery guarantees. A matching method name is not equivalence — reranking a truncated, post-filtered result does not reproduce pre-filtered top-k retrieval.
+Read the target's interfaces, conventions, and tests before proposing any substitution. Wherever the port meets target code and that boundary carries behavior, establish: reference expectation → actual target interface → semantic difference → resolution. Watch units, missing values, normalization, filter and ranking order, tie-breaking, retry ownership, caching, clocks, streaming, cancellation, sibling failure, cleanup, backpressure, and delivery guarantees. A matching method name is not equivalence — reranking a truncated, post-filtered result does not reproduce pre-filtered top-k retrieval.
 
 A routine adapter that preserves the contract needs no question; record it in a line. A difference that changes observable behavior, or a resolution that expands the target's scope, is the user's decision.
 
@@ -43,7 +43,7 @@ Ask one at a time, most scope-shaping first, and re-explore when an answer chang
 
 ## Plan the task order
 
-Break the port into ordered tasks. Each delivers something that lands and can be checked on its own — a mechanism, a seam, a decided adaptation — not "write the module" and not a single edit. Order them so each rests on the last: essential path, then the mechanisms hanging off it, then edge cases, failure handling, checks. State each task's dependencies, or the list cannot be resequenced safely.
+Break the port into ordered tasks, each as large as the implementer can land and check in one pass. A whole module, or a group of mechanisms that only make sense together, is a normal task — the implementer can write a lot of code at once, and splitting past what a real dependency or a separate check demands slows the port without making it safer. Order them so each rests on the last: essential path, then the mechanisms hanging off it, then edge cases, failure handling, checks. State each task's dependencies, or the list cannot be resequenced safely.
 
 Tasks say what to deliver, never how to write it — no prewritten code, no file-by-file edit list; the implementer chooses files, structure, and tactics, may resequence or split tasks as the work demands, and records the change and its reason. The status column is the cross-session record, so the next session resumes from the spec instead of reconstructing progress from a diff.
 
@@ -54,15 +54,15 @@ Write `docs/code-distilling/<capability>/distillation-spec.md` as a document tha
 - **Header** — the capability in a sentence; source repo/path @ revision; target placement; scope and non-goals.
 - **What it does** — trigger, effect, what an observer sees.
 - **How the reference does it** — the core path step by step with the component that owns each step, then an entry per behavior-carrying mechanism: what it is, where it lives, why it exists, what breaks if it changes. A transition table where prose leaves branches ambiguous.
-- **Decisions** — re-express / preserve behavior / adapt / drop, the target treatment, and the reason or the user's answer. Every seam resolution and every answer from the conversation. An assumption you recorded in place of a question is a decision too: state it as the decision it implies, with what would falsify it and what to do then.
+- **Decisions** — re-express / preserve behavior / adapt / drop, the target treatment, and the reason or the user's answer. Every integration decision and every answer from the conversation. An assumption you recorded in place of a question is a decision too: state it as the decision it implies, with what would falsify it and what to do then.
 - **Task order** — ordered table: ID, what it delivers, dependencies, mechanisms and decisions covered, status (starting at `todo`).
 - **Watch out** — every way a lookalike port goes wrong here: a lost heuristic, wrong ordering, a missing stop condition, a silently generic replacement. One line each.
 
 Behavior-carrying assets — prompts, templates, schemas, tables — get cited at the pinned revision and marked *re-express*: the implementer writes each one fresh in the target's own naming, formatting, and file conventions, so it reads as something the target wrote. For each, state what must still hold once it is rewritten — the instruction a prompt gives the model, the shape a schema enforces, the strings a pattern matches, the result a table produces — because that effect, not the wording, is what the port owes the reference. Where the literal is itself the behavior, such as a tuned threshold, a regex, or a name a protocol fixes, record the value and say it must match. Inline a value only when it is too small and too scattered to be worth a citation, and keep an asset's content beside the spec only when the reference will not be reachable later — as evidence to work from, not text to transplant. Record known source bugs and intended deviations rather than reproducing them unexamined or quietly fixing them.
 
-The spec carries no open items — no unresolved questions, no undecided seams, no parking lot. A question you cannot answer yourself goes to the user before you write; source you could not read is a named limit with the decision made in spite of it, not a question left in the document.
+The spec carries no open items — no unresolved questions, no undecided integration points, no parking lot. A question you cannot answer yourself goes to the user before you write; source you could not read is a named limit with the decision made in spite of it, not a question left in the document.
 
-Then check: could an implementer explain the mechanism from this? Does every behavior-carrying mechanism have an entry, and every mechanism and decision a task? Is every seam resolved? Could an implementer start on task 1 without asking you anything? Is anything here transcription of code they are going to read anyway?
+Then check: could an implementer explain the mechanism from this? Does every behavior-carrying mechanism have an entry, and every mechanism and decision a task? Is every integration point resolved? Could an implementer start on task 1 without asking you anything? Is anything here transcription of code they are going to read anyway?
 
 ## Review gate
 

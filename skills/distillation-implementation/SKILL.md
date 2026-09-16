@@ -28,7 +28,7 @@ The spec's task table is the todo list, and the spec file is where status lives 
 
 ## Implement faithfully
 
-Keep the source and the spec open while editing. Write each asset marked *re-express* fresh in the target's own conventions, then check it against the source at the pinned revision for what the spec says must still hold — comparing runtime values, not literals, where escaping differs between languages. Preserve the invariants the spec names — ordering, state ownership, transition predicates, retry and stop conditions, domain heuristics — even when files, classes, and constructs change around them. Resolve each seam the way the spec decided; renaming a call is not resolving it.
+Keep the source and the spec open while editing. Write each asset marked *re-express* fresh in the target's own conventions, then check it against the source at the pinned revision for what the spec says must still hold — comparing runtime values, not literals, where escaping differs between languages. Preserve the invariants the spec names — ordering, state ownership, transition predicates, retry and stop conditions, domain heuristics — even when files, classes, and constructs change around them. Resolve each integration difference the way the spec decided; renaming a call is not resolving it.
 
 Use native target patterns for incidental structure. Do not import from a checkout outside the project, and do not carry over a dependency merely because the reference uses one. For prompt-driven features, land prompts, context assembly, tool schemas, output parsing, transitions, and stop rules together — a lookalike API over a generic algorithm is not the port. Keep required license and attribution notices wherever reference material survives, and let comments explain invariants rather than syntax.
 
@@ -40,7 +40,7 @@ Give each task a check that would fail on a wrong port, then verify the feature 
 
 - Re-expressed assets still do what the spec says they must: the instruction given, the shape enforced, the strings matched, the value produced.
 - Every item in the spec's *Watch out* list is specifically checked.
-- Seams behave, not just compile: ordering, filtering, units, retries, state lifetime, cancellation.
+- Integration points behave, not just compile: ordering, filtering, units, retries, state lifetime, cancellation.
 - For agent workflows, replay controlled model and tool outputs to test routing, parsing, transitions, and termination deterministically; keep that separate from any live quality evaluation.
 - Discarded packaging has not leaked into the target, and no essential behavior left with it.
 - The target's tests, build, and type checks pass, and the integrated feature path runs where feasible.
