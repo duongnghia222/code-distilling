@@ -48,8 +48,6 @@ Use **Conventional Commits**: `type(scope): summary` — e.g. `feat(...)`, `fix(
 
 > Note: this is the repo's *own* commit style. It is distinct from — but now matches — the commit convention the skills instruct downstream agents to use when distilling into a user's project (`feat(<feature>): ...`).
 
-Go ahead commit or push when done. 
-
 ## Contribution bar is high
 
 `CONTRIBUTING.md` is strict, and its "If you are an AI agent" section applies to you: verify a real problem motivates any change, search open/closed PRs for prior art, keep changes in-scope (domain/language/tool-specific work belongs in a separate plugin), and get explicit human approval on the complete diff before opening a PR.
