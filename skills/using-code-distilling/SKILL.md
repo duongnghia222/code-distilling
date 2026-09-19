@@ -21,8 +21,7 @@ Then skip the design conversation, spec document, and review gate:
 
 1. Read the reference unit, the dependencies that determine its behavior (defaults, constants, tests), and where it lands in the target.
 2. Say in one line that this is a small port you are implementing directly. Do it without waiting.
-3. Re-express it in the target's conventions, preserving the values and invariants its behavior depends on. Keep required license and attribution notices.
-4. Run a check that would catch a wrong port. Report: reference path and revision, what was preserved or adapted, the checks, any limits.
+3. Re-express it in the target's conventions, preserving the values and invariants its behavior depends on.4. Run a check that would catch a wrong port. Report: reference path and revision, what was preserved or adapted, the checks, any limits.
 
 If a design question appears — a scope choice, a behavior-changing integration difference, a new dependency — **stop and ask** before continuing. Size alone is not a design question: more code than expected stays small as long as you can still read it completely and nothing above changed. No longer small → switch to the full flow. User asks for a spec or a review → full flow regardless of size.
 

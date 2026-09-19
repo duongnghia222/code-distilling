@@ -134,8 +134,7 @@ Agent: I'm using `distillation-implementation` to build and verify it.
 
 For deep research, the design may include evidence tracking, follow-up search, and citation binding. For group chat, it may include speaker eligibility, context visibility, and reply-loop prevention. The spec traces the actual reference mechanisms; it does not impose these examples on every feature.
 
-The implementer retains discretion over local coding decisions. The spec preserves the knowledge that would otherwise be lost between sessions. Required license and attribution notices remain wherever reference material survives.
-
+The implementer retains discretion over local coding decisions. The spec preserves the knowledge that would otherwise be lost between sessions.
 ## Status
 
 Early development.

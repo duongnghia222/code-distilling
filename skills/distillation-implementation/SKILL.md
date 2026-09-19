@@ -36,7 +36,7 @@ Keep the source and the spec open while editing.
 - Resolve each integration difference the way the spec decided. **Renaming a call is not resolving it.**
 - Native target patterns for incidental structure. Do not import from a checkout outside the project. Do not carry over a dependency merely because the reference uses one.
 - Prompt-driven features: land prompts, context assembly, tool schemas, output parsing, transitions, and stop rules **together**. A lookalike API over a generic algorithm is not the port.
-- Keep required license and attribution notices wherever reference material survives. Comments explain invariants, not syntax.
+- Comments explain invariants, not syntax.
 - Ordinary coding choices are yours. **Never quietly change the contract to make a check pass.**
 - Implement here by default. Delegate only a bounded task with no overlapping edits, where that is authorized and useful, and review the combined result yourself.
 
