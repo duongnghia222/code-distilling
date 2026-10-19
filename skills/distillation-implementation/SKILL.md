@@ -1,6 +1,7 @@
 ---
 name: distillation-implementation
 description: Use to build a reference port from an approved distillation spec, or to resume one already in progress — work the spec's task order, track progress outside the spec, and verify fidelity against the reference.
+disable-model-invocation: true
 ---
 
 # Distillation Implementation

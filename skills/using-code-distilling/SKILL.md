@@ -1,6 +1,7 @@
 ---
 name: using-code-distilling
 description: Use when the user wants to port, distill, copy, borrow, or bring a feature from a reference repository into their project, or to catch an existing port up with its reference or close its remaining gaps.
+disable-model-invocation: true
 ---
 
 # Using Code Distilling
@@ -46,4 +47,4 @@ A port exists and the reference has moved, or the port falls short of its spec o
 
 ## Harness portability
 
-Use the host's skill loader if available; otherwise read the linked `SKILL.md` files directly. Paths are relative to their containing file.
+Every skill here is user-invocable only, so the host's skill loader may refuse to load one for you. Once the user has invoked this flow, read the linked `SKILL.md` files directly. Paths are relative to their containing file.

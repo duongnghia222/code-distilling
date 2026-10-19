@@ -64,13 +64,13 @@ Skills are not prose — they are code that shapes agent behavior. If you modify
 
 If your PR adds support for a new harness (IDE, CLI tool, agent runner), you MUST include a session transcript proving the integration works end-to-end.
 
-A real integration loads the `using-code-distilling` bootstrap at session start. The bootstrap is what causes the porting skills to auto-trigger when porting intent is detected. Without it, the skills are dead weight.
+A real integration makes the skills available for the user to invoke explicitly, and never loads them on its own.
 
 **The acceptance test.** Open a clean session in the new harness inside any project, with a reference repo cloned somewhere on disk. Send exactly (substitute a real path):
 
 > Let's port the X feature from /path/to/reference-repo.
 
-A working integration auto-triggers `distillation-spec` before any code is written. Paste the complete transcript in the PR.
+No `code-distilling` skill may load. Then, in a second clean session, send the same message while invoking `using-code-distilling` through the harness's explicit mechanism (slash command, skill mention, or equivalent). A working integration reaches `distillation-spec` before any code is written. Paste both complete transcripts in the PR.
 
 ## How to develop a skill change
 

@@ -1,6 +1,7 @@
 ---
 name: distillation-spec
 description: Use for the analysis stage of porting a feature from a reference repository — read the reference and the target, converge with the user on what to preserve, adapt, and drop, and write the distillation spec the implementer works from. Use before any port code is written.
+disable-model-invocation: true
 ---
 
 # Distillation Spec

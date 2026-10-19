@@ -1,6 +1,7 @@
 ---
 name: distillation-gap
 description: Use to find and log the gaps between a feature and its reference — a port that has fallen behind an upstream that moved on, a clone where both sides have changed, or two versions of the same feature that were never formally ported — then decide each gap with the user and close the approved ones.
+disable-model-invocation: true
 ---
 
 # Distillation Gap

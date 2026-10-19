@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: A skill didn't auto-trigger, the porting flow misbehaved, or a license check produced the wrong result
+about: A skill loaded without being invoked, the porting flow misbehaved, or a license check produced the wrong result
 title: "[bug] "
 labels: bug
 assignees: ''
@@ -18,7 +18,7 @@ assignees: ''
 
 ## Expected behavior
 
-<!-- What should the agent have done? Quote the skill that you'd expect to fire. -->
+<!-- What should the agent have done? Quote the skill you invoked. -->
 
 ## Actual behavior
 

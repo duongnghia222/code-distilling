@@ -43,7 +43,7 @@ Small ports skip all of that. If the feature is a bounded unit, like a helper, r
 
 After a port lands, **`distillation-gap`** keeps it current. Ask the agent to catch the port up with the reference, or to close what the first implementation left open. It reviews the reference from the revision recorded in the spec, following renames, prompt and config changes, and changed tests. It also checks the target against the spec for unimplemented, drifted, or unverified behavior. Each gap is recorded with evidence and a proposed treatment (adopt, adapt, decline, or defer) in `distillation-gaps.md`, so declined upstream changes aren't raised again next time. Gaps that change the spec go through the same review gate before any code changes, except a small catch-up of unambiguous adoptions such as an upstream bug fix; upstream changes are re-expressed through the spec's adaptations, not applied as a patch.
 
-The skills auto-trigger when the agent sees porting intent and a reference repo path. You don't need to type any slash commands.
+The skills run only when you invoke them; the agent never loads them on its own, even for a porting request. Start the flow with `/code-distilling:using-code-distilling` in Claude Code, or pick `using-code-distilling` with `$` or `/skills` in Codex. You can also invoke a single stage directly, such as `/code-distilling:distillation-gap`. Once you have invoked the flow, the agent moves between its stages itself.
 
 ## Quickstart
 
@@ -53,9 +53,9 @@ git clone https://github.com/<org>/<reference-repo> ~/code/<reference-repo>
 
 # 2. Open your coding agent (Claude Code, Codex, etc.) in your project.
 
-# 3. Ask, naming the reference path:
-#    "I want to port the OAuth flow from ~/code/<reference-repo>
-#     into src/auth/."
+# 3. Invoke the flow and name the reference path:
+#    /code-distilling:using-code-distilling I want to port the OAuth flow
+#    from ~/code/<reference-repo> into src/auth/.
 ```
 
 Absolute paths, relative paths, and a checkout that happens to live inside your project all work — the plugin treats whatever you point it at as the reference. The agent will engage `distillation-spec` first, then walk you through the rest of the flow.
@@ -87,14 +87,15 @@ This repo ships a `.codex-plugin/` manifest. Install it through your harness's p
 
 ### Other harnesses
 
-The skill instructions use ordinary Markdown and do not require named tools or subagents. A coding CLI, including GitHub Copilot, can follow them when its environment makes the skills available; start with `skills/using-code-distilling/SKILL.md`. Automatic discovery depends on the harness integration. See `hooks/session-start` for the existing context-output branches; portability of the instructions is not a claim of end-to-end testing on every CLI.
+The skill instructions use ordinary Markdown and do not require named tools or subagents. A coding CLI, including GitHub Copilot, can follow them when its environment makes the skills available; point the agent at `skills/using-code-distilling/SKILL.md` when you want the flow. Nothing loads the skills automatically; portability of the instructions is not a claim of end-to-end testing on every CLI.
 
 ## What you'll see in a session
 
-After installation, the agent loads the `using-code-distilling` bootstrap at session start. The bootstrap is silent until porting intent appears. Then:
+Nothing from the plugin is loaded until you invoke it. Then:
 
 ```
-User: I want to port the OAuth flow from ~/code/awesome-auth into src/auth/.
+User: /code-distilling:using-code-distilling I want to port the OAuth flow
+      from ~/code/awesome-auth into src/auth/.
 
 Agent: I'm using `distillation-spec` to map the reference and write the spec.
        [reads ~/code/awesome-auth/ and src/auth/, locates the OAuth files]
@@ -119,9 +120,9 @@ Agent: I'm using `distillation-implementation` to build and verify it.
 
 ## The skills
 
-| Skill | When it fires | What it produces |
+| Skill | When to invoke | What it produces |
 |-------|---------------|------------------|
-| `using-code-distilling` | Session start (bootstrap) | Routes to the flow on porting intent |
+| `using-code-distilling` | Starting a port or catching one up | Routes to the right stage |
 | `distillation-spec` | Reference feature needs analysis | `distillation-spec.md`, with linked design notes/assets when useful |
 | `distillation-implementation` | Spec is approved and implementation is requested | Ported code and fidelity/integration verification |
 | `distillation-gap` | An existing port needs to catch up with its reference or close remaining gaps | `distillation-gaps.md` ledger, updated spec, and verified gap fixes |
@@ -156,4 +157,4 @@ MIT. See [`LICENSE`](LICENSE).
 
 ## Acknowledgements
 
-`code-distilling` is heavily inspired by [Superpowers](https://github.com/obra/superpowers) by Jesse Vincent and the team at Prime Radiant. The skill structure, the bootstrap-via-hook mechanism, the two-stage review pattern, and the writing voice all draw on Superpowers' design choices. If you don't already use Superpowers for general agent-driven development, you probably should.
+`code-distilling` is heavily inspired by [Superpowers](https://github.com/obra/superpowers) by Jesse Vincent and the team at Prime Radiant. The skill structure, the two-stage review pattern, and the writing voice all draw on Superpowers' design choices. If you don't already use Superpowers for general agent-driven development, you probably should.

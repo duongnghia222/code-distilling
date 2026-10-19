@@ -63,11 +63,8 @@ of human involvement will be closed without review.
      runner), you MUST include a session transcript proving the
      integration actually works.
 
-     A real integration loads the `using-code-distilling` bootstrap at
-     session start. The bootstrap is what causes the porting skills to
-     auto-trigger when porting intent is detected. Without it, the skills
-     are dead weight — present on disk but never invoked at the right
-     moments.
+     A real integration makes the skills available for the user to
+     invoke explicitly, and never loads them on its own.
 
      ACCEPTANCE TEST: Open a clean session in the new harness inside any
      project, with a reference repo cloned anywhere on disk. Send exactly
@@ -75,20 +72,25 @@ of human involvement will be closed without review.
 
          Let's port the X feature from /path/to/reference-repo.
 
-     A working integration auto-triggers `distillation-spec` before any
-     code is written. Paste the complete transcript below.
+     No `code-distilling` skill may load. Then, in a second clean
+     session, send the same message while invoking `using-code-distilling`
+     through the harness's explicit mechanism (slash command, skill
+     mention, or equivalent). A working integration reaches
+     `distillation-spec` before any code is written. Paste both complete
+     transcripts below.
 
      These are NOT real integrations and PRs that ship them will be closed:
 
      - Manually copying skill files into the harness.
      - Wrapping with `npx skills` or similar at-runtime shims.
-     - Anything that requires the user to opt in to skills per-session.
-     - Anything where `distillation-spec` does not auto-trigger on the
-       test above.
+     - Anything that loads the skills without explicit invocation, such
+       as session-start injection or always-on rules.
+     - Anything where explicitly invoking `using-code-distilling` does
+       not reach `distillation-spec` on the test above.
 -->
 
 <details>
-<summary>Clean-session transcript for the acceptance test</summary>
+<summary>Clean-session transcripts for the acceptance test</summary>
 
 ```
 paste the complete transcript here

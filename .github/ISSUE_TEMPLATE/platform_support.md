@@ -12,22 +12,24 @@ assignees: ''
 
 ## How does it load skills?
 
-<!-- Does it support session-start hooks? Plugin manifests? Slash commands?
+<!-- Does it support plugin manifests? Slash commands or skill mentions?
+     Can a skill be limited to explicit invocation?
      Paste links to its plugin docs. -->
 
 ## What needs to change?
 
-<!-- Manifest file? New hook output format? Bootstrap mechanism? Be specific. -->
+<!-- Manifest file? Per-skill invocation policy? Be specific. -->
 
 ## Acceptance test plan
 
-<!-- A real integration auto-triggers `distillation-spec` when porting
-     intent is detected. Describe how you'd verify this works in the new
+<!-- A real integration never loads the skills on its own, and reaches
+     `distillation-spec` when the user explicitly invokes
+     `using-code-distilling`. Describe how you'd verify both in the new
      harness. -->
 
 ## Are you willing to send a PR?
 
 - [ ] Yes, I can implement and provide a session transcript proving the
-      bootstrap loads.
+      explicit invocation works and nothing loads without it.
 - [ ] No, but I can help test.
 - [ ] No.

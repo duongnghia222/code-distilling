@@ -4,7 +4,7 @@ Guidance for Claude Code and other agents working **on this repository** (develo
 
 ## What this repo is
 
-`code-distilling` is a **Claude Code + Codex plugin** — not an application. It ships a set of skills that turn "copy this feature from that repo" into a two-stage flow (spec → implementation). There is no build step and no runtime; the deliverable is Markdown skills, hooks, and plugin manifests.
+`code-distilling` is a **Claude Code + Codex plugin** — not an application. It ships a set of skills that turn "copy this feature from that repo" into a two-stage flow (spec → implementation). There is no build step and no runtime; the deliverable is Markdown skills and plugin manifests.
 
 **Zero runtime dependencies by design.** Do not add third-party service/tool dependencies except when adding support for a new harness.
 
@@ -13,6 +13,7 @@ Guidance for Claude Code and other agents working **on this repository** (develo
 The files under `skills/` are **agent instructions that shape how other agents behave** — treat them as code, not documentation.
 
 - Don't reword carefully-tuned content (Red Flags tables, rationalization lists, Iron Law statements, "your human partner" phrasing) without evidence a change improves behavior.
+- Every skill is **explicit-invoke only**: `disable-model-invocation: true` in its frontmatter (Claude Code) and `policy.allow_implicit_invocation: false` in its `agents/openai.yaml` (Codex). Keep both on any new skill, and don't add a hook that loads skills at session start. Skills hand off to each other by reading the linked `SKILL.md` file, not through the skill loader.
 - A skill change is only "done" after adversarial testing across sessions against a real reference repo — verifying the right skills fire, the Red Flags trip, and the checklist items get done. See `CONTRIBUTING.md`.
 
 ## Layout
@@ -21,11 +22,10 @@ The files under `skills/` are **agent instructions that shape how other agents b
 .claude-plugin/     plugin.json (Claude manifest) + marketplace.json
 .codex-plugin/      plugin.json (Codex manifest)
 skills/             four skills with supporting references and optional handoffs
-  using-code-distilling/        session-start bootstrap; routes on porting intent
+  using-code-distilling/        entry point; routes to the right stage
   distillation-spec/            contract, architecture, behavioral design, integration, checks
   distillation-implementation/  direct implementation + fidelity and integration review
   distillation-gap/             upstream catch-up and remaining-gap closure for existing ports
-hooks/              SessionStart hook that injects the bootstrap (session-start, run-hook.cmd)
 scripts/            bump-version.sh
 .version-bump.json  declares which files carry the version + audit excludes
 ```
