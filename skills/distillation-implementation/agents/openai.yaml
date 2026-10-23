@@ -1,2 +1,5 @@
+interface:
+  display_name: "Distillation Implementation"
+  short_description: "Build a port from an approved distillation spec"
 policy:
   allow_implicit_invocation: false

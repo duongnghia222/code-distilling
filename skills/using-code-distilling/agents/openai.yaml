@@ -1,2 +1,5 @@
+interface:
+  display_name: "Code Distilling"
+  short_description: "Start porting a feature from a reference repo"
 policy:
   allow_implicit_invocation: false

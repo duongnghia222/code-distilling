@@ -43,7 +43,7 @@ Small ports skip all of that. If the feature is a bounded unit, like a helper, r
 
 After a port lands, **`distillation-gap`** keeps it current. Ask the agent to catch the port up with the reference, or to close what the first implementation left open. It reviews the reference from the revision recorded in the spec, following renames, prompt and config changes, and changed tests. It also checks the target against the spec for unimplemented, drifted, or unverified behavior. Each gap is recorded with evidence and a proposed treatment (adopt, adapt, decline, or defer) in `distillation-gaps.md`, so declined upstream changes aren't raised again next time. Gaps that change the spec go through the same review gate before any code changes, except a small catch-up of unambiguous adoptions such as an upstream bug fix; upstream changes are re-expressed through the spec's adaptations, not applied as a patch.
 
-The skills run only when you invoke them; the agent never loads them on its own, even for a porting request. Start the flow with `/code-distilling:using-code-distilling` in Claude Code, or pick `using-code-distilling` with `$` or `/skills` in Codex. You can also invoke a single stage directly, such as `/code-distilling:distillation-gap`. Once you have invoked the flow, the agent moves between its stages itself.
+The skills run only when you invoke them; the agent never loads them on its own, even for a porting request. Start the flow with `/code-distilling:using-code-distilling` in Claude Code, or `$code-distilling:using-code-distilling` in Codex (also listed under `$` and `/skills`). Codex namespaces plugin skills, so a bare `$using-code-distilling` loads nothing. You can also invoke a single stage directly, such as `/code-distilling:distillation-gap` or `$code-distilling:distillation-gap`. Once you have invoked the flow, the agent moves between its stages itself.
 
 ## Quickstart
 
@@ -56,6 +56,7 @@ git clone https://github.com/<org>/<reference-repo> ~/code/<reference-repo>
 # 3. Invoke the flow and name the reference path:
 #    /code-distilling:using-code-distilling I want to port the OAuth flow
 #    from ~/code/<reference-repo> into src/auth/.
+#    (In Codex, start with $code-distilling:using-code-distilling instead.)
 ```
 
 Absolute paths, relative paths, and a checkout that happens to live inside your project all work — the plugin treats whatever you point it at as the reference. The agent will engage `distillation-spec` first, then walk you through the rest of the flow.

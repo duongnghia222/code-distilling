@@ -30,9 +30,9 @@
       "Write"
     ],
     "defaultPrompt": [
-      "$using-code-distilling I want to port a feature from /path/to/reference-repo into my project.",
-      "$using-code-distilling Help me distill the OAuth implementation from this reference.",
-      "$distillation-gap Catch my port of this feature up with the latest changes in its reference repo."
+      "$code-distilling:using-code-distilling I want to port a feature from /path/to/reference-repo into my project.",
+      "$code-distilling:using-code-distilling Help me distill the OAuth implementation from this reference.",
+      "$code-distilling:distillation-gap Catch my port of this feature up with the latest changes in its reference repo."
     ]
   }
 }

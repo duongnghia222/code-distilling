@@ -1,2 +1,5 @@
+interface:
+  display_name: "Distillation Gap"
+  short_description: "Catch a port up with its reference and close gaps"
 policy:
   allow_implicit_invocation: false

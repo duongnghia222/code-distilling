@@ -1,2 +1,5 @@
+interface:
+  display_name: "Distillation Spec"
+  short_description: "Analyze a reference and write the distillation spec"
 policy:
   allow_implicit_invocation: false
